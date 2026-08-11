@@ -6,10 +6,10 @@ import VolumeChart from "./components/VolumeChart.jsx"
 import SignalQueue from "./components/SignalQueue.jsx"
 import ActivityPanel from "./components/ActivityPanel.jsx"
 import CommandPalette from "./components/CommandPalette.jsx"
+import ErrorState from "./components/ErrorState.jsx"
 import { useTheme } from "./lib/useTheme.js"
 import { useLocalStorageState } from "./lib/useLocalStorageState.js"
 import { computeMetrics } from "./lib/metrics.js"
-import newsData from "./data/data.json"
 
 const DATE_RANGE_DAYS = { "7": 7, "30": 30, "90": 90 }
 
@@ -31,14 +31,36 @@ function App() {
   const [reviewedIds, setReviewedIds] = useLocalStorageState("sdr-dashboard-reviewed-ids", [])
   const [sidebarOpen, setSidebarOpen] = useLocalStorageState("sdr-dashboard-sidebar-open", true)
   const [paletteOpen, setPaletteOpen] = useState(false)
+
+  const [signals, setSignals] = useState([])
   const [loading, setLoading] = useState(true)
+  const [fetchError, setFetchError] = useState(null)
+  const [reloadToken, setReloadToken] = useState(0)
 
   const reviewedSet = useMemo(() => new Set(reviewedIds), [reviewedIds])
 
   useEffect(() => {
-    const timer = setTimeout(() => setLoading(false), 150)
-    return () => clearTimeout(timer)
-  }, [])
+    const controller = new AbortController()
+    setLoading(true)
+    setFetchError(null)
+
+    fetch("/api/signals", { signal: controller.signal })
+      .then((res) => {
+        if (!res.ok) throw new Error(`Server responded ${res.status}`)
+        return res.json()
+      })
+      .then((data) => {
+        setSignals(data)
+        setLoading(false)
+      })
+      .catch((err) => {
+        if (err.name === "AbortError") return
+        setFetchError(err.message || "Failed to load signals")
+        setLoading(false)
+      })
+
+    return () => controller.abort()
+  }, [reloadToken])
 
   useEffect(() => {
     function handleKey(e) {
@@ -60,21 +82,21 @@ function App() {
   }, [])
 
   const scopeOptions = useMemo(
-    () => [...new Set(newsData.map((item) => item.scope))].sort(),
-    [],
+    () => [...new Set(signals.map((item) => item.scope))].sort(),
+    [signals],
   )
   const entityOptions = useMemo(
-    () => [...new Set(newsData.map((item) => item.entity))].sort(),
-    [],
+    () => [...new Set(signals.map((item) => item.entity))].sort(),
+    [signals],
   )
   const signalTypeOptions = useMemo(
-    () => [...new Set(newsData.map((item) => item.signalType))].sort(),
-    [],
+    () => [...new Set(signals.map((item) => item.signalType))].sort(),
+    [signals],
   )
 
   const sortedItems = useMemo(
-    () => [...newsData].sort((a, b) => (a.date < b.date ? 1 : -1)),
-    [],
+    () => [...signals].sort((a, b) => (a.date < b.date ? 1 : -1)),
+    [signals],
   )
 
   const metrics = useMemo(() => computeMetrics(sortedItems), [sortedItems])
@@ -125,6 +147,10 @@ function App() {
 
   const handleMarkManyReviewed = (ids) => {
     setReviewedIds((prev) => [...new Set([...prev, ...ids])])
+  }
+
+  if (fetchError) {
+    return <ErrorState message={fetchError} onRetry={() => setReloadToken((t) => t + 1)} />
   }
 
   return (
