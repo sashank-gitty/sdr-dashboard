@@ -1,42 +1,61 @@
 import { useState } from "react"
-import { colorForScope, colorForSignalType } from "../lib/colors.js"
+import { pillClassForScope, pillClassForSignalType } from "../lib/colors.js"
 
-function FilterSection({ title, options, selected, onToggle, colorFor, scrollable }) {
+const DATE_RANGES = [
+  { value: "7", label: "7d" },
+  { value: "30", label: "30d" },
+  { value: "90", label: "90d" },
+  { value: "all", label: "All" },
+]
+
+function swatchClassFor(colorFor, option) {
+  if (!colorFor) return null
+  const classes = colorFor(option)
+  const bgMatch = classes.match(/(?:^|\s)(bg-\S+)/)
+  return bgMatch ? bgMatch[1].replace("/10", "") : "bg-slate-400"
+}
+
+function FilterSection({ title, options, selected, onToggle, colorFor }) {
   const [open, setOpen] = useState(
     () => typeof window === "undefined" || window.innerWidth > 900,
   )
 
   return (
-    <div className="filter-section">
+    <div className="border-b border-slate-200 py-3 dark:border-zinc-800">
       <button
         type="button"
-        className="filter-section-header"
         onClick={() => setOpen((v) => !v)}
         aria-expanded={open}
+        className="flex w-full items-center gap-2 text-left text-sm font-semibold text-slate-700 dark:text-zinc-200"
       >
-        <span className={`chevron ${open ? "chevron-open" : ""}`}>&#9656;</span>
-        <span className="filter-section-title">{title}</span>
+        <span className={`inline-block text-[10px] text-slate-400 transition-transform dark:text-zinc-500 ${open ? "rotate-90" : ""}`}>
+          &#9656;
+        </span>
+        <span className="flex-1">{title}</span>
         {selected.length > 0 && (
-          <span className="filter-section-count">{selected.length}</span>
+          <span className="rounded-full bg-indigo-500/10 px-1.5 py-0.5 text-[11px] font-semibold text-indigo-600 dark:text-indigo-400">
+            {selected.length}
+          </span>
         )}
       </button>
 
       {open && (
-        <div className={`filter-section-body ${scrollable ? "scrollable" : ""}`}>
+        <div className="mt-2 flex max-h-56 flex-col gap-0.5 overflow-y-auto scrollbar-thin">
           {options.map((option) => (
-            <label key={option} className="filter-checkbox">
+            <label
+              key={option}
+              className="flex cursor-pointer items-center gap-2 rounded-md px-1.5 py-1 text-[13px] text-slate-600 hover:bg-slate-100 dark:text-zinc-400 dark:hover:bg-zinc-800/80"
+            >
               <input
                 type="checkbox"
                 checked={selected.includes(option)}
                 onChange={() => onToggle(option)}
+                className="h-3.5 w-3.5 flex-shrink-0 accent-indigo-600"
               />
               {colorFor && (
-                <span
-                  className="filter-swatch"
-                  style={{ background: colorFor(option) }}
-                />
+                <span className={`h-2 w-2 flex-shrink-0 rounded-full ${swatchClassFor(colorFor, option)}`} />
               )}
-              <span className="filter-checkbox-label">{option}</span>
+              <span className="truncate capitalize">{option}</span>
             </label>
           ))}
         </div>
@@ -46,6 +65,8 @@ function FilterSection({ title, options, selected, onToggle, colorFor, scrollabl
 }
 
 function Sidebar({
+  dateRange,
+  onDateRangeChange,
   scopeOptions,
   entityOptions,
   signalTypeOptions,
@@ -57,22 +78,45 @@ function Sidebar({
   onToggleSignalType,
   onClearAll,
 }) {
-  const activeCount =
-    scopeFilter.length + entityFilter.length + signalTypeFilter.length
+  const activeCount = scopeFilter.length + entityFilter.length + signalTypeFilter.length
 
   return (
-    <aside className="sidebar">
-      <div className="sidebar-header">
-        <span className="sidebar-title">Filters</span>
-        {activeCount > 0 && <span className="sidebar-active-count">{activeCount} active</span>}
+    <aside className="flex h-full flex-col gap-1 overflow-y-auto border-r border-slate-200 bg-white/60 p-4 dark:border-zinc-800 dark:bg-zinc-900/40 lg:sticky lg:top-[57px] lg:h-[calc(100vh-57px)]">
+      <div className="mb-1 flex items-center gap-2 pb-3">
+        <span className="text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-zinc-400">Filters</span>
+        {activeCount > 0 && (
+          <span className="rounded-full bg-indigo-500/10 px-1.5 py-0.5 text-[11px] font-semibold text-indigo-600 dark:text-indigo-400">
+            {activeCount} active
+          </span>
+        )}
         <button
           type="button"
-          className="clear-all-btn"
           onClick={onClearAll}
           disabled={activeCount === 0}
+          className="ml-auto rounded-md border border-slate-200 px-2 py-1 text-xs font-medium text-slate-500 transition-colors hover:border-slate-300 hover:text-slate-900 disabled:cursor-default disabled:opacity-40 dark:border-zinc-800 dark:text-zinc-400 dark:hover:border-zinc-700 dark:hover:text-zinc-100"
         >
           Clear all
         </button>
+      </div>
+
+      <div className="border-b border-slate-200 pb-3 dark:border-zinc-800">
+        <p className="mb-2 text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-zinc-400">Date Range</p>
+        <div className="flex overflow-hidden rounded-md border border-slate-200 dark:border-zinc-800">
+          {DATE_RANGES.map((range) => (
+            <button
+              key={range.value}
+              type="button"
+              onClick={() => onDateRangeChange(range.value)}
+              className={`flex-1 py-1.5 text-xs font-semibold transition-colors ${
+                dateRange === range.value
+                  ? "bg-indigo-500/10 text-indigo-600 dark:text-indigo-400"
+                  : "text-slate-500 hover:bg-slate-100 dark:text-zinc-400 dark:hover:bg-zinc-800"
+              }`}
+            >
+              {range.label}
+            </button>
+          ))}
+        </div>
       </div>
 
       <FilterSection
@@ -80,15 +124,15 @@ function Sidebar({
         options={scopeOptions}
         selected={scopeFilter}
         onToggle={onToggleScope}
-        colorFor={colorForScope}
+        colorFor={pillClassForScope}
       />
 
       <FilterSection
-        title="Signal type"
+        title="Signal Type"
         options={signalTypeOptions}
         selected={signalTypeFilter}
         onToggle={onToggleSignalType}
-        colorFor={colorForSignalType}
+        colorFor={pillClassForSignalType}
       />
 
       <FilterSection
@@ -96,7 +140,6 @@ function Sidebar({
         options={entityOptions}
         selected={entityFilter}
         onToggle={onToggleEntity}
-        scrollable
       />
     </aside>
   )
