@@ -1,13 +1,17 @@
 # SDR Dashboard
 
-A single-page competitor and industry news dashboard, built with React and Vite.
+A single-page competitor and industry news/signal intelligence dashboard, built with React, Vite, and Tailwind CSS v4.
 
 ## What it does
 
-- Card-based feed of news/signal items, newest first
-- Filter by scope (macro/micro), entity, and signal type — filters combine
-- Search box filters by headline and summary text
-- Live count of visible items
+- KPI summary row (total signals, weekly trend, regulatory/pain-point signals, entities tracked) with sparklines
+- 30-day macro vs. micro signal volume chart
+- Tabbed, filterable signal queue (All / Macro / Micro) with quick filter pills (This Week, Regulatory & Pain Points, Leadership Moves, Competitor Moves)
+- Per-signal quick actions: copy to clipboard, mark reviewed
+- Right-rail activity stream + rule-based weekly highlights (most active entity, leading signal type, regulatory pressure)
+- Sidebar filters by date range, scope (macro/micro), entity, and signal type — filters combine
+- Global search plus a `Cmd/Ctrl+K` command palette for fast lookup and quick actions
+- Full dark / light theme support (persisted to `localStorage`, defaults to system preference)
 
 ## Data
 
