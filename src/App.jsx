@@ -15,10 +15,26 @@ function App() {
     [],
   )
 
-  const signalTypeOptions = useMemo(
-    () => [...new Set(newsData.map((item) => item.signalType))].sort(),
-    [],
-  )
+  const signalTypeOptions = useMemo(() => {
+    const knownTypes = [
+      "funding",
+      "leadership change",
+      "pain point",
+      "product launch",
+      "regulation",
+      "market shift",
+      "new entrant",
+      "customer incident",
+      "employee incident",
+      "brand move",
+      "research shift",
+      "digital transformation",
+      "restructure",
+      "analyst report",
+    ]
+    const dataTypes = newsData.map((item) => item.signalType)
+    return [...new Set([...knownTypes, ...dataTypes])].sort()
+  }, [])
 
   const sortedItems = useMemo(
     () => [...newsData].sort((a, b) => (a.date < b.date ? 1 : -1)),
