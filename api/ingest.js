@@ -40,7 +40,7 @@ export default async function handler(req, res) {
   const summary = { queried: FULL_WATCHLIST.length, rawItems: 0, afterDedupe: 0, normalized: 0, inserted: 0, errors: [] }
 
   try {
-    const { rows: existing } = await sql`SELECT dedupe_key FROM signals`
+    const existing = await sql`SELECT dedupe_key FROM signals`
     const existingKeys = new Set(existing.map((r) => r.dedupe_key))
 
     const rawItems = await fetchWatchlist(FULL_WATCHLIST)

@@ -9,7 +9,9 @@ export default async function handler(req, res) {
   try {
     // to_char avoids the classic node-postgres DATE-to-local-midnight
     // timezone footgun — we want the exact YYYY-MM-DD stored, no shifting.
-    const { rows } = await sql`
+    // Note: @neondatabase/serverless's tagged-template `sql` resolves
+    // directly to an array of rows, unlike @vercel/postgres's `{ rows }`.
+    const rows = await sql`
       SELECT
         id,
         headline,
