@@ -30,6 +30,16 @@
     "signalType": "product launch"
   },
   {
+    "id": "2026-08-11-nab-business-survey-july",
+    "headline": "NAB July survey shows business conditions edge up but confidence stays fragile amid oil-price shock",
+    "summary": "NAB's Monthly Business Survey for July 2026, released August 11, showed business conditions rising one point to +4 (still below the long-run average of +7) while confidence held flat at -6 -- the first month since the Iran conflict began that confidence failed to improve. The survey was fielded July 21-31, capturing business reaction to the breakdown of the US-Iran memorandum of understanding and a brief spike in Brent crude above US$100/bbl, with firms citing renewed cost pressures. For lower mid-market ANZ businesses this signals continued caution on hiring and investment even as headline conditions stabilise, meaning B2B buying committees remain risk-averse and budget cycles slower to unlock -- a relevant backdrop for anyone selling CX/EX software into commercial accounts. NAB characterised businesses as 'managing better than feared, but confidence remains too fragile to call the uncertainty over,' directly reinforcing the broader cost-of-living and rate-sensitivity theme running through Australian economic data this quarter.",
+    "sourceUrl": "https://www.westpaciq.com.au/economics/2026/08/australian-business-conditions-july-2026",
+    "date": "2026-08-11",
+    "scope": "macro",
+    "entity": "NAB / Australian business sector",
+    "signalType": "market shift"
+  },
+  {
     "id": "2026-08-10-afca-insurance-claims-handling-approach",
     "headline": "AFCA publishes new rulebook covering general insurance claims handling standards",
     "summary": "On 10 August 2026 the Australian Financial Complaints Authority published three new Approach papers: a standalone paper on general insurance claims handling, an updated paper on non-financial loss, and a new paper on uninsured motorist complaints, giving insurers a documented benchmark for when claims conduct falls short. This directly touches complaints-handling and CX processes at general insurers, a clear opening to discuss how experience management can help firms track and close claims-handling gaps before they escalate to AFCA (single source).",
@@ -80,6 +90,16 @@
     "signalType": "new entrant"
   },
   {
+    "id": "2026-08-10-nab-tech-ai-leadership-shuffle",
+    "headline": "NAB overhauls executive leadership as two senior executives retire and tech/AI portfolio consolidates under Pete Steel",
+    "summary": "On 10 August 2026, National Australia Bank announced that Group Chief Operating Officer Les Matheson and Group Executive Technology and Enterprise Operations Patrick Wright will both leave the Executive Leadership Team on 30 September 2026, with Wright transitioning to special adviser to CEO Andrew Irvine before retiring in 2027. Their responsibilities are being reallocated rather than backfilled: Pete Steel, previously Group Executive Digital Data and AI, becomes Group Executive Technology and AI, while Shane Conway, previously Group Executive Transformation, becomes Group Executive Transformation and Operations, effectively consolidating NAB's technology, data and AI strategy under a single new leader. In a related move, Group Executive Personal Banking Ana Marinkovic takes on accountability for Ubank, NAB's digital/neobank subsidiary, putting a fresh decision-maker over that unit's customer and digital experience strategy. This is a strong outreach trigger: new leaders in newly-consolidated Technology/AI and Transformation/Operations seats at Australia's third-largest bank are exactly the first-90-days moment where CX/EX and research vendors get evaluated, and the Ubank change specifically opens a door into a digital-first banking brand undergoing its own AI-driven operating shift. This sits inside the broader 2026 trend of Australian financial institutions restructuring technology functions around AI, making it timely to discuss how experience management platforms help new tech/ops leaders prove the customer and employee impact of AI-era transformation.",
+    "sourceUrl": "https://www.bloomberg.com/news/articles/2026-08-10/nab-shuffles-senior-team-with-pete-steel-to-lead-tech-and-ai",
+    "date": "2026-08-10",
+    "scope": "micro",
+    "entity": "National Australia Bank (NAB)",
+    "signalType": "leadership change"
+  },
+  {
     "id": "2026-08-08-national-auction-clearance-rate",
     "headline": "National auction clearance rate edges up to 50.3% but stays far below last year's pace",
     "summary": "The weekend auction report for the week ending 8 August 2026 recorded a national clearance rate of 50.3%, up from 48.4% the prior week but well below the 72.9% recorded in the same week last year; Canberra's clearance rate fell to 36% from 73% a year earlier. Weak, uneven clearance rates point to continued softness in property transaction volumes, which affects demand for mortgage broking, conveyancing and insurance CX programs tied to settlement activity (single source).",
@@ -88,6 +108,36 @@
     "scope": "macro",
     "entity": "Australian residential property market",
     "signalType": "market shift"
+  },
+  {
+    "id": "2026-08-08-nz-housing-auction-low",
+    "headline": "NZ residential auction volumes fall to three-year low as winter listings pile up",
+    "summary": "Just 197 residential properties went under the hammer across New Zealand in the first week of August 2026, the quietest auction week since 2023, with only 89 selling on the day for a clearance rate of about 45%, down from 246 properties the prior week -- a 20% single-week drop. At the same time, 33,252 properties sat unsold and asking prices fell for a fifth consecutive month, with the report noting the seasonal winter thinning is steeper this year than usual given the volume of stock currently for sale is the highest in more than a decade. The pullback follows the Reserve Bank of New Zealand's July 8, 2026 OCR hike to 2.50% -- its first increase in over three years -- which is dampening buyer sentiment and mortgage availability. For financial services and insurance providers serving the NZ property-adjacent market (mortgage brokers, conveyancers, home insurers), a softening, oversupplied housing market typically slows loan origination volumes and increases price-sensitivity in switching behaviour, reinforcing the connection between the rate-hike cycle and property-market demand for financial services CX investment.",
+    "sourceUrl": "https://newswire.co.nz/2026/08/housing-auction-numbers-three-year-low-winter-listings/",
+    "date": "2026-08-08",
+    "scope": "macro",
+    "entity": "New Zealand residential property market",
+    "signalType": "market shift"
+  },
+  {
+    "id": "2026-08-06-insurance-code-compliance-report",
+    "headline": "Insurance code compliance data shows 70,325 breaches as claims failures mount behind AFCA record",
+    "summary": "An early-August 2026 analysis drawing on the General Insurance Code Governance Committee's Annual Industry Data and Compliance Report found the industry's own compliance body recorded 70,325 code breaches, up 20.5%, with claims-related failures making up 59% of the total, alongside AFCA's 36,022 general insurance complaints for FY25-26 (up 5%). Breaches of the requirement to give policyholders a progress update at least every 20 business days rose 67% to 18,350, rejection-of-claim complaints for comprehensive motor vehicle insurance jumped 47%, and superannuation insurance claim rejections climbed 82%. Suncorp was the most complained-about insurer at AFCA with 5,343 disputes, followed by IAG (3,444), Allianz (1,625), QBE (1,588) and RACQ (1,075) -- showing even the largest, best-resourced insurers are struggling with claims communication cadence. For CX vendors this is a clear signal that insurers, including mid-market brands sitting under the majors' umbrellas, need better real-time claims-journey monitoring and proactive communication triggers, sitting squarely inside the regulatory macro trend of ASIC naming claims and complaints handling a 2026 enforcement priority for general insurers.",
+    "sourceUrl": "https://www.insurancebusinessmag.com/au/news/breaking-news/record-afca-complaints-mask-a-worse-story-in-insurer-compliance-data-584812.aspx",
+    "date": "2026-08-06",
+    "scope": "macro",
+    "entity": "General Insurance Code Governance Committee / Australian general insurers",
+    "signalType": "regulation"
+  },
+  {
+    "id": "2026-08-06-bank-of-sydney-cco-karavias",
+    "headline": "Bank of Sydney creates new Chief Customer Officer role, promotes CMO Maria Karavias in three-executive leadership reshape",
+    "summary": "Bank of Sydney announced on 6 August 2026 a leadership restructure that created a newly-established Chief Customer Officer role and promoted incumbent Chief Marketing Officer Maria Karavias into it, alongside two other executive appointments, as CEO Kieran McKenna pushes ahead with the bank's growth strategy. In her expanded CCO remit, Karavias now owns brand, marketing, product and customer experience together, a structural signal that the bank sees CX as a unified growth lever rather than a marketing-adjacent function, having already been credited with strengthening the bank's digital proposition since joining as CMO in 2023. For a genuinely lower mid-market bank like Bank of Sydney (a small, community-focused ADI), consolidating CX, brand, product and marketing under one newly-created executive is a textbook trigger: the new CCO will need a way to tie customer experience metrics to commercial outcomes across all four disciplines to justify the role's creation to the board. This is a strong outreach window because newly-created C-suite roles typically come with budget and a mandate to stand up new measurement capability within the first two quarters, and it reflects the broader trend of smaller ANZ ADIs elevating CX to executive-committee level as they compete against both major-bank scale and neobank convenience.",
+    "sourceUrl": "https://neoskosmos.com/en/2026/08/06/news/australia/bank-of-sydney-appoints-new-executives-as-part-of-leadership-restructure/",
+    "date": "2026-08-06",
+    "scope": "micro",
+    "entity": "Bank of Sydney",
+    "signalType": "leadership change"
   },
   {
     "id": "2026-08-05-medallia-funding",
@@ -100,6 +150,76 @@
     "signalType": "funding"
   },
   {
+    "id": "2026-08-05-nice-q2-2026-earnings",
+    "headline": "NICE beats Q2 2026 revenue guidance as cloud and AI ARR surge, raises full-year EPS outlook",
+    "summary": "On August 5, 2026, NICE reported second-quarter 2026 revenue of $782.3 million, up 7.6% year-over-year and above its own guidance range, driven by 12.6% cloud revenue growth and a 22% increase in international revenue. The company disclosed AI ARR climbed to $362 million, with management citing record new cloud ACV and AI bookings \u2014 particularly at NICE Cognigy, the agentic AI vendor NICE acquired in 2025 \u2014 as enterprises move from AI pilots into production-scale deployments on the CXone platform. NICE raised its full-year 2026 EPS outlook on the strength of this momentum. For the CX industry, this is a clear signal that contact-center incumbents are successfully monetizing agentic AI at scale, not just announcing it \u2014 a maturity gap that pure-play VoC/XM vendors like Qualtrics need to watch closely, since NICE's AI ARR growth shows real budget shifting toward operational, AI-driven CX rather than survey-based feedback programs alone.",
+    "sourceUrl": "https://www.theglobeandmail.com/investing/markets/stocks/NICE-Q/pressreleases/3694709/nice-beats-q2-revenue-guidance-and-raises-2026-eps-outlook-on-strong-cloud-and-ai-growth/",
+    "date": "2026-08-05",
+    "scope": "micro",
+    "entity": "NICE",
+    "signalType": "earnings"
+  },
+  {
+    "id": "2026-08-04-accenture-qantas-project-iq",
+    "headline": "Qantas in early talks with Accenture on 'Project iQ' to offshore up to 1,000 back-office roles including HR",
+    "summary": "Reports surfacing around August 4, 2026 revealed Qantas is in early-stage discussions with Accenture on an internal program called Project iQ that could shift up to 1,000 corporate back-office roles \u2014 spanning HR, marketing, and finance \u2014 to India as part of an AI-driven cost-cutting overhaul, intended to free up budget to hire more customer-facing staff. A Qantas spokesperson told the Australian Financial Review the airline is \"in early stage discussions with Accenture, but no formal agreement is in place and no decisions have been made,\" while the Australian Services Union publicly pressed Qantas to honor prior no-job-losses commitments tied to earlier restructuring pledges. This is a significant systems-integrator signal for ANZ account tracking: Accenture is positioning itself as the AI transformation partner reshaping how a top ASX-listed employer runs its HR function, exactly the kind of large-scale HR/operations transformation engagement that can create both risk (incumbent HR tech being ripped out during the transition) and opportunity (a live modernization conversation with a new SI-influenced buying committee) for experience management vendors already in the account. If finalized, it would be one of the largest AI-driven HR outsourcing moves in the ANZ market this year, and it reflects the same broader push toward agentic-AI-enabled shared-services offerings that Capgemini and KPMG are emphasizing in their own 2026 CX/EX research as a growth lever for consulting firms.",
+    "sourceUrl": "https://greekcitytimes.com/2026/08/04/qantas-eyes-offshoring-major-ai/",
+    "date": "2026-08-04",
+    "scope": "macro",
+    "entity": "Accenture",
+    "signalType": "digital transformation"
+  },
+  {
+    "id": "2026-08-04-afca-record-complaints-fy26",
+    "headline": "AFCA logs record 119,949 complaints in FY2025-26 as banking and insurance disputes surge",
+    "summary": "The Australian Financial Complaints Authority reported a record 119,949 complaints for FY2025-26, up 19% on FY25's 100,745 and the third consecutive year above 100,000, with banking and finance complaints rising 23% to 66,971 cases. The most complained-about products were personal transaction accounts, motor vehicle insurance and credit cards, and the top three issues nationally were delay in claim handling, service quality and claim rejection; financial difficulty complaints rose 17%, credit reporting complaints rose 22%, and scam-related complaints rose 12%. AFCA's Chief Customer Officer Deborah Jenkins said the numbers 'highlight the impact that ongoing cost-of-living challenges and economic uncertainty are having on consumers, and the flow-on effects these conditions can have across the financial system.' This is a direct, quantified pain point for the experience management industry: record dispute volumes concentrated in complaint handling and service quality are exactly the failure modes CX platforms are built to catch earlier, and mid-market lenders and insurers now face heightened AFCA and ASIC scrutiny of their complaints processes as a result, tying directly into the cost-of-living macro thread.",
+    "sourceUrl": "https://www.afca.org.au/news/media-releases/record-complaints-mark-third-consecutive-year-above-100000",
+    "date": "2026-08-04",
+    "scope": "macro",
+    "entity": "Australian Financial Complaints Authority (AFCA)",
+    "signalType": "regulation"
+  },
+  {
+    "id": "2026-08-04-commbank-ai-job-cuts",
+    "headline": "AI adoption drives fresh customer-service job cuts at Commonwealth Bank, Microsoft and Uber",
+    "summary": "Reporting in early August 2026 revealed Commonwealth Bank of Australia has cut hundreds of contracted chat-support positions (roles supplied by Johannesburg-based outsourcer Nutun) as its \"Hey CommBank\" generative AI chatbot, built with Microsoft on Copilot Studio, now resolves nearly 9 in 10 customer conversations without human help and manages more than two million conversations a month; the bank says the shift is saving tens of millions of dollars annually. The story grouped CBA with Microsoft (which has cut its own support workforce from roughly 50,000 to 40,000) and Uber (which cut 10% of its customer-service roles) as evidence that generative AI is now eliminating tier-one service jobs at scale rather than just augmenting them, with analysts quoted warning nearly half of such roles could be affected by 2030. For the experience management industry this signals AI-driven complaints handling and conversational automation are moving from pilot to core operations at large ANZ enterprises, shifting the buying conversation from \"add AI features\" toward budget reallocation into orchestration and analytics platforms, while also creating a governance gap around measuring satisfaction/trust impact that CX and VoC vendors can be positioned to fill.",
+    "sourceUrl": "https://www.ghacks.net/2026/08/04/ai-adoption-drives-thousands-of-customer-service-job-cuts-at-microsoft-uber-and-commonwealth-bank/",
+    "date": "2026-08-04",
+    "scope": "macro",
+    "entity": "Commonwealth Bank of Australia",
+    "signalType": "restructure"
+  },
+  {
+    "id": "2026-08-04-bendigo-bank-cco-christopher-dean",
+    "headline": "Bendigo Bank appoints ex-HSBC executive Christopher Dean as Chief Customer Officer for consumer banking",
+    "summary": "Bendigo Bank announced on 4 August 2026 that it has appointed Christopher Dean, a former HSBC executive, as Chief Customer Officer for its consumer banking business; Dean will be based in Melbourne and officially starts in September 2026. The bank explicitly framed the hire around sharpening its digital offering and simplifying customer-facing processes for its 2.9 million customers, signalling a deliberate CX-modernisation mandate rather than a like-for-like replacement. A newly appointed CCO arriving with an explicit \"simplify customer-facing processes\" brief will need credible measurement infrastructure (VoC, journey analytics, digital CX benchmarking) within the first two quarters to show progress, making this a strong outreach window. Regional banks like Bendigo have historically lagged the Big Four on digital CX investment, so a CCO hire poached from a global bank often precedes a step-change in CX technology and research spend as the new leader looks to close that gap. This connects to the broader trend of regional and mid-tier Australian banks racing to modernise customer experience capability in 2026 as competition for deposits intensifies against both major banks and neobanks.",
+    "sourceUrl": "https://www.mi-3.com.au/04-08-2026/bendigo-bank-taps-ex-hsbc-exec-christopher-dean-chief-customer-officer-consumer-banking",
+    "date": "2026-08-04",
+    "scope": "micro",
+    "entity": "Bendigo Bank",
+    "signalType": "leadership change"
+  },
+  {
+    "id": "2026-08-03-kantar-patel-brand-science-hire",
+    "headline": "Kantar hires 22-year veteran Adhil Patel as Senior Director, Marketing Science to lead AI-era brand equity work",
+    "summary": "Kantar appointed Adhil Patel as Senior Director, Marketing Science, with the 22-year Kantar veteran starting the role on August 3, 2026 after most recently serving as Africa Director of Research at Mobile Digital Insights. Patel will oversee Kantar's Meaningful, Different and Salient (MDS) brand equity framework and lead its evolution for an AI-driven marketing landscape, reporting into Dan Colton, who joined Kantar as Global Managing Director, Brand in April 2026. This is Kantar's first senior hire under Colton's rebuilt Brand leadership team, signaling that the world's largest research holding company is treating 'AI-influenced brand equity' as a strategic battleground rather than a side feature. For competitors selling brand-health and CX measurement software, this points toward new AI-adjacent brand tracking products from Kantar and sharper competitive positioning against platforms like Qualtrics Brand Tracker and Tracksuit.",
+    "sourceUrl": "https://www.research-live.com/article/news/senior-director-for-marketing-science-returns-to-kantar/id/5151737",
+    "date": "2026-08-03",
+    "scope": "micro",
+    "entity": "Kantar",
+    "signalType": "leadership change"
+  },
+  {
+    "id": "2026-08-03-nice-cxone-26-3-release",
+    "headline": "NICE opens CXone 26.3 release cycle with dedicated ANZ release webinar",
+    "summary": "NICE's CXone 26.3 release cycle began on August 3, 2026 and runs until the next release, currently targeted for October 25, 2026, per NICE's official release notes documentation. NICE scheduled release webinars for August 11 (AMER and EMEA regions) and August 12 (9:00-10:00 AM AEDT, specifically for the ANZ region), showing NICE running a dedicated regional release cadence and support structure for Australia/New Zealand customers. This matters competitively because it shows NICE actively investing go-to-market and enablement resources into the ANZ contact-center market specifically, a region where Qualtrics also has a growing footprint and public-sector push \u2014 meaning ANZ CX/EX deals may increasingly see NICE CXone as a live alternative or overlapping vendor conversation, particularly for accounts evaluating contact-center-adjacent experience analytics rather than pure survey/VoC programs.",
+    "sourceUrl": "https://help.nice-incontact.com/content/releasenotes/release.htm",
+    "date": "2026-08-03",
+    "scope": "micro",
+    "entity": "NICE",
+    "signalType": "product launch"
+  },
+  {
     "id": "2026-08-02-qualtrics-cro",
     "headline": "Qualtrics names new Chief Revenue Officer to lead global go-to-market",
     "summary": "Qualtrics announced a leadership change with a new CRO tasked with accelerating enterprise growth. The appointment signals a renewed push into international markets over the next fiscal year.",
@@ -108,6 +228,146 @@
     "scope": "micro",
     "entity": "Qualtrics",
     "signalType": "leadership change"
+  },
+  {
+    "id": "2026-08-01-australia-retail-outlook-august",
+    "headline": "Australian retail outlook flags slowing discretionary spend and rising premium on in-store experience and personalisation",
+    "summary": "An August 2026 Australian retail sector outlook reported retail sales growth holding at a modest 1.8-2.3% for the year, with essentials such as food and cafes outperforming big-ticket discretionary categories, while Deloitte Access Economics is cited forecasting discretionary spending growth slowing to around 0.7% in the year to December 2026. The outlook explicitly calls out in-store experience paired with genuine service, and data-driven personalised offers, as the differentiators smaller and mid-size retailers can use against online giants without heavy marketing spend, alongside \"non-negotiable\" e-commerce integration such as click-and-collect. This matters for the experience management industry because it is a direct articulation of the macro thesis CX vendors sell against: under margin and discretionary-spend pressure, ANZ retailers are being told by industry commentary to invest in service quality and personalisation rather than compete purely on price. It reinforces that mid-market AU/NZ retail and DTC brands are the more receptive buying audience right now versus majors who can absorb margin pressure through scale and private label.",
+    "sourceUrl": "https://successknocks.com/australia-retail-sector-outlook-august/",
+    "date": "2026-08-01",
+    "scope": "macro",
+    "entity": "Australian retail sector",
+    "signalType": "market shift"
+  },
+  {
+    "id": "2026-07-31-lattice-hris-shutdown",
+    "headline": "Lattice shuts down its HRIS and payroll products, retreating to a performance-management-only focus",
+    "summary": "Lattice's HRIS product officially shut down on July 31, 2026, with payroll access already cut off March 31, 2026 and all customer HRIS data set for permanent deletion on August 6, 2026, completing a retreat from core HR administration that followed Lattice's earlier partnership with Workday. Lattice is discontinuing HRIS and payroll entirely to refocus exclusively on performance management, engagement, and growth tools, repositioning itself for mid-market and enterprise customers who already run Workday or BambooHR as their system of record. This narrows Lattice's footprint at the exact moment Leapsome is expanding into HRIS-adjacent territory, and it deepens Lattice's dependency on integrations with HRIS incumbents like Workday and SAP SuccessFactors \u2014 the same ecosystem play Qualtrics uses for its native SuccessFactors integration, reinforcing that \"system of record + specialist listening layer\" is becoming the dominant architecture pattern in EX. For SDRs, this is a live trigger event: any account running Lattice HRIS now faces a forced migration deadline and is actively evaluating new systems of record and engagement layers, creating a concrete window for outreach into displaced Lattice accounts.",
+    "sourceUrl": "https://www.calamari.io/blog/lattice-hris-is-shutting-down-how-to-migrate-without-the-enterprise-price-tag",
+    "date": "2026-07-31",
+    "scope": "micro",
+    "entity": "Lattice",
+    "signalType": "restructure"
+  },
+  {
+    "id": "2026-07-31-ipsos-kelly-beaver-ceo",
+    "headline": "Ipsos board appoints Kelly Beaver as new global CEO, succeeding Jean Laurent Poitou",
+    "summary": "At a board meeting on July 30, 2026, Ipsos' Board of Directors unanimously appointed Kelly Beaver as the company's new Chief Executive Officer, succeeding Jean Laurent Poitou; Beaver has been with Ipsos since 2011 and most recently chaired its Global Healthcare Service Line after serving as CEO for UK and Ireland since 2021. Board chair Laurence Stoclet called the appointment 'excellent news for Ipsos, its clients, and its employees' and part of a formal succession plan, while Beaver said Ipsos is 'uniquely positioned to strengthen its leadership and drive long-term growth' amid 'growing demand for trusted insights powered by data, technology and human expertise.' This is a leadership transition at one of the three largest market research holding companies globally, with Beaver's explicit mandate to accelerate the 'Horizons' growth plan. For Qualtrics and other experience management vendors, a growth-focused new CEO at Ipsos raises the likelihood of more aggressive competitive moves in AI-enabled insights and enterprise platform sales over the next 12-18 months.",
+    "sourceUrl": "https://www.globenewswire.com/news-release/2026/07/31/3336614/0/en/Kelly-Beaver-appointed-Chief-Executive-Officer-of-Ipsos.html",
+    "date": "2026-07-31",
+    "scope": "micro",
+    "entity": "Ipsos",
+    "signalType": "leadership change"
+  },
+  {
+    "id": "2026-07-31-ipsos-ai-monitor-2026",
+    "headline": "Ipsos AI Monitor 2026 finds global public sentiment 'neither convinced nor walking away' from AI",
+    "summary": "As part of its July 2026 research slate, Ipsos published its AI Monitor 2026, finding that the world remains 'neither convinced nor walking away from AI' \u2014 a more cautious, ambivalent public sentiment than either AI boosters or skeptics might expect. The study is part of Ipsos' broader effort to position itself as the authoritative voice on societal and consumer sentiment toward AI, a topic increasingly central to how CX, EX and market research vendors pitch AI-powered features to still-skeptical enterprise buyers and end consumers. This matters for the experience management industry because ambivalent public sentiment toward AI is a real go-to-market headwind: vendors rolling out AI agents, AI-generated insights, or AI-moderated research need messaging that accounts for consumer trust gaps rather than assuming enthusiastic adoption. It connects directly to the broader macro trend running through this window \u2014 Kantar's AI-focused brand equity hire, Tracksuit's AI-visibility acquisition, and multiple MCP-server launches \u2014 showing that while vendors race to embed AI, buyer and consumer trust in AI is lagging the vendor arms race, a gap worth probing in discovery conversations.",
+    "sourceUrl": "https://www.ipsos.com/en/ipsos-update-july-2026",
+    "date": "2026-07-31",
+    "scope": "macro",
+    "entity": "Ipsos",
+    "signalType": "analyst report"
+  },
+  {
+    "id": "2026-07-31-fair-work-commission-rules-amendment",
+    "headline": "Fair Work Commission's 2026 rules amendment takes effect, expanding digital services and gig-worker protections",
+    "summary": "The Fair Work Commission Amendment (2026 Measures No.1) Rules 2026 -- an exposure draft released by Justice Adam Hatcher to modernise Commission processes, expand digital services and strengthen protections for gig-economy workers -- commenced on July 31, 2026 after a stakeholder consultation period that closed July 1. The rules change how digital and gig-platform workers can raise disputes and how the Commission processes claims, reflecting a regulatory push into employee experience and conduct within non-traditional employment arrangements. For EX-focused vendors, this expands the addressable compliance conversation beyond traditional employers to gig-economy and platform businesses operating in ANZ, which will need better mechanisms to capture and respond to worker sentiment and disputes as regulatory visibility into that segment increases. The change fits the broader ANZ regulatory macro trend of tightening workplace conduct oversight, following the FWC's 2026 minimum and award wage increases that already raised the cost and scrutiny of employee relations for mid-market employers.",
+    "sourceUrl": "https://www.hcamag.com/au/specialisation/employment-law/fair-work-commission-rule-changes-proposed-for-australias-workplaces/579509",
+    "date": "2026-07-31",
+    "scope": "macro",
+    "entity": "Fair Work Commission",
+    "signalType": "regulation"
+  },
+  {
+    "id": "2026-07-31-zendesk-july-2026-product-updates",
+    "headline": "Zendesk ships AI-based predictive routing, presence detection and free WFM in July 2026 update",
+    "summary": "In its July 2026 product update, Zendesk introduced AI-based predictive routing for omnichannel messaging tickets that assigns conversations to the agents statistically most likely to resolve them fastest, alongside a new 'Agent Engagement Time' metric to measure the feature's impact. The release also added end-user presence detection to distinguish an abandoned chat from an active one, external knowledge-source connectivity to Google Drive, Box and Amazon S3 for AI-powered help center answers, and folded Workforce Management (WFM) into Suite Professional at no extra cost, giving customers 24-hour visibility into agent activity and Average Handle Time. Bundling WFM into a lower-tier plan is a notable packaging move: it undercuts pricing for workforce-engagement features that vendors like Verint/Calabrio and NICE typically sell as premium add-ons, pushing Zendesk further into contact-center-operations territory historically owned by CCaaS players. For the CX industry, this continues a two-directional squeeze \u2014 ticketing/helpdesk vendors absorbing operational contact-center capabilities while contact-center vendors absorb experience-analytics capabilities \u2014 that increasingly surrounds pure-play VoC/XM platforms like Qualtrics from both sides.",
+    "sourceUrl": "https://support.zendesk.com/hc/en-us/articles/10943174976794-What-s-new-in-Zendesk-July-2026",
+    "date": "2026-07-31",
+    "scope": "micro",
+    "entity": "Zendesk",
+    "signalType": "product launch"
+  },
+  {
+    "id": "2026-07-30-dynata-distressed-exchange",
+    "headline": "Dynata launches below-par distressed debt exchange two years after emerging from bankruptcy",
+    "summary": "Dynata LLC, the research-panel and first-party data giant that emerged from Chapter 11 bankruptcy roughly two years ago, launched a below-par distressed debt exchange on July 30, 2026 aimed at lowering its interest expense and pushing loan maturities out to 2031. The move signals continuing balance-sheet stress at one of the industry's largest sample and panel providers, at a time when AI-native research automation startups are threatening to erode demand for traditional panel-based data collection. For the experience management industry, a financially strained Dynata is a mixed signal: it may become a more aggressive, discount-driven competitor on sample pricing to shore up cash flow, but continued distress also raises real questions about long-term reliability of panel supply for any research or CX vendor that depends on Dynata as a data partner. This connects to the broader macro trend of legacy panel and sample vendors facing structural pressure as AI lowers the cost of alternative data-collection methods, a dynamic sales teams can use when discussing platform resilience versus legacy vendor risk.",
+    "sourceUrl": "https://news.bloomberglaw.com/bankruptcy-law/dynata-launches-distressed-exchange-two-years-after-bankruptcy",
+    "date": "2026-07-30",
+    "scope": "micro",
+    "entity": "Dynata",
+    "signalType": "restructure"
+  },
+  {
+    "id": "2026-07-30-anz-roy-morgan-nz-confidence",
+    "headline": "ANZ-Roy Morgan NZ Consumer Confidence jumps 8 points to 99.3 in July, a five-month high",
+    "summary": "The ANZ-Roy Morgan New Zealand Consumer Confidence index rose 8 points to 99.3 in July 2026, up from 91.3 in June, marking a five-month high and coming after the index fell as low as 80.3 in April during the Middle East conflict-driven confidence slump. The future conditions sub-index surged from 96.7 to 106.5, moving above the neutral 100 mark for the first time since February 2026, yet card spending data showed households still describing it as a bad time to buy big-ticket items. This divergence between improving sentiment and stalled discretionary spending is a classic signal for CX and market-research vendors: NZ consumers are cautiously optimistic but not yet re-engaging with higher-consideration purchases, meaning retailers, banks and insurers need finer-grained experience data to detect which segments are ready to spend versus still guarding wallets. The rebound sits within the broader interest-rate/cost-of-living macro trend, occurring in the same window as the RBNZ's first OCR hike in three years, showing consumer mood and monetary tightening moving in different directions simultaneously.",
+    "sourceUrl": "https://www.roymorgan.com/findings/10302-anz-roy-morgan-nz-consumer-confidence-july-2026",
+    "date": "2026-07-30",
+    "scope": "macro",
+    "entity": "ANZ-Roy Morgan / New Zealand consumers",
+    "signalType": "market shift"
+  },
+  {
+    "id": "2026-07-30-verint-agentic-outcome-orchestration",
+    "headline": "Verint expands Agentic Outcome Orchestration with new intelligence across conversations, processes and desktop activity",
+    "summary": "Around July 30, 2026, Verint announced an expansion of its Agentic Outcome Orchestration capabilities, adding enhanced intelligence across customer conversations, back-office processes, and agent desktop activity within its CX Automation Platform. The announcement builds on capabilities Verint first unveiled at its Engage 2026 conference in June \u2014 Workforce Intelligence, Desktop Intelligence and Quality Intelligence \u2014 as the newly merged Verint-Calabrio organization (formed after Thoma Bravo's $2 billion acquisition and February 2026 rebrand) continues integrating the two companies' AI and workforce-engagement portfolios. This signals Verint differentiating on breadth of operational data (desktop-level activity plus conversation and process intelligence) rather than survey-based feedback, positioning itself as an 'outcomes' platform for contact centers rather than a classic VoC vendor. For Qualtrics and other XM players, Verint's post-merger push into agentic orchestration is competitive pressure from the operations/workforce-engagement side of the market, consistent with the broader trend of contact-center vendors absorbing experience-analytics functionality.",
+    "sourceUrl": "https://www.verint.com/press-room/2026-press-releases/verint-advances-agentic-outcome-orchestration-intelligence/",
+    "date": "2026-07-30",
+    "scope": "micro",
+    "entity": "Verint",
+    "signalType": "product launch"
+  },
+  {
+    "id": "2026-07-30-woolworths-everyday-extra-monthly",
+    "headline": "Woolworths forces Everyday Extra members onto monthly billing, an effective 20% price rise",
+    "summary": "From 30 July 2026, Woolworths' Everyday Extra premium loyalty tier stopped offering an annual payment option, moving all members to a $7-a-month plan that totals $84 a year versus the previous $70 annual fee, roughly a 20% increase for the same benefits. The change coincides with Woolworths retiring its legacy WRewards and MySchool cards in favour of a new three-tier \"MyDifference\" rewards structure offering vouchers, personalised deals and spend-based perks. Consumer coverage flagged customer frustration over the repricing, illustrating how loyalty-program changes are becoming a visible flashpoint for trust and experience even at a scale grocery player. This is a clear example of a major FMCG retailer using loyalty-program redesign to extract more revenue per customer while cost-of-living pressure squeezes household budgets, reinforcing the macro theme that CX and retention economics are colliding across ANZ grocery retail.",
+    "sourceUrl": "https://www.yourlifechoices.com.au/retail/how-coles-and-woolworths-rewrote-their-membership-rules/",
+    "date": "2026-07-30",
+    "scope": "macro",
+    "entity": "Woolworths",
+    "signalType": "brand move"
+  },
+  {
+    "id": "2026-07-29-glassbox-pulse-launch",
+    "headline": "Glassbox launches Pulse AI engine and MCP Server to give enterprise AI governed access to digital experience data",
+    "summary": "Digital experience analytics vendor Glassbox launched Glassbox Pulse, an AI-powered operational intelligence engine, alongside a Glassbox MCP Server on July 29, 2026, giving enterprise AI systems governed access to Glassbox's digital experience data. Pulse applies machine learning to customer behavior, technical error, and business-impact signals to surface only the issues requiring attention rather than handing raw session data to AI models, directly addressing enterprise concerns about scaling AI without overwhelming it with unfiltered data. This positions Glassbox alongside Contentsquare and FullStory in the race to become the 'trusted context layer' feeding AI agents inside CX and digital experience stacks, a land-grab with direct implications for how Qualtrics needs to differentiate its own AI/agent strategy on governed, structured data access rather than raw analytics. The MCP Server launch mirrors similar moves by SurveyMonkey (Claude integration) and UserTesting (its own MCP Server), confirming MCP-based AI-agent connectivity is becoming baseline infrastructure across the digital experience analytics category in mid-2026.",
+    "sourceUrl": "https://www.prnewswire.com/news-releases/glassbox-turns-digital-experience-into-real-time-digital-operational-intelligence-for-enterprise-ai-302837278.html",
+    "date": "2026-07-29",
+    "scope": "micro",
+    "entity": "Glassbox",
+    "signalType": "product launch"
+  },
+  {
+    "id": "2026-07-29-alchemer-holiday-shopper-report",
+    "headline": "Alchemer's 2026 Holiday Shopper Report finds in-store shopping set to outpace online this season",
+    "summary": "Alchemer released its 2026 Holiday Shopper Report on July 29, 2026, based on a survey of more than 1,000 U.S. consumers, finding that more shoppers now plan to buy in-store than online for the coming holiday season, a reversal of recent e-commerce-favoring trends. The report is a lead-generation and thought-leadership play for Alchemer's Voice of Customer platform, reinforcing its positioning \u2014 it was named a Challenger in Gartner's 2026 Magic Quadrant for VoC Platforms \u2014 as a research-capable alternative to Qualtrics for retail and CX teams. For the experience management industry, original consumer-behavior research like this shows mid-market VoC vendors increasingly competing on research credibility and thought leadership, not just survey tooling, narrowing a differentiator Qualtrics has traditionally owned. It also signals renewed importance of in-store experience measurement for retail CX programs heading into H2 2026, relevant for account teams prospecting into retail and CPG.",
+    "sourceUrl": "https://finance.yahoo.com/small-business/articles/store-expected-top-online-shopping-130000374.html",
+    "date": "2026-07-29",
+    "scope": "micro",
+    "entity": "Alchemer",
+    "signalType": "research shift"
+  },
+  {
+    "id": "2026-07-29-oaic-qantas-report",
+    "headline": "OAIC publishes report on preliminary inquiries into 2025 Qantas data incident",
+    "summary": "The Office of the Australian Information Commissioner published a report of its preliminary inquiries into the 2025 Qantas Airways data incident on July 29, 2026, continuing regulatory follow-through on one of the largest recent customer-data events affecting an Australian consumer brand. The report comes as the OAIC's own 2025 Notifiable Data Breaches statistics (released just before this window) showed a record 1,205 breach notifications, with financial services and government agencies among the highest-volume sectors alongside health providers. For companies handling large volumes of customer contact-centre and loyalty-program data, continued regulatory scrutiny of a major, publicly-known breach keeps data-handling and incident-response practices in the spotlight, reinforcing that trust and data-privacy failures compound directly into customer experience and churn risk. This sits within the ANZ regulatory macro trend of privacy enforcement intensifying as breach volumes climb, giving CX and EX vendors a stronger argument for pairing experience measurement with demonstrable data-governance practices when selling into regulated industries.",
+    "sourceUrl": "https://www.oaic.gov.au/news",
+    "date": "2026-07-29",
+    "scope": "macro",
+    "entity": "OAIC / Qantas Airways",
+    "signalType": "regulation"
+  },
+  {
+    "id": "2026-07-29-qualtrics-weekly-release-notes",
+    "headline": "Qualtrics ships Lifecycle response-rate widget and survey-editor usability updates in late-July weekly releases",
+    "summary": "In its Weekly Product Release Notes dated July 22 and July 29, 2026, Qualtrics rolled out a new response rate line chart widget for Lifecycle projects, the ability to hide survey questions directly from a button in the survey editor, and new response-level metadata fields (Last Seen Flow ID and Last Seen Questions) that show exactly where a respondent was in a survey flow when they dropped off. These are incremental usability and analytics improvements rather than headline launches, but they show Qualtrics maintaining a steady weekly release cadence even while its leadership team is being rebuilt and it digests the Press Ganey Forsta integration. For SDRs, the Last Seen Flow ID/Questions metadata is a useful proof point when talking to CX and research ops teams about survey abandonment diagnostics \u2014 a known weak spot for legacy VoC tools. The steady weekly release cycle also reinforces the 'always-shipping' narrative Qualtrics uses competitively against slower-moving legacy vendors.",
+    "sourceUrl": "https://community.qualtrics.com/product-release-notes-96/weekly-product-release-notes-july-29-2026-33476",
+    "date": "2026-07-29",
+    "scope": "macro",
+    "entity": "Qualtrics",
+    "signalType": "product launch"
   },
   {
     "id": "2026-07-28-cx-industry-regulation",
@@ -120,6 +380,66 @@
     "signalType": "regulation"
   },
   {
+    "id": "2026-07-28-genesys-xperience-2026-announced",
+    "headline": "Genesys announces Xperience 2026, its flagship agentic-era CX and AI conference for September in Las Vegas",
+    "summary": "On July 28, 2026, Genesys announced Xperience 2026, taking place September 1-3, 2026 at the Wynn Las Vegas Resort, framed around helping enterprises 'lead in the agentic era' of customer experience. Confirmed speakers and customer case studies come from Vanguard, Blue Cross Blue Shield of North Carolina, Roche, M&T Bank, Electrolux and Global Payments, alongside an 'Executive Perspectives' leadership track featuring outside thinkers Azeem Azhar and Sallie Krawcheck. The event's framing \u2014 connecting agentic orchestration to enterprise workflows and business outcomes, not just contact-center metrics \u2014 signals Genesys pushing further beyond traditional contact-center software into the broader experience-orchestration space where it increasingly overlaps with Qualtrics and NICE. For the industry, this continues the trend of contact-center/CCaaS vendors building experience-analytics and orchestration capabilities that blur the line between operational CX tools and VoC/XM platforms, intensifying competitive pressure on Qualtrics from the operations side of the market.",
+    "sourceUrl": "https://www.genesys.com/company/newsroom/announcements/genesys-xperience-2026-winning-in-the-agentic-era-starts-here",
+    "date": "2026-07-28",
+    "scope": "micro",
+    "entity": "Genesys",
+    "signalType": "brand move"
+  },
+  {
+    "id": "2026-07-23-atombit-medallia-alliance",
+    "headline": "Atombit elevates Medallia partnership to group-level European alliance for AI-driven experience intelligence",
+    "summary": "On 23 July 2026, IT services group Atombit announced it had elevated its long-running relationship with Medallia (in place since 2019 via its Omega3C unit) into a strategic, group-level European alliance focused on turning customer and employee experience data into measurable business outcomes using AI. Atombit brings roughly 200 AI, data-science and GenAI consulting specialists across Europe and India, pairing that capacity with Medallia's experience platform, which the release notes is trusted by 7 of the Fortune 10; the alliance begins in Italy with plans to scale across Atombit's European and international footprint. For the experience management competitive landscape, this shows systems integrators wrapping AI-native implementation and consulting services around incumbent VoC platforms like Medallia, a direct Qualtrics competitor, deepening its enterprise delivery capability. This is a global signal worth tracking because it reflects the broader trend of CX platform vendors partnering with AI consultancies to close the \"insight to action\" gap analysts increasingly cite as the deciding factor between VoC vendors.",
+    "sourceUrl": "https://www.morningstar.com/news/pr-newswire/20260723ln10235/atombit-signs-medallia-alliance-to-generate-measurable-outcomes-with-ai-driven-experience-intelligence",
+    "date": "2026-07-23",
+    "scope": "macro",
+    "entity": "Medallia / Atombit",
+    "signalType": "partnership"
+  },
+  {
+    "id": "2026-07-22-cultureamp-ai-hr-study",
+    "headline": "Culture Amp's 2026 AI in HR Study finds AI buy-in outpacing trusted, transformational deployment",
+    "summary": "On July 22, 2026, Culture Amp released its second annual AI in HR study, surveying 264 HR professionals across North America, APAC, and EMEA, and found that while 77% express strong buy-in on AI, only 24% feel comfortable deploying agentic AI systems, and belief that AI will meaningfully improve how work gets done fell 9 points year-over-year (86% to 77%). Most HR AI usage remains task-level \u2014 content creation (86%), brainstorming (83%), information synthesis (81%) \u2014 with only 34% using agentic workflows; Culture Amp VP of People Science Amy Lavoie noted that organizations who push past this fear see transformation at two-to-three times the rate of peers. For an EX competitor selling against Qualtrics, this is a self-disclosed execution gap: Culture Amp is publicly diagnosing that its own customer base struggles to operationalize AI-driven people insights, an opening for Qualtrics to position its EX AI (Assist, Comment Summaries, Conversational Feedback) as further along the maturity curve in discovery calls. The finding also reflects a broader 2026 industry pattern of EX vendors interrogating whether AI hype is matched by reliability, a theme echoed the same month in Perceptyx's PYX-Voice benchmark, raising the bar for proof-of-value conversations across the category.",
+    "sourceUrl": "http://www.prnewswire.com/news-releases/culture-amps-2026-ai-in-hr-study-reveals-transformation-gap-task-level-tinkering-masks-opportunity-302831663.html",
+    "date": "2026-07-22",
+    "scope": "micro",
+    "entity": "Culture Amp",
+    "signalType": "research shift"
+  },
+  {
+    "id": "2026-07-22-niq-circle-k-partnership",
+    "headline": "NielsenIQ signs multi-country global measurement partnership with Circle K",
+    "summary": "NielsenIQ announced a strategic global partnership with convenience retailer Circle K on July 22, 2026, covering measurement and market insights across more than 12 countries in North America and Europe. The deal expands NIQ's retail measurement footprint into convenience/fuel retail, a channel increasingly important for CPG brands tracking impulse and on-the-go purchase behavior, reinforcing NIQ's core 'Full View' retail measurement strategy. This matters for the experience management industry because it shows NIQ doubling down on its traditional POS/retail-measurement moat rather than pivoting toward CX/EX software, keeping it positioned as a data-layer partner rather than a direct platform competitor to Qualtrics in most deals. The multi-country scope also signals continued consolidation of global retail data partnerships, which raises switching costs for brands already embedded in the NIQ ecosystem and makes greenfield account entry harder for challengers.",
+    "sourceUrl": "https://www.gurufocus.com/news/8971129/nielseniq-niq-partners-with-circle-k-for-global-market-insights",
+    "date": "2026-07-22",
+    "scope": "micro",
+    "entity": "Nielsen (NIQ)",
+    "signalType": "partnership"
+  },
+  {
+    "id": "2026-07-22-comcom-nz-enforcement-priorities",
+    "headline": "NZ Commerce Commission sets 2026-27 priorities, flags unconscionable conduct and vulnerable-consumer cases",
+    "summary": "The Commerce Commission presented its 2026-27 enforcement and compliance priorities on July 22, 2026, indicating it has unconscionable-conduct cases in the pipeline, particularly involving misleading sales tactics targeting vulnerable consumers, and signalling it will actively pursue more. The announcement comes as New Zealand's Commerce Act undergoes a mid-2026 shake-up aimed at strengthening the merger regime and addressing concentrated markets and predatory pricing. For NZ mid-market retailers, telcos and financial services firms, an explicit regulatory focus on sales-tactic conduct and vulnerable customers raises the stakes on how frontline sales and retention scripts are monitored, making complaint and interaction-quality measurement a more direct compliance need rather than a pure CX nice-to-have. This connects to the broader ANZ regulatory macro trend of consumer watchdogs sharpening focus on conduct and complaints handling just as cost-of-living pressure increases the volume of vulnerable-consumer interactions.",
+    "sourceUrl": "https://www.comcom.govt.nz/about-us/our-role/our-enforcement-and-compliance-priorities/",
+    "date": "2026-07-22",
+    "scope": "macro",
+    "entity": "Commerce Commission New Zealand",
+    "signalType": "regulation"
+  },
+  {
+    "id": "2026-07-21-tracksuit-hall-acquisition",
+    "headline": "Tracksuit makes first-ever acquisition, buying AI visibility startup Hall to add LLM brand tracking",
+    "summary": "New Zealand-founded brand tracking platform Tracksuit announced its first-ever acquisition around July 20-21, 2026, buying Sydney-based AI visibility startup Hall, founded by former VaynerMedia strategist Kai Forsyth, and simultaneously appointed former Hatch marketing executive Tom Mansfield as Chief Marketing Officer. Hall's technology measures how brands are represented within large language models and will be folded into Tracksuit's core product so customers can see how their brand appears in AI platforms, how it compares to competitors, and how that visibility trends over time; deal terms were not disclosed. Forsyth said 'short-term tactics can spike a brand's AI visibility, but what actually moves the needle is the brand-building work that makes people already know and trust you,' while Mansfield called brand 'one of the last remaining defensible assets for marketers' in an AI-enabled world. This is a concrete example of a named Qualtrics-adjacent brand-tracking competitor moving fast to own the emerging 'AI/generative engine visibility' (GEO) category before larger players like Kantar or Qualtrics itself do, validating GEO brand measurement as a real near-term product category rather than a hypothetical trend.",
+    "sourceUrl": "https://www.mi-3.com.au/21-07-2026/tracksuit-acquires-hall-enhance-ai-visibility-brand-tracking",
+    "date": "2026-07-21",
+    "scope": "micro",
+    "entity": "Tracksuit",
+    "signalType": "product launch"
+  },
+  {
     "id": "2026-07-20-medallia-product-launch",
     "headline": "Medallia launches AI-powered sentiment analysis for real-time agent coaching",
     "summary": "The new product uses generative AI to flag negative sentiment during live customer calls and suggest coaching prompts to agents. Early customers report faster resolution times in pilot programs.",
@@ -130,6 +450,16 @@
     "signalType": "product launch"
   },
   {
+    "id": "2026-07-16-asic-apra-statement-of-intent",
+    "headline": "ASIC and APRA publish updated Statements of Intent, signalling tighter coordination on conduct oversight",
+    "summary": "On July 16, 2026, ASIC and APRA both published updated Statements of Intent outlining how each regulator will pursue its statutory objectives and exercise its powers, part of a broader push for closer coordination between the two agencies and reduced duplication in financial-sector oversight. The statements land alongside APRA's newly commenced CPS 230 operational risk standard (effective July 1, 2026) and its finalised general insurance reinsurance framework amendments, signalling a period of active prudential and conduct rule-making. For mid-market ANZ lenders and insurers, a more coordinated ASIC-APRA posture means less room to treat conduct and prudential obligations as separate compliance tracks, raising the bar for firms without mature complaints and experience-monitoring infrastructure. This is a governance-level signal within the regulatory macro trend: regulators are explicitly aligning enforcement and supervisory priorities around customer treatment, strengthening the compliance case for CX/EX measurement tools that can demonstrate fair customer outcomes across the product lifecycle.",
+    "sourceUrl": "https://www.regulationtomorrow.com/2026/07/asic-and-apra-update-statement-of-intents/",
+    "date": "2026-07-16",
+    "scope": "macro",
+    "entity": "ASIC / APRA",
+    "signalType": "regulation"
+  },
+  {
     "id": "2026-07-15-qualtrics-hiring-pain-point",
     "headline": "Qualtrics customers cite integration complexity as top pain point in recent survey",
     "summary": "A third-party buyer survey found that nearly 40% of Qualtrics customers struggle with integrating the platform into existing data stacks. The company is reportedly hiring additional solutions engineers to address onboarding friction.",
@@ -138,5 +468,85 @@
     "scope": "micro",
     "entity": "Qualtrics",
     "signalType": "pain point"
+  },
+  {
+    "id": "2026-07-15-perceptyx-pyx-voice-benchmark",
+    "headline": "Perceptyx's PYX Labs launches PYX-Voice, first benchmark testing whether frontier AI actually understands employee feedback",
+    "summary": "On July 15, 2026, PYX Labs, a research lab sponsored by Perceptyx, announced PYX-Voice, the employee-listening industry's first benchmark evaluating how well seven frontier AI models from OpenAI, Google, Anthropic, and xAI interpret employee feedback across 84 tasks. Models scored 76-82% on simple, verifiable tasks but fell as low as 33% on tasks requiring nuanced interpretation, and comment synthesis \u2014 pulling coherent themes from open-ended feedback \u2014 was the weakest capability tested across every model, scoring just 14-57%. This directly validates a core value proposition purpose-built EX platforms make against generic LLM summarization, and Perceptyx is using the finding to argue off-the-shelf AI cannot be trusted with people data without domain-specific tooling, a positioning Qualtrics can counter or reinforce with its own AI-trust messaging. The research lands the same week as Culture Amp's own AI-in-HR study showing fragile HR trust in AI, pointing to a broader industry moment where EX vendors are competing on AI credibility and reliability claims rather than raw feature counts. Perceptyx frames PYX Labs as an ongoing evaluation-standards initiative, signaling more competitive AI-benchmarking content aimed at differentiating listening platforms is likely to follow.",
+    "sourceUrl": "https://www.globenewswire.com/news-release/2026/07/15/3327669/0/en/ai-can-summarize-employee-feedback-a-new-benchmark-shows-it-doesn-t-always-understand-it.html",
+    "date": "2026-07-15",
+    "scope": "micro",
+    "entity": "Perceptyx",
+    "signalType": "research shift"
+  },
+  {
+    "id": "2026-07-15-leapsome-ats-ai-talent-density",
+    "headline": "Leapsome launches unified AI HR platform with new ATS, expanding into full talent-lifecycle territory",
+    "summary": "On July 15, 2026, Leapsome \u2014 used by over 2,000 organizations including Notion, Spotify, Mercedes-Benz, and Bolt \u2014 unveiled a new applicant tracking system (ATS) in early access alongside five EU-hosted AI agents and Model Context Protocol connectivity, positioning itself as the only HR platform connecting recruiting, onboarding, performance, engagement, learning, and compensation into one people-data foundation. The company is emphasizing EU AI Act compliance, ISO 27001 certification, and full EU hosting as a differentiator for European buyers wary of US-hosted AI tools. This is a direct expansion into workforce-planning and talent-acquisition territory that overlaps with the holistic EX use case Qualtrics pursues through its SAP SuccessFactors integration \u2014 Leapsome is now trying to be both the HRIS-adjacent system of record and the engagement/listening layer, collapsing the boundary SDRs typically rely on when positioning Qualtrics as the specialist layer on top of a separate HRIS. The move also contrasts sharply with Lattice's opposite strategic bet the same month (exiting HRIS entirely), illustrating a split in how mid-market EX/performance vendors are racing to lock in more of the HR tech stack before AI further commoditizes point solutions.",
+    "sourceUrl": "https://finance.yahoo.com/technology/ai/articles/leapsome-hr-platform-unveils-industry-130000603.html",
+    "date": "2026-07-15",
+    "scope": "micro",
+    "entity": "Leapsome",
+    "signalType": "product launch"
+  },
+  {
+    "id": "2026-07-15-usertesting-july-release-mcp",
+    "headline": "UserTesting ships MCP Server and Advanced Targeting, deepening AI-agent and B2B research push",
+    "summary": "UserTesting shipped its July 2026 product release centered on an MCP Server that connects participant recruitment, test creation and results directly into AI tools like Claude, ChatGPT and Figma Make, alongside expanded Figma plugin support for multi-task studies and a new Advanced Targeting capability reaching a combined network of 7.6 million participants, including 3.2 million verified professionals across 140 industries. This follows UserTesting's January 2026 acquisition of User Interviews and April 2026 hire of a new CTO focused on AI-powered customer understanding, showing a sustained, multi-quarter push to embed UserTesting into AI-native product and design workflows rather than remain a standalone research tool. For Qualtrics, this matters because UserTesting is targeting the same 'AI agent access to human insight' wedge that Qualtrics, Glassbox and SurveyMonkey are all now building toward via MCP servers, meaning MCP/agent connectivity is rapidly becoming table-stakes infrastructure across the UX research and CX category rather than a differentiator. The professional-audience targeting expansion also strengthens UserTesting's position in B2B research, a segment where it increasingly overlaps with Qualtrics' research-services offering.",
+    "sourceUrl": "https://www.usertesting.com/resources/product-releases/july-2026",
+    "date": "2026-07-15",
+    "scope": "micro",
+    "entity": "UserTesting",
+    "signalType": "product launch"
+  },
+  {
+    "id": "2026-07-15-sprinklr-summer26-release",
+    "headline": "Sprinklr ships Summer '26 Release with agentic AI agents, MCP connector, and video-based customer intelligence",
+    "summary": "On July 15, 2026, Sprinklr announced its Summer '26 Release, adding agentic AI agents, sub-second-response Voice AI, a Model Context Protocol (MCP) beta connector that lets Microsoft Copilot, ChatGPT and Claude query Sprinklr customer intelligence directly, and video-based customer intelligence built on its May 2026 acquisition of ViralMoment. The release also introduced 'LLM Insights,' which helps brands understand how they appear in AI-powered search and discovery channels, plus AI content generation inside Sprinklr's Copilot for marketers. This matters for the CX industry because it shows unified-CXM platforms racing to move from passive insight dashboards to autonomous, real-time action \u2014 the same 'insight-to-action' pitch Medallia and Qualtrics are both making \u2014 while extending analytics beyond text into video and audio. The MCP integration is competitively notable: Sprinklr is positioning its platform as a data layer other AI assistants can query, which could pressure Qualtrics and Medallia to open similar interoperability paths or risk being bypassed by agent-based workflows.",
+    "sourceUrl": "https://www.morningstar.com/news/business-wire/20260715011693/sprinklr-introduces-new-ai-capabilities-to-help-brands-move-from-insights-to-real-time-customer-action",
+    "date": "2026-07-15",
+    "scope": "micro",
+    "entity": "Sprinklr",
+    "signalType": "product launch"
+  },
+  {
+    "id": "2026-07-15-coles-flybuys-pay-with-points",
+    "headline": "Coles launches Flybuys \"Pay with Points\" nationally, intensifying loyalty battle with Woolworths",
+    "summary": "On 15 July 2026, Coles rolled out \"Pay with Points\" nationally across its Flybuys loyalty programme, letting members redeem points for instant discounts of between $10 and $100 off their in-store shop, compared with the previous flat $10-off cap once a shopper reached 2,000 points. The change followed shortly after Woolworths overhauled its own Everyday Rewards programme, and Coles has also flagged that Coles Plus will become Coles Plus Delivery from 9 September 2026 with a higher free-delivery minimum. For a margin-squeezed grocery sector, this is a direct signal that supermarkets see loyalty-program flexibility and instant, tangible value as the lever for retention rather than price cuts alone. It matters for the experience management industry because it shows FMCG majors using granular reward personalisation and redemption-friction reduction as a customer-experience differentiator under cost-of-living pressure, a pattern smaller ANZ retailers will likely have to match to stay competitive on loyalty economics.",
+    "sourceUrl": "https://www.colesgroup.com.au/news/2026/media-releases/?page=coles-helps-customers-take-100-dollars-off-their-in-store-shop-with-20-000-flybuys-points",
+    "date": "2026-07-15",
+    "scope": "macro",
+    "entity": "Coles / Flybuys",
+    "signalType": "brand move"
+  },
+  {
+    "id": "2026-07-14-westpac-mi-consumer-sentiment",
+    "headline": "Westpac-Melbourne Institute sentiment rises 4.1% but remains near historic lows",
+    "summary": "The Westpac-Melbourne Institute Index of Consumer Sentiment rose 4.1% to 83.9 in July 2026, up from 80.6 in June, per the bulletin published July 14, 2026. Despite the monthly gain, the reading sits in the bottom 10% of the index's 50-year history, with Westpac attributing the improvement to relief that 'worst case' scenarios around energy prices, interest rates and jobs are not playing out, while cautioning that family finances remain under intense pressure and the outlook is uncertain. For CX and EX vendors, this combination of relief-driven confidence but weak underlying sentiment signals households are still cost-conscious and switching-prone, raising the value of voice-of-customer programs for retailers, telcos, utilities and financial services firms trying to protect wallet share. The result reinforces the cost-of-living/consumer sentiment macro theme, showing sentiment recovery is fragile and tied to geopolitical and rate-path news rather than a durable turnaround in household finances.",
+    "sourceUrl": "https://library.westpaciq.com.au/content/dam/public/westpaciq/secure/economics/documents/aus/2026/07/er20260714BullConsumerSentiment.pdf",
+    "date": "2026-07-14",
+    "scope": "macro",
+    "entity": "Westpac-Melbourne Institute / Australian consumers",
+    "signalType": "market shift"
+  },
+  {
+    "id": "2026-07-14-asknicely-review-routing-agent",
+    "headline": "AskNicely launches Review Routing Agent, an AI tool that directs customer reviews to high-visibility channels",
+    "summary": "On July 14, 2026, AskNicely launched the Review Routing Agent, the newest addition to its Ask NiceAI suite of agentic AI tools, designed to automatically direct customer reviews to the platforms and channels where prospective buyers are most likely to see them. The launch follows a string of AI agent releases from AskNicely in 2026 \u2014 including Ask NiceAI in March, Reputation Manager in April, and Insights/Response Agents in June \u2014 showing the vendor is aggressively building out an agentic layer on top of its frontline CX feedback platform. For the experience management industry, this reflects a broader shift among mid-market CX vendors toward 'action agents' that close the loop automatically rather than just surfacing dashboards, a category Qualtrics is also investing in with its own Experience Agents. AskNicely's rapid, near-monthly cadence of agentic launches signals aggressive land-grab positioning against larger, slower-moving platforms in the frontline/SMB segment of CX software.",
+    "sourceUrl": "https://www.globenewswire.com/news-release/2026/07/14/3326707/0/en/asknicely-launches-ai-agent-that-routes-reviews-to-where-buyers-are-looking.html",
+    "date": "2026-07-14",
+    "scope": "micro",
+    "entity": "AskNicely",
+    "signalType": "product launch"
+  },
+  {
+    "id": "2026-07-14-qualtrics-five-leadership-hires",
+    "headline": "Qualtrics names five senior leaders including ex-Medallia sales veteran Adam Block as Chief Sales Officer",
+    "summary": "On July 14, 2026, Qualtrics announced five senior leadership appointments across sales, marketing and product to drive its AI-era Experience Management strategy: Adam Block (formerly CRO at Motive and an eight-year Medallia sales veteran) as Chief Sales Officer, Ken Coleman as SVP of Marketing, Ken Hoang as SVP of Product, Khoi Hoang leading global sales engineering, and Aaron Ellis leading corporate sales. Block now runs the full go-to-market org \u2014 sales, sales development, solutions engineering, revenue operations, partnerships & alliances, and sales enablement \u2014 in what CMSWire characterized as a 'yearlong executive shakeup' at Qualtrics. Hiring a long-tenured Medallia sales leader into the top revenue seat is a direct competitive signal: Qualtrics is explicitly recruiting talent that knows how Medallia sells and defends accounts, which reads as Qualtrics sharpening its enterprise CX displacement playbook against Medallia specifically. This own-company leadership shakeup will likely cascade into new sales messaging, territory realignment, and a renewed enterprise CX push in H2 2026.",
+    "sourceUrl": "https://www.mi-3.com.au/14-07-2026/qualtrics-strengthens-leadership-new-senior-appointments",
+    "date": "2026-07-14",
+    "scope": "macro",
+    "entity": "Qualtrics",
+    "signalType": "leadership change"
   }
 ]
