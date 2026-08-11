@@ -14,11 +14,14 @@ const RISK_SIGNAL_TYPES = new Set(["regulation", "pain point"])
 
 const PILLS = [
   { id: "all", label: "All" },
+  { id: "high-relevance", label: "High Relevance" },
   { id: "this-week", label: "This Week" },
   { id: "regulatory", label: "Regulatory & Pain Points" },
   { id: "leadership", label: "Leadership Moves" },
   { id: "competitor", label: "Competitor Moves" },
 ]
+
+const HIGH_RELEVANCE_THRESHOLD = 4
 
 function daysBetween(a, b) {
   return Math.round((a.getTime() - b.getTime()) / (24 * 60 * 60 * 1000))
@@ -56,6 +59,8 @@ function SignalQueue({
 
   const pillFiltered = useMemo(() => {
     switch (activePill) {
+      case "high-relevance":
+        return tabFiltered.filter((i) => (i.outreachRelevance ?? 0) >= HIGH_RELEVANCE_THRESHOLD)
       case "this-week":
         return tabFiltered.filter((i) => daysBetween(today, new Date(`${i.date}T00:00:00`)) <= 6)
       case "regulatory":

@@ -19,6 +19,7 @@ function domainFromUrl(url) {
 
 function SignalRow({ item, reviewed, onToggleReviewed, selected, onToggleSelect }) {
   const [copied, setCopied] = useState(false)
+  const [expanded, setExpanded] = useState(false)
 
   const handleCopy = async () => {
     try {
@@ -73,7 +74,21 @@ function SignalRow({ item, reviewed, onToggleReviewed, selected, onToggleSelect 
           {item.headline}
         </h2>
 
-        <p className="mb-3 text-sm leading-relaxed text-slate-600 dark:text-zinc-400">{item.summary}</p>
+        <button
+          type="button"
+          onClick={() => setExpanded((v) => !v)}
+          className="mb-3 block w-full text-left"
+          aria-expanded={expanded}
+        >
+          <p
+            className={`text-sm leading-relaxed text-slate-600 dark:text-zinc-400 ${expanded ? "" : "line-clamp-1"}`}
+          >
+            {item.summary}
+          </p>
+          <span className="text-xs font-medium text-indigo-600 hover:underline dark:text-indigo-400">
+            {expanded ? "Show less" : "Show more"}
+          </span>
+        </button>
 
         <div className="flex flex-wrap items-center gap-2">
           <span className="rounded-full border border-violet-500/20 bg-violet-500/10 px-2 py-0.5 text-[11px] font-semibold text-violet-600 dark:text-violet-400">
