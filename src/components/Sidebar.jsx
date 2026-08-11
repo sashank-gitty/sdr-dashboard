@@ -15,10 +15,18 @@ function swatchClassFor(colorFor, option) {
   return bgMatch ? bgMatch[1].replace("/10", "") : "bg-slate-400"
 }
 
+const SEARCHABLE_THRESHOLD = 8
+
 function FilterSection({ title, options, selected, onToggle, colorFor }) {
   const [open, setOpen] = useState(
     () => typeof window === "undefined" || window.innerWidth > 900,
   )
+  const [query, setQuery] = useState("")
+
+  const showSearch = options.length > SEARCHABLE_THRESHOLD
+  const visibleOptions = showSearch && query.trim()
+    ? options.filter((o) => o.toLowerCase().includes(query.trim().toLowerCase()))
+    : options
 
   return (
     <div className="border-b border-slate-200 py-3 dark:border-zinc-800">
@@ -28,7 +36,7 @@ function FilterSection({ title, options, selected, onToggle, colorFor }) {
         aria-expanded={open}
         className="flex w-full items-center gap-2 text-left text-sm font-semibold text-slate-700 dark:text-zinc-200"
       >
-        <span className={`inline-block text-[10px] text-slate-400 transition-transform dark:text-zinc-500 ${open ? "rotate-90" : ""}`}>
+        <span className={`inline-block text-[10px] text-slate-400 transition-transform duration-200 ease-spring dark:text-zinc-500 ${open ? "rotate-90" : ""}`}>
           &#9656;
         </span>
         <span className="flex-1">{title}</span>
@@ -40,24 +48,39 @@ function FilterSection({ title, options, selected, onToggle, colorFor }) {
       </button>
 
       {open && (
-        <div className="mt-2 flex max-h-56 flex-col gap-0.5 overflow-y-auto scrollbar-thin">
-          {options.map((option) => (
-            <label
-              key={option}
-              className="flex cursor-pointer items-center gap-2 rounded-md px-1.5 py-1 text-[13px] text-slate-600 hover:bg-slate-100 dark:text-zinc-400 dark:hover:bg-zinc-800/80"
-            >
-              <input
-                type="checkbox"
-                checked={selected.includes(option)}
-                onChange={() => onToggle(option)}
-                className="h-3.5 w-3.5 flex-shrink-0 accent-indigo-600"
-              />
-              {colorFor && (
-                <span className={`h-2 w-2 flex-shrink-0 rounded-full ${swatchClassFor(colorFor, option)}`} />
-              )}
-              <span className="truncate capitalize">{option}</span>
-            </label>
-          ))}
+        <div className="mt-2">
+          {showSearch && (
+            <input
+              type="text"
+              value={query}
+              onChange={(e) => setQuery(e.target.value)}
+              placeholder={`Filter ${title.toLowerCase()}...`}
+              className="mb-1.5 w-full rounded-md border border-slate-200 bg-white px-2 py-1 text-xs text-slate-700 outline-none placeholder:text-slate-400 focus:border-indigo-400 dark:border-zinc-800 dark:bg-zinc-900 dark:text-zinc-200 dark:placeholder:text-zinc-500 dark:focus:border-indigo-500"
+            />
+          )}
+          <div className="flex max-h-56 flex-col gap-0.5 overflow-y-auto scrollbar-thin">
+            {visibleOptions.length === 0 ? (
+              <p className="px-1.5 py-1 text-xs text-slate-400 dark:text-zinc-500">No matches.</p>
+            ) : (
+              visibleOptions.map((option) => (
+                <label
+                  key={option}
+                  className="flex cursor-pointer items-center gap-2 rounded-md px-1.5 py-1 text-[13px] text-slate-600 hover:bg-slate-100 dark:text-zinc-400 dark:hover:bg-zinc-800/80"
+                >
+                  <input
+                    type="checkbox"
+                    checked={selected.includes(option)}
+                    onChange={() => onToggle(option)}
+                    className="h-3.5 w-3.5 flex-shrink-0 accent-indigo-600"
+                  />
+                  {colorFor && (
+                    <span className={`h-2 w-2 flex-shrink-0 rounded-full ${swatchClassFor(colorFor, option)}`} />
+                  )}
+                  <span className="truncate capitalize">{option}</span>
+                </label>
+              ))
+            )}
+          </div>
         </div>
       )}
     </div>
