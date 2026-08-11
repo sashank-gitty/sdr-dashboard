@@ -1,5 +1,95 @@
 [
   {
+    "id": "2026-08-11-rba-cash-rate-hold",
+    "headline": "RBA holds cash rate at 4.35% but flags inflation still 'too high' and further hikes possible",
+    "summary": "The Reserve Bank of Australia's Monetary Policy Board unanimously kept the cash rate at 4.35% on 11 August 2026, extending the pause it began in June, while warning that a further increase remains possible if inflation risks materialise. For SDRs selling to lenders and insurers, this prolonged rate uncertainty keeps pressure on customer contact volumes (hardship calls, repricing queries) and complicates CX planning for financial services accounts.",
+    "sourceUrl": "https://www.rba.gov.au/media-releases/2026/mr-26-19.html",
+    "date": "2026-08-11",
+    "scope": "macro",
+    "entity": "Reserve Bank of Australia",
+    "signalType": "market shift"
+  },
+  {
+    "id": "2026-08-11-finder-mortgage-stress-survey",
+    "headline": "Finder research: 55% of Australian mortgage holders report stress, spending 38% of income on repayments",
+    "summary": "A Finder survey of about 1,000 Australians (291 current mortgage borrowers), published 11 August 2026, found 55% of mortgage holders experience mortgage stress and devote an average of 38% of after-tax income to repayments, with many spending over half their take-home pay on their home loan. This is a direct pain-point signal for banks and lenders in the lower mid-market segment: rising hardship queries and dissatisfaction with lender communication are exactly the kind of friction experience management programs are built to surface and reduce (single source).",
+    "sourceUrl": "https://www.sbs.com.au/news/article/the-problem-with-australias-mortgage-stress-measure/pxw0bg9f9",
+    "date": "2026-08-11",
+    "scope": "macro",
+    "entity": "Australian mortgage holders / Finder",
+    "signalType": "pain point"
+  },
+  {
+    "id": "2026-08-11-nice-cxone-263-release",
+    "headline": "NICE runs CXone 26.3 release briefing webinars, ANZ session follows",
+    "summary": "NICE held AMER/EMEA briefing webinars on 11 August 2026 walking customers through new features in the CXone 26.3 release cycle (running August 3 to October 25, 2026), with a dedicated ANZ-region session scheduled the next day. This shows NICE actively re-engaging its ANZ CXone contact-centre base with new capabilities, useful context for reps prospecting accounts that may be currently locked into or evaluating NICE (single source).",
+    "sourceUrl": "https://help.nice-incontact.com/content/releasenotes/comingsoon.htm",
+    "date": "2026-08-11",
+    "scope": "micro",
+    "entity": "NICE (CXone)",
+    "signalType": "product launch"
+  },
+  {
+    "id": "2026-08-10-afca-insurance-claims-handling-approach",
+    "headline": "AFCA publishes new rulebook covering general insurance claims handling standards",
+    "summary": "On 10 August 2026 the Australian Financial Complaints Authority published three new Approach papers: a standalone paper on general insurance claims handling, an updated paper on non-financial loss, and a new paper on uninsured motorist complaints, giving insurers a documented benchmark for when claims conduct falls short. This directly touches complaints-handling and CX processes at general insurers, a clear opening to discuss how experience management can help firms track and close claims-handling gaps before they escalate to AFCA (single source).",
+    "sourceUrl": "https://www.insurancebusinessmag.com/au/news/claims/general-insurance-claims-handling-just-got-a-published-rulebook-585495.aspx",
+    "date": "2026-08-10",
+    "scope": "macro",
+    "entity": "AFCA / general insurance sector",
+    "signalType": "regulation"
+  },
+  {
+    "id": "2026-08-10-asic-fy26-enforcement-report",
+    "headline": "ASIC reports 150 enforcement actions in FY25/26, with insurance claims handling named a top priority",
+    "summary": "Coverage published 10 August 2026 detailed ASIC's FY2025/26 enforcement record: 150 enforcement actions, 114 individuals/businesses removed or restricted from providing financial or credit services, and 36 individuals disqualified from managing corporations, with insurance complaints and claims handling, private credit practices and misleading pricing flagged as ongoing 2026 priorities. For SDRs, this signals continued regulatory heat on complaints and claims processes at banks, insurers and credit providers in the ANZ lower mid-market (single source).",
+    "sourceUrl": "https://www.caproasia.com/2026/08/10/australian-securities-and-investments-commission-asic-took-150-enforcement-actions-in-2025-2026-for-misconduct-in-australia-financial-credit-corporate-sectors-114-individuals-businesses-remove/",
+    "date": "2026-08-10",
+    "scope": "macro",
+    "entity": "ASIC",
+    "signalType": "regulation"
+  },
+  {
+    "id": "2026-08-10-genesys-cloud-feature-push",
+    "headline": "Genesys pushes new AI contact-centre features live in Genesys Cloud",
+    "summary": "Genesys shipped new Genesys Cloud capabilities on 10 August 2026, including system-detected forecast outliers and live screen monitoring for supervisors, part of its ongoing AI feature cadence. Relevant for SDRs positioning against Genesys in ANZ contact-centre and CX accounts that track vendor release velocity (single source).",
+    "sourceUrl": "https://help.genesys.cloud/release-notes/genesys-cloud/features-coming-soon/",
+    "date": "2026-08-10",
+    "scope": "micro",
+    "entity": "Genesys",
+    "signalType": "product launch"
+  },
+  {
+    "id": "2026-08-10-nielsen-niq-q2-earnings",
+    "headline": "NIQ (Nielsen) posts strong Q2 2026 earnings, APAC returns to growth",
+    "summary": "NIQ Global Intelligence reported Q2 2026 revenue of $1,124.2 million, up 8.0% year-over-year (5.8% organic constant currency), with adjusted EBITDA margins expanding 270bps to 23.3% and APAC returning to positive growth at 1.9% after a weak stretch. Shares jumped over 17% after hours on the fifth straight quarter of guidance beats, underscoring that this insights/market-research competitor is well-capitalized and pushing hard on AI-powered analytics, relevant context when positioning Qualtrics against Nielsen/NIQ-influenced research budgets in ANZ accounts.",
+    "sourceUrl": "https://www.investing.com/news/company-news/niq-q2-2026-slides-ai-drives-growth-margins-hit-233-93CH-4850573",
+    "date": "2026-08-10",
+    "scope": "micro",
+    "entity": "Nielsen (NIQ)",
+    "signalType": "earnings"
+  },
+  {
+    "id": "2026-08-10-echovane-funding",
+    "headline": "AI-native market research startup Echovane raises $1M seed round",
+    "summary": "Echovane, a San Francisco-based startup used by P&G, Haleon and Kantar, raised a $1 million round co-led by Titan Capital and Neon to expand AI agents that run entire market research studies (design, fielding, participant recruitment, analysis) without traditional panel logistics. It signals a new class of AI-native research automation vendors encroaching on territory traditionally served by experience management and survey platforms.",
+    "sourceUrl": "https://siliconangle.com/2026/08/10/ai-native-market-research-automation-startup-echovane-raises-1m/",
+    "date": "2026-08-10",
+    "scope": "macro",
+    "entity": "Echovane",
+    "signalType": "new entrant"
+  },
+  {
+    "id": "2026-08-08-national-auction-clearance-rate",
+    "headline": "National auction clearance rate edges up to 50.3% but stays far below last year's pace",
+    "summary": "The weekend auction report for the week ending 8 August 2026 recorded a national clearance rate of 50.3%, up from 48.4% the prior week but well below the 72.9% recorded in the same week last year; Canberra's clearance rate fell to 36% from 73% a year earlier. Weak, uneven clearance rates point to continued softness in property transaction volumes, which affects demand for mortgage broking, conveyancing and insurance CX programs tied to settlement activity (single source).",
+    "sourceUrl": "https://propertyupdate.com.au/this-weekends-auction-results-what-happened-in-sydney-melbourne-brisbane-adelaide-canberra/",
+    "date": "2026-08-08",
+    "scope": "macro",
+    "entity": "Australian residential property market",
+    "signalType": "market shift"
+  },
+  {
     "id": "2026-08-05-medallia-funding",
     "headline": "Medallia explores new growth funding round amid CX market consolidation",
     "summary": "Reports indicate Medallia is in early talks with investors for a new funding round as competition in the customer experience space intensifies. The move follows several smaller CX vendors being acquired over the past year.",
