@@ -21,7 +21,8 @@ export default async function handler(req, res) {
         scope,
         entity,
         signal_type AS "signalType",
-        origin
+        origin,
+        outreach_relevance AS "outreachRelevance"
       FROM signals
       ORDER BY date DESC, created_at DESC
     `

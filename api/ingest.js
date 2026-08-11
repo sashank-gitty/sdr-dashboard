@@ -75,7 +75,7 @@ export default async function handler(req, res) {
 
           const dedupeKey = raw.sourceUrl
           await sql`
-            INSERT INTO signals (id, headline, summary, source_url, date, scope, entity, signal_type, origin, dedupe_key)
+            INSERT INTO signals (id, headline, summary, source_url, date, scope, entity, signal_type, origin, dedupe_key, outreach_relevance)
             VALUES (
               ${idFor(dedupeKey)},
               ${cleanTitle(raw.title)},
@@ -86,7 +86,8 @@ export default async function handler(req, res) {
               ${normalized.entity},
               ${normalized.signalType},
               'news',
-              ${dedupeKey}
+              ${dedupeKey},
+              ${normalized.outreachRelevance}
             )
             ON CONFLICT (dedupe_key) DO NOTHING
           `

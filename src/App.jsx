@@ -94,12 +94,31 @@ function App() {
     [signals],
   )
 
-  const sortedItems = useMemo(
+  // Pure chronological order — used wherever "recent" needs to actually
+  // mean recent (the activity timeline, weekly metrics), independent of
+  // how the main feed is ranked.
+  const chronologicalItems = useMemo(
     () => [...signals].sort((a, b) => (a.date < b.date ? 1 : -1)),
     [signals],
   )
 
-  const metrics = useMemo(() => computeMetrics(sortedItems), [sortedItems])
+  // Main feed order: outreach relevance first (Issue 3 — "most important
+  // priority should be if it's relevant enough to base outreach on"),
+  // date as the tiebreak within the same relevance tier. Rows that
+  // haven't been scored yet (pre-backfill, or a normalization skip) get
+  // a neutral mid-tier default rather than sinking to the bottom or
+  // unfairly floating to the top.
+  const sortedItems = useMemo(
+    () =>
+      [...signals].sort((a, b) => {
+        const relDiff = (b.outreachRelevance ?? 3) - (a.outreachRelevance ?? 3)
+        if (relDiff !== 0) return relDiff
+        return a.date < b.date ? 1 : -1
+      }),
+    [signals],
+  )
+
+  const metrics = useMemo(() => computeMetrics(chronologicalItems), [chronologicalItems])
 
   const filteredItems = useMemo(() => {
     const query = search.trim().toLowerCase()
@@ -216,7 +235,7 @@ function App() {
               onPillChange={setActivePill}
               onClearEverything={handleClearEverything}
             />
-            <ActivityPanel recentItems={sortedItems.slice(0, 8)} metrics={metrics} />
+            <ActivityPanel recentItems={chronologicalItems.slice(0, 8)} metrics={metrics} />
           </div>
         </main>
       </div>
