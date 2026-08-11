@@ -17,7 +17,10 @@ function TrendBadge({ pct, delta, positiveIsGood = true, invert = false }) {
   const arrow = isFlat ? "→" : isUp ? "↑" : "↓"
 
   return (
-    <span className={`inline-flex items-center gap-1 text-xs font-semibold tabular-nums ${colorClass}`}>
+    <span
+      title={`${Math.abs(pct)}% ${isUp ? "increase" : isFlat ? "no change" : "decrease"} vs last week`}
+      className={`inline-flex items-center gap-1 text-xs font-semibold tabular-nums ${colorClass}`}
+    >
       {arrow} {Math.abs(pct)}%<span className="font-normal text-slate-400 dark:text-zinc-500">vs last week</span>
     </span>
   )
@@ -25,7 +28,7 @@ function TrendBadge({ pct, delta, positiveIsGood = true, invert = false }) {
 
 function KpiCard({ label, value, sub, sparkValues, sparkClassName, children }) {
   return (
-    <div className="group rounded-lg border border-slate-200 bg-white/60 p-4 backdrop-blur-sm transition-all hover:border-slate-300 dark:border-zinc-800 dark:bg-zinc-900/60 dark:hover:border-zinc-700">
+    <div className="group rounded-lg border border-slate-200 bg-white/60 p-4 backdrop-blur-sm transition-all duration-200 ease-spring hover:-translate-y-0.5 hover:border-slate-300 hover:shadow-md dark:border-zinc-800 dark:bg-zinc-900/60 dark:hover:border-zinc-700">
       <div className="flex items-start justify-between gap-2">
         <p className="text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-zinc-400">{label}</p>
         {sparkValues && (
@@ -62,7 +65,10 @@ function KpiGrid({ metrics }) {
         label="Regulatory &amp; Pain-Point Signals"
         value={metrics.riskThisWeekCount}
         sub={
-          <span className="inline-flex items-center gap-1 text-xs font-semibold tabular-nums text-amber-600 dark:text-amber-400">
+          <span
+            title="Signals tagged regulation or pain point — usually the fastest path to a relevant, timely outreach angle"
+            className="inline-flex items-center gap-1 text-xs font-semibold tabular-nums text-amber-600 dark:text-amber-400"
+          >
             {riskDelta === 0 ? "→" : riskDelta > 0 ? "↑" : "↓"} {Math.abs(riskDelta)}
             <span className="font-normal text-slate-400 dark:text-zinc-500">vs last week</span>
           </span>
