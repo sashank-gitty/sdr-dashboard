@@ -1,19 +1,20 @@
 :root {
-  --bg: #14161a;
-  --bg-elevated: #1c1f25;
-  --border: #2b2f37;
-  --text: #e6e8eb;
-  --text-muted: #9a9fa8;
+  --bg: #121212;
+  --bg-elevated: #1a1a1a;
+  --bg-card: #1e1e1e;
+  --bg-hover: #252525;
+  --border: #2e2e2e;
+  --border-strong: #3a3a3a;
+  --text: #e0e0e0;
+  --text-bright: #ffffff;
+  --text-muted: #8a8a8a;
   --accent: #7c9cbf;
   --accent-soft: rgba(124, 156, 191, 0.15);
-  --pill-scope: #6f9d7c;
-  --pill-scope-bg: rgba(111, 157, 124, 0.15);
-  --pill-entity: #b98fc9;
-  --pill-entity-bg: rgba(185, 143, 201, 0.15);
-  --pill-signal: #c9a56b;
-  --pill-signal-bg: rgba(201, 165, 107, 0.15);
+  --entity-color: #9d8fc9;
+  --entity-bg: rgba(157, 143, 201, 0.14);
 
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  font-size: 14px;
   color-scheme: dark;
 }
 
@@ -45,4 +46,17 @@ button,
 select,
 input {
   font-family: inherit;
+}
+
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--border-strong);
 }
