@@ -1,0 +1,52 @@
+[
+  {
+    "id": "2026-08-05-medallia-funding",
+    "headline": "Medallia explores new growth funding round amid CX market consolidation",
+    "summary": "Reports indicate Medallia is in early talks with investors for a new funding round as competition in the customer experience space intensifies. The move follows several smaller CX vendors being acquired over the past year.",
+    "sourceUrl": "https://www.example.com/medallia-funding-2026",
+    "date": "2026-08-05",
+    "scope": "micro",
+    "entity": "Medallia",
+    "signalType": "funding"
+  },
+  {
+    "id": "2026-08-02-qualtrics-cro",
+    "headline": "Qualtrics names new Chief Revenue Officer to lead global go-to-market",
+    "summary": "Qualtrics announced a leadership change with a new CRO tasked with accelerating enterprise growth. The appointment signals a renewed push into international markets over the next fiscal year.",
+    "sourceUrl": "https://www.example.com/qualtrics-cro-2026",
+    "date": "2026-08-02",
+    "scope": "micro",
+    "entity": "Qualtrics",
+    "signalType": "leadership change"
+  },
+  {
+    "id": "2026-07-28-cx-industry-regulation",
+    "headline": "New data privacy rules could reshape how CX platforms handle customer feedback",
+    "summary": "Regulators in the EU proposed stricter consent requirements for survey and feedback data collection. Analysts expect CX platform vendors to accelerate compliance tooling over the coming quarters.",
+    "sourceUrl": "https://www.example.com/cx-privacy-regulation-2026",
+    "date": "2026-07-28",
+    "scope": "macro",
+    "entity": "CX Industry",
+    "signalType": "regulation"
+  },
+  {
+    "id": "2026-07-20-medallia-product-launch",
+    "headline": "Medallia launches AI-powered sentiment analysis for real-time agent coaching",
+    "summary": "The new product uses generative AI to flag negative sentiment during live customer calls and suggest coaching prompts to agents. Early customers report faster resolution times in pilot programs.",
+    "sourceUrl": "https://www.example.com/medallia-ai-launch-2026",
+    "date": "2026-07-20",
+    "scope": "micro",
+    "entity": "Medallia",
+    "signalType": "product launch"
+  },
+  {
+    "id": "2026-07-15-qualtrics-hiring-pain-point",
+    "headline": "Qualtrics customers cite integration complexity as top pain point in recent survey",
+    "summary": "A third-party buyer survey found that nearly 40% of Qualtrics customers struggle with integrating the platform into existing data stacks. The company is reportedly hiring additional solutions engineers to address onboarding friction.",
+    "sourceUrl": "https://www.example.com/qualtrics-integration-pain-2026",
+    "date": "2026-07-15",
+    "scope": "micro",
+    "entity": "Qualtrics",
+    "signalType": "pain point"
+  }
+]
