@@ -26,16 +26,28 @@ function TrendBadge({ pct, delta, positiveIsGood = true, invert = false }) {
   )
 }
 
-function KpiCard({ label, value, sub, sparkValues, sparkClassName, children }) {
+function KpiCard({ label, value, sub, sparkValues, sparkClassName, children, featured = false }) {
   return (
-    <div className="group rounded-lg border border-slate-200 bg-white/60 p-4 backdrop-blur-sm transition-all duration-200 ease-spring hover:-translate-y-0.5 hover:border-slate-300 hover:shadow-md dark:border-zinc-800 dark:bg-zinc-900/60 dark:hover:border-zinc-700">
+    <div
+      className={`group rounded-lg border bg-white/60 p-4 backdrop-blur-sm transition-all duration-200 ease-spring hover:-translate-y-0.5 hover:shadow-md dark:bg-zinc-900/60 ${
+        featured
+          ? "border-indigo-500/30 hover:border-indigo-500/50 dark:border-indigo-500/30 dark:hover:border-indigo-500/50"
+          : "border-slate-200 hover:border-slate-300 dark:border-zinc-800 dark:hover:border-zinc-700"
+      }`}
+    >
       <div className="flex items-start justify-between gap-2">
         <p className="text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-zinc-400">{label}</p>
         {sparkValues && (
           <Sparkline values={sparkValues} width={72} height={24} strokeClassName={sparkClassName} />
         )}
       </div>
-      <p className="mt-2 font-mono text-2xl font-semibold tabular-nums text-slate-900 dark:text-zinc-50">{value}</p>
+      <p
+        className={`mt-2 font-mono font-semibold tabular-nums text-slate-900 dark:text-zinc-50 ${
+          featured ? "text-5xl" : "text-2xl"
+        }`}
+      >
+        {value}
+      </p>
       <div className="mt-1.5">{sub ?? children}</div>
     </div>
   )
@@ -56,6 +68,7 @@ function KpiGrid({ metrics }) {
       />
 
       <KpiCard
+        featured
         label="Signals This Week"
         value={metrics.thisWeekCount}
         sub={<TrendBadge pct={metrics.weekOverWeekPct} delta={metrics.weekOverWeekDelta} />}
