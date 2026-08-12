@@ -2,6 +2,7 @@ import { useEffect, useMemo, useRef, useState } from "react"
 import SignalRow from "./SignalRow.jsx"
 import SkeletonRow from "./SkeletonRow.jsx"
 import Checkbox from "./Checkbox.jsx"
+import TagLegend from "./TagLegend.jsx"
 
 const TABS = [
   { id: "all", label: "All Signals" },
@@ -43,6 +44,7 @@ function SignalQueue({
 }) {
   const [selectedIds, setSelectedIds] = useState(() => new Set())
   const [visibleCount, setVisibleCount] = useState(INITIAL_VISIBLE_COUNT)
+  const [legendOpen, setLegendOpen] = useState(false)
   const tabsRef = useRef(null)
 
   const tabCounts = useMemo(
@@ -142,6 +144,24 @@ function SignalQueue({
               )}
             </button>
           ))}
+
+          <button
+            type="button"
+            onClick={() => setLegendOpen((v) => !v)}
+            aria-expanded={legendOpen}
+            className={`ml-auto flex items-center gap-1.5 rounded-md px-2 py-1 text-xs font-medium transition-colors ${
+              legendOpen
+                ? "text-indigo-600 dark:text-indigo-400"
+                : "text-slate-400 hover:text-slate-700 dark:text-zinc-500 dark:hover:text-zinc-300"
+            }`}
+          >
+            <span className="flex h-2.5 w-2.5 items-center gap-px overflow-hidden rounded-sm">
+              <span className="h-full w-1/3 bg-emerald-500" />
+              <span className="h-full w-1/3 bg-amber-500" />
+              <span className="h-full w-1/3 bg-indigo-500" />
+            </span>
+            Legend
+          </button>
         </div>
 
         <div className="flex flex-wrap items-center gap-1.5 py-3">
@@ -182,6 +202,8 @@ function SignalQueue({
           )}
         </div>
       </div>
+
+      {legendOpen && <TagLegend />}
 
       <div className="flex flex-col gap-2.5">
         {loading ? (
