@@ -285,7 +285,9 @@ function App() {
               onPillChange={setActivePill}
               onClearEverything={handleClearEverything}
             />
-            <ActivityPanel recentItems={chronologicalItems.slice(0, 8)} metrics={metrics} />
+            <div className="xl:sticky xl:top-[73px] xl:self-start">
+              <ActivityPanel recentItems={chronologicalItems.slice(0, 8)} metrics={metrics} />
+            </div>
           </div>
         </main>
       </div>

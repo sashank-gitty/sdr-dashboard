@@ -22,6 +22,8 @@ const PILLS = [
 ]
 
 const HIGH_RELEVANCE_THRESHOLD = 4
+const INITIAL_VISIBLE_COUNT = 20
+const LOAD_MORE_INCREMENT = 15
 
 function daysBetween(a, b) {
   return Math.round((a.getTime() - b.getTime()) / (24 * 60 * 60 * 1000))
@@ -40,6 +42,7 @@ function SignalQueue({
   onClearEverything,
 }) {
   const [selectedIds, setSelectedIds] = useState(() => new Set())
+  const [visibleCount, setVisibleCount] = useState(INITIAL_VISIBLE_COUNT)
   const tabsRef = useRef(null)
 
   const tabCounts = useMemo(
@@ -72,6 +75,17 @@ function SignalQueue({
         return tabFiltered
     }
   }, [tabFiltered, activePill, today])
+
+  // Rendering all 50+ cards at once made the desktop feed one unbroken
+  // column with no natural stopping point. Reveal them in pages instead —
+  // every signal is still counted in tab totals and still reachable, this
+  // only changes how many render up front.
+  useEffect(() => {
+    setVisibleCount(INITIAL_VISIBLE_COUNT)
+  }, [items, activeTab, activePill])
+
+  const visibleItems = pillFiltered.slice(0, visibleCount)
+  const hasMore = visibleCount < pillFiltered.length
 
   // Selection is scoped to what's currently visible — stale picks from a
   // previous filter shouldn't silently linger in the bulk-action count.
@@ -184,16 +198,30 @@ function SignalQueue({
             </button>
           </div>
         ) : (
-          pillFiltered.map((item) => (
-            <SignalRow
-              key={item.id}
-              item={item}
-              reviewed={item.reviewed}
-              onToggleReviewed={onToggleReviewed}
-              selected={selectedIds.has(item.id)}
-              onToggleSelect={toggleSelectOne}
-            />
-          ))
+          <>
+            {visibleItems.map((item) => (
+              <SignalRow
+                key={item.id}
+                item={item}
+                reviewed={item.reviewed}
+                onToggleReviewed={onToggleReviewed}
+                selected={selectedIds.has(item.id)}
+                onToggleSelect={toggleSelectOne}
+              />
+            ))}
+            {hasMore && (
+              <button
+                type="button"
+                onClick={() => setVisibleCount((v) => v + LOAD_MORE_INCREMENT)}
+                className="mt-1 self-center rounded-md border border-slate-200 px-4 py-2 text-xs font-semibold text-slate-600 transition-colors hover:border-slate-300 hover:text-slate-900 dark:border-zinc-800 dark:text-zinc-300 dark:hover:border-zinc-700 dark:hover:text-zinc-100"
+              >
+                Load {Math.min(LOAD_MORE_INCREMENT, pillFiltered.length - visibleCount)} more{" "}
+                <span className="font-normal text-slate-400 dark:text-zinc-500">
+                  ({pillFiltered.length - visibleCount} remaining)
+                </span>
+              </button>
+            )}
+          </>
         )}
       </div>
     </div>
