@@ -1,11 +1,18 @@
 import { useState } from "react"
-import { pillClassForScope, pillClassForSignalType, pillClassForPracticeArea, PRACTICE_AREA_LABELS } from "../lib/colors.js"
+import { pillClassForSignalType, pillClassForPracticeArea, PRACTICE_AREA_LABELS } from "../lib/colors.js"
+import { QUICK_FILTERS, isQuickFilterActive } from "../lib/quickFilters.js"
 
 const DATE_RANGES = [
   { value: "7", label: "7d" },
   { value: "30", label: "30d" },
   { value: "90", label: "90d" },
   { value: "all", label: "All" },
+]
+
+const SCOPE_OPTIONS = [
+  { id: "all", label: "All", value: [] },
+  { id: "macro", label: "Macro", value: ["macro"] },
+  { id: "micro", label: "Micro", value: ["micro"] },
 ]
 
 function swatchClassFor(colorFor, option) {
@@ -89,44 +96,113 @@ function FilterSection({ title, options, selected, onToggle, colorFor, labelFor 
   )
 }
 
+// Scope only ever has two real values, so a segmented control reads
+// better than a checkbox list — and having exactly one control for it
+// (instead of this plus a separate Macro/Micro/All tab bar elsewhere)
+// means it can't disagree with itself.
+function ScopeControl({ scopeFilter, scopeCounts, onScopeChange }) {
+  const current = scopeFilter.length === 0 ? "all" : scopeFilter[0]
+
+  return (
+    <div className="border-b border-slate-200 pb-3 dark:border-zinc-800">
+      <p className="mb-2 text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-zinc-400">Scope</p>
+      <div className="flex overflow-hidden rounded-md border border-slate-200 dark:border-zinc-800">
+        {SCOPE_OPTIONS.map((option) => (
+          <button
+            key={option.id}
+            type="button"
+            onClick={() => onScopeChange(option.value)}
+            className={`flex-1 py-1.5 text-xs font-semibold transition-colors ${
+              current === option.id
+                ? "bg-indigo-500/10 text-indigo-600 dark:text-indigo-400"
+                : "text-slate-500 hover:bg-slate-100 dark:text-zinc-400 dark:hover:bg-zinc-800"
+            }`}
+          >
+            {option.label}{" "}
+            <span className="font-mono text-[10px] tabular-nums text-slate-400 dark:text-zinc-500">
+              ({scopeCounts[option.id] ?? 0})
+            </span>
+          </button>
+        ))}
+      </div>
+    </div>
+  )
+}
+
+// Shortcuts that set a combination of the same facets below — not a
+// second, competing filtering system. Multiple can be active at once
+// (e.g. High Relevance + This Week), which the old single-select pill row
+// couldn't do.
+function QuickFilters({ urlState, onToggleQuickFilter }) {
+  return (
+    <div className="border-b border-slate-200 py-3 dark:border-zinc-800">
+      <p className="mb-2 text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-zinc-400">
+        Quick Filters
+      </p>
+      <div className="flex flex-wrap gap-1.5">
+        {QUICK_FILTERS.map((quickFilter) => {
+          const active = isQuickFilterActive(quickFilter, urlState)
+          return (
+            <button
+              key={quickFilter.id}
+              type="button"
+              onClick={() => onToggleQuickFilter(quickFilter)}
+              aria-pressed={active}
+              className={`rounded-full border px-2.5 py-1 text-xs font-medium transition-all duration-200 ease-spring ${
+                active
+                  ? "border-indigo-500/30 bg-indigo-500/10 text-indigo-600 dark:text-indigo-400"
+                  : "border-slate-200 text-slate-500 hover:border-slate-300 hover:text-slate-900 dark:border-zinc-800 dark:text-zinc-400 dark:hover:border-zinc-700 dark:hover:text-zinc-100"
+              }`}
+            >
+              {quickFilter.label}
+            </button>
+          )
+        })}
+      </div>
+    </div>
+  )
+}
+
 function Sidebar({
   dateRange,
   onDateRangeChange,
+  scopeFilter,
+  scopeCounts,
+  onScopeChange,
   practiceAreaOptions,
-  scopeOptions,
   entityOptions,
   signalTypeOptions,
   practiceAreaFilter,
-  scopeFilter,
   entityFilter,
   signalTypeFilter,
   onTogglePracticeArea,
-  onToggleScope,
   onToggleEntity,
   onToggleSignalType,
+  urlState,
+  onToggleQuickFilter,
+  activeFilterCount,
   onClearAll,
 }) {
-  const activeCount =
-    practiceAreaFilter.length + scopeFilter.length + entityFilter.length + signalTypeFilter.length
-
   return (
     <aside className="flex h-full flex-col gap-1 overflow-y-auto border-r border-slate-200 bg-white/60 p-4 dark:border-zinc-800 dark:bg-zinc-900/40 lg:sticky lg:top-[57px] lg:h-[calc(100vh-57px)]">
       <div className="mb-1 flex items-center gap-2 pb-3">
         <span className="text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-zinc-400">Filters</span>
-        {activeCount > 0 && (
+        {activeFilterCount > 0 && (
           <span className="rounded-full bg-indigo-500/10 px-1.5 py-0.5 text-[11px] font-semibold text-indigo-600 dark:text-indigo-400">
-            {activeCount} active
+            {activeFilterCount} active
           </span>
         )}
         <button
           type="button"
           onClick={onClearAll}
-          disabled={activeCount === 0}
+          disabled={activeFilterCount === 0}
           className="ml-auto rounded-md border border-slate-200 px-2 py-1 text-xs font-medium text-slate-500 transition-colors hover:border-slate-300 hover:text-slate-900 disabled:cursor-default disabled:opacity-40 dark:border-zinc-800 dark:text-zinc-400 dark:hover:border-zinc-700 dark:hover:text-zinc-100"
         >
           Clear all
         </button>
       </div>
+
+      <QuickFilters urlState={urlState} onToggleQuickFilter={onToggleQuickFilter} />
 
       <div className="border-b border-slate-200 pb-3 dark:border-zinc-800">
         <p className="mb-2 text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-zinc-400">Date Range</p>
@@ -148,6 +224,8 @@ function Sidebar({
         </div>
       </div>
 
+      <ScopeControl scopeFilter={scopeFilter} scopeCounts={scopeCounts} onScopeChange={onScopeChange} />
+
       <FilterSection
         title="Practice Area"
         options={practiceAreaOptions}
@@ -155,14 +233,6 @@ function Sidebar({
         onToggle={onTogglePracticeArea}
         colorFor={pillClassForPracticeArea}
         labelFor={(v) => PRACTICE_AREA_LABELS[v] ?? v}
-      />
-
-      <FilterSection
-        title="Scope"
-        options={scopeOptions}
-        selected={scopeFilter}
-        onToggle={onToggleScope}
-        colorFor={pillClassForScope}
       />
 
       <FilterSection

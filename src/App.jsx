@@ -5,14 +5,19 @@ import Header from "./components/Header.jsx"
 import KpiGrid from "./components/KpiGrid.jsx"
 import VolumeChart from "./components/VolumeChart.jsx"
 import SignalQueue from "./components/SignalQueue.jsx"
+import SignalDetailPanel from "./components/SignalDetailPanel.jsx"
 import ActivityPanel from "./components/ActivityPanel.jsx"
 import CommandPalette from "./components/CommandPalette.jsx"
 import ErrorState from "./components/ErrorState.jsx"
 import { useTheme } from "./lib/useTheme.js"
 import { useLocalStorageState } from "./lib/useLocalStorageState.js"
+import { useUrlState } from "./lib/useUrlState.js"
 import { computeMetrics } from "./lib/metrics.js"
+import { HIGH_RELEVANCE_THRESHOLD } from "./lib/relevance.js"
+import { isQuickFilterActive, clearPatchFor } from "./lib/quickFilters.js"
 
 const DATE_RANGE_DAYS = { "7": 7, "30": 30, "90": 90 }
+const EMPTY_ARRAY = []
 
 function toggleValue(list, value) {
   return list.includes(value) ? list.filter((v) => v !== value) : [...list, value]
@@ -22,14 +27,23 @@ function App() {
   const { theme, toggleTheme } = useTheme()
   const searchInputRef = useRef(null)
 
-  const [search, setSearch] = useState("")
-  const [dateRange, setDateRange] = useLocalStorageState("sdr-dashboard-date-range", "all")
-  const [practiceAreaFilter, setPracticeAreaFilter] = useLocalStorageState("sdr-dashboard-practice-area-filter", [])
-  const [scopeFilter, setScopeFilter] = useLocalStorageState("sdr-dashboard-scope-filter", [])
-  const [entityFilter, setEntityFilter] = useLocalStorageState("sdr-dashboard-entity-filter", [])
-  const [signalTypeFilter, setSignalTypeFilter] = useLocalStorageState("sdr-dashboard-signal-type-filter", [])
-  const [activeTab, setActiveTab] = useLocalStorageState("sdr-dashboard-active-tab", "all")
-  const [activePill, setActivePill] = useLocalStorageState("sdr-dashboard-active-pill", "all")
+  // Filters, search, tab-equivalents, and the open signal all live in the
+  // URL now (Issue: none of this was bookmarkable or shareable before —
+  // it lived only in component state or localStorage). Display prefs that
+  // aren't "state someone else should be able to open via a link" —
+  // sidebar collapsed, theme — stay in localStorage below.
+  const [urlState, updateUrl] = useUrlState()
+
+  const search = urlState.q ?? ""
+  const dateRange = urlState.range ?? "all"
+  const practiceAreaFilter = urlState.practice ?? EMPTY_ARRAY
+  const scopeFilter = urlState.scope ?? EMPTY_ARRAY
+  const entityFilter = urlState.entity ?? EMPTY_ARRAY
+  const signalTypeFilter = urlState.type ?? EMPTY_ARRAY
+  const relevanceOnly = urlState.relevance === "high"
+  const unreviewedOnly = urlState.reviewed === "false"
+  const openSignalId = urlState.signal ?? null
+
   const [sidebarOpen, setSidebarOpen] = useLocalStorageState("sdr-dashboard-sidebar-open", true)
   const [paletteOpen, setPaletteOpen] = useState(false)
   const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false)
@@ -85,10 +99,6 @@ function App() {
     () => [...new Set(signals.map((item) => item.practiceArea))].sort(),
     [signals],
   )
-  const scopeOptions = useMemo(
-    () => [...new Set(signals.map((item) => item.scope))].sort(),
-    [signals],
-  )
   const entityOptions = useMemo(
     () => [...new Set(signals.map((item) => item.entity))].sort(),
     [signals],
@@ -124,7 +134,10 @@ function App() {
 
   const metrics = useMemo(() => computeMetrics(chronologicalItems), [chronologicalItems])
 
-  const filteredItems = useMemo(() => {
+  // Filtered on everything except scope, so the scope control's own
+  // counts (Macro/Micro/All) reflect every other active filter without
+  // being circular about scope itself.
+  const filteredItemsExceptScope = useMemo(() => {
     const query = search.trim().toLowerCase()
     const rangeDays = DATE_RANGE_DAYS[dateRange]
     const cutoff = rangeDays
@@ -138,10 +151,11 @@ function App() {
 
     return sortedItems.filter((item) => {
       if (practiceAreaFilter.length && !practiceAreaFilter.includes(item.practiceArea)) return false
-      if (scopeFilter.length && !scopeFilter.includes(item.scope)) return false
       if (entityFilter.length && !entityFilter.includes(item.entity)) return false
       if (signalTypeFilter.length && !signalTypeFilter.includes(item.signalType)) return false
       if (cutoff && new Date(`${item.date}T00:00:00`) < cutoff) return false
+      if (relevanceOnly && (item.outreachRelevance ?? 0) < HIGH_RELEVANCE_THRESHOLD) return false
+      if (unreviewedOnly && item.reviewed) return false
 
       if (query) {
         const haystack = `${item.headline} ${item.summary} ${item.entity}`.toLowerCase()
@@ -150,23 +164,67 @@ function App() {
 
       return true
     })
-  }, [sortedItems, search, dateRange, practiceAreaFilter, scopeFilter, entityFilter, signalTypeFilter])
+  }, [sortedItems, search, dateRange, practiceAreaFilter, entityFilter, signalTypeFilter, relevanceOnly, unreviewedOnly])
+
+  const scopeCounts = useMemo(
+    () => ({
+      all: filteredItemsExceptScope.length,
+      macro: filteredItemsExceptScope.filter((i) => i.scope === "macro").length,
+      micro: filteredItemsExceptScope.filter((i) => i.scope === "micro").length,
+    }),
+    [filteredItemsExceptScope],
+  )
+
+  const filteredItems = useMemo(
+    () =>
+      scopeFilter.length
+        ? filteredItemsExceptScope.filter((item) => scopeFilter.includes(item.scope))
+        : filteredItemsExceptScope,
+    [filteredItemsExceptScope, scopeFilter],
+  )
 
   const activeFilterCount =
-    practiceAreaFilter.length + scopeFilter.length + entityFilter.length + signalTypeFilter.length
+    practiceAreaFilter.length +
+    scopeFilter.length +
+    entityFilter.length +
+    signalTypeFilter.length +
+    (relevanceOnly ? 1 : 0) +
+    (unreviewedOnly ? 1 : 0)
+
+  const openItem = useMemo(() => signals.find((s) => s.id === openSignalId) ?? null, [signals, openSignalId])
+  const relatedItems = useMemo(() => {
+    if (!openItem) return []
+    return signals
+      .filter((s) => s.id !== openItem.id && s.entity === openItem.entity)
+      .sort((a, b) => (a.date < b.date ? 1 : -1))
+      .slice(0, 5)
+  }, [signals, openItem])
+
+  const setSearch = (value) => updateUrl({ q: value || undefined })
+  const setDateRange = (value) => updateUrl({ range: value === "all" ? undefined : value })
+  const setScopeFilter = (values) => updateUrl({ scope: values.length ? values : undefined })
+  const toggleFacet = (key, currentList, value) => updateUrl({ [key]: toggleValue(currentList, value) })
+  const toggleQuickFilter = (quickFilter) => {
+    updateUrl(isQuickFilterActive(quickFilter, urlState) ? clearPatchFor(quickFilter) : quickFilter.patch)
+  }
+  const openSignal = (id) => updateUrl({ signal: id }, { push: true })
+  const closeSignal = () => updateUrl({ signal: undefined })
 
   const handleClearAll = () => {
-    setPracticeAreaFilter([])
-    setScopeFilter([])
-    setEntityFilter([])
-    setSignalTypeFilter([])
+    updateUrl({
+      practice: undefined,
+      scope: undefined,
+      entity: undefined,
+      type: undefined,
+      relevance: undefined,
+      reviewed: undefined,
+      range: undefined,
+    })
   }
 
   const handleClearEverything = () => {
     handleClearAll()
-    setSearch("")
-    setActiveTab("all")
-    setActivePill("all")
+    updateUrl({ q: undefined })
   }
 
   // "Mark Reviewed" is durable server state (Issue 4), not localStorage —
@@ -212,6 +270,27 @@ function App() {
     return <ErrorState message={fetchError} onRetry={() => setReloadToken((t) => t + 1)} />
   }
 
+  const sidebarProps = {
+    dateRange,
+    onDateRangeChange: setDateRange,
+    scopeFilter,
+    scopeCounts,
+    onScopeChange: setScopeFilter,
+    practiceAreaOptions,
+    entityOptions,
+    signalTypeOptions,
+    practiceAreaFilter,
+    entityFilter,
+    signalTypeFilter,
+    onTogglePracticeArea: (v) => toggleFacet("practice", practiceAreaFilter, v),
+    onToggleEntity: (v) => toggleFacet("entity", entityFilter, v),
+    onToggleSignalType: (v) => toggleFacet("type", signalTypeFilter, v),
+    urlState,
+    onToggleQuickFilter: toggleQuickFilter,
+    activeFilterCount,
+    onClearAll: handleClearAll,
+  }
+
   return (
     <div className="min-h-screen bg-slate-50 dark:bg-zinc-950">
       <h1 className="sr-only">SDR Command Center &mdash; Signal Intelligence Dashboard</h1>
@@ -228,25 +307,7 @@ function App() {
         onOpenMobileFilters={() => setMobileFiltersOpen(true)}
       />
 
-      <FilterDrawer
-        open={mobileFiltersOpen}
-        onClose={() => setMobileFiltersOpen(false)}
-        dateRange={dateRange}
-        onDateRangeChange={setDateRange}
-        practiceAreaOptions={practiceAreaOptions}
-        scopeOptions={scopeOptions}
-        entityOptions={entityOptions}
-        signalTypeOptions={signalTypeOptions}
-        practiceAreaFilter={practiceAreaFilter}
-        scopeFilter={scopeFilter}
-        entityFilter={entityFilter}
-        signalTypeFilter={signalTypeFilter}
-        onTogglePracticeArea={(v) => setPracticeAreaFilter((list) => toggleValue(list, v))}
-        onToggleScope={(v) => setScopeFilter((list) => toggleValue(list, v))}
-        onToggleEntity={(v) => setEntityFilter((list) => toggleValue(list, v))}
-        onToggleSignalType={(v) => setSignalTypeFilter((list) => toggleValue(list, v))}
-        onClearAll={handleClearAll}
-      />
+      <FilterDrawer open={mobileFiltersOpen} onClose={() => setMobileFiltersOpen(false)} {...sidebarProps} />
 
       <div className="flex flex-col lg:flex-row">
         <div
@@ -255,23 +316,7 @@ function App() {
           }`}
         >
           <div className="lg:w-60">
-            <Sidebar
-              dateRange={dateRange}
-              onDateRangeChange={setDateRange}
-              practiceAreaOptions={practiceAreaOptions}
-              scopeOptions={scopeOptions}
-              entityOptions={entityOptions}
-              signalTypeOptions={signalTypeOptions}
-              practiceAreaFilter={practiceAreaFilter}
-              scopeFilter={scopeFilter}
-              entityFilter={entityFilter}
-              signalTypeFilter={signalTypeFilter}
-              onTogglePracticeArea={(v) => setPracticeAreaFilter((list) => toggleValue(list, v))}
-              onToggleScope={(v) => setScopeFilter((list) => toggleValue(list, v))}
-              onToggleEntity={(v) => setEntityFilter((list) => toggleValue(list, v))}
-              onToggleSignalType={(v) => setSignalTypeFilter((list) => toggleValue(list, v))}
-              onClearAll={handleClearAll}
-            />
+            <Sidebar {...sidebarProps} />
           </div>
         </div>
 
@@ -290,14 +335,10 @@ function App() {
           <div className="grid grid-cols-1 gap-6 xl:grid-cols-[minmax(0,1fr)_320px]">
             <SignalQueue
               items={filteredItems}
-              today={metrics.today}
               onToggleReviewed={handleToggleReviewed}
               onMarkManyReviewed={handleMarkManyReviewed}
+              onOpenSignal={openSignal}
               loading={loading}
-              activeTab={activeTab}
-              onTabChange={setActiveTab}
-              activePill={activePill}
-              onPillChange={setActivePill}
               onClearEverything={handleClearEverything}
             />
             <div className="xl:sticky xl:top-[73px] xl:self-start">
@@ -311,9 +352,18 @@ function App() {
         open={paletteOpen}
         onClose={() => setPaletteOpen(false)}
         items={sortedItems}
-        onSelectItem={(item) => setSearch(item.headline)}
+        onSelectItem={(item) => openSignal(item.id)}
         onClearFilters={handleClearEverything}
         onToggleTheme={toggleTheme}
+      />
+
+      <SignalDetailPanel
+        item={openItem}
+        open={Boolean(openItem)}
+        onClose={closeSignal}
+        onToggleReviewed={handleToggleReviewed}
+        relatedItems={relatedItems}
+        onSelectRelated={(id) => openSignal(id)}
       />
     </div>
   )
