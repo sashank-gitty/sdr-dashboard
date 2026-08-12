@@ -94,8 +94,9 @@ Two things feed this view specifically:
   market entry as a 5 whether or not the company is on anyone's account
   list. Without that it scored mid-tier and sank below the fold, since
   the rest of the rubric is written around tracked accounts. Changing
-  the rubric changes scoring for everything, so re-run
-  `db/backfill-relevance.mjs` after editing it.
+  the rubric changes the bar for everything, so rescore existing rows
+  with `db/backfill-relevance.mjs --all` after editing it — without
+  `--all` the script skips rows that already have a (stale) score.
 
 ### Sharing a patch view
 
