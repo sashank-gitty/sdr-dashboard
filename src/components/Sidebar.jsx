@@ -1,5 +1,12 @@
 import { useState } from "react"
-import { pillClassForScope, pillClassForSignalType, pillClassForPracticeArea, PRACTICE_AREA_LABELS } from "../lib/colors.js"
+import {
+  pillClassForScope,
+  pillClassForSignalType,
+  pillClassForPracticeArea,
+  pillClassForPatch,
+  PRACTICE_AREA_LABELS,
+  PATCH_LABELS,
+} from "../lib/colors.js"
 
 const DATE_RANGES = [
   { value: "7", label: "7d" },
@@ -96,18 +103,34 @@ function Sidebar({
   scopeOptions,
   entityOptions,
   signalTypeOptions,
+  patchOptions,
+  aeOptions,
   practiceAreaFilter,
   scopeFilter,
   entityFilter,
   signalTypeFilter,
+  patchFilter,
+  aeFilter,
+  namedAccountsOnly,
   onTogglePracticeArea,
   onToggleScope,
   onToggleEntity,
   onToggleSignalType,
+  onTogglePatch,
+  onToggleAe,
+  onToggleNamedAccountsOnly,
   onClearAll,
+  onCopyViewLink,
+  viewLinkCopied,
 }) {
   const activeCount =
-    practiceAreaFilter.length + scopeFilter.length + entityFilter.length + signalTypeFilter.length
+    practiceAreaFilter.length +
+    scopeFilter.length +
+    entityFilter.length +
+    signalTypeFilter.length +
+    patchFilter.length +
+    aeFilter.length +
+    (namedAccountsOnly ? 1 : 0)
 
   return (
     <aside className="flex h-full flex-col gap-1 overflow-y-auto border-r border-slate-200 bg-white/60 p-4 dark:border-zinc-800 dark:bg-zinc-900/40 lg:sticky lg:top-[57px] lg:h-[calc(100vh-57px)]">
@@ -128,6 +151,35 @@ function Sidebar({
         </button>
       </div>
 
+      {/* The patch and AE filters live in the URL, so whatever is on
+          screen can be handed to the rep who owns it as a link rather
+          than a list of checkboxes to re-tick. */}
+      <div className="border-b border-slate-200 pb-3 dark:border-zinc-800">
+        <button
+          type="button"
+          onClick={onCopyViewLink}
+          className="w-full rounded-md border border-slate-200 px-2 py-1.5 text-xs font-medium text-slate-500 transition-colors hover:border-slate-300 hover:text-slate-900 dark:border-zinc-800 dark:text-zinc-400 dark:hover:border-zinc-700 dark:hover:text-zinc-100"
+        >
+          {viewLinkCopied ? "Link copied" : "Copy link to this view"}
+        </button>
+      </div>
+
+      <label className="flex cursor-pointer items-start gap-2 border-b border-slate-200 py-3 text-[13px] text-slate-600 dark:border-zinc-800 dark:text-zinc-400">
+        <input
+          type="checkbox"
+          checked={namedAccountsOnly}
+          onChange={onToggleNamedAccountsOnly}
+          className="mt-0.5 h-3.5 w-3.5 flex-shrink-0 accent-indigo-600"
+        />
+        <span>
+          <span className="font-semibold text-slate-700 dark:text-zinc-200">Named accounts only</span>
+          <span className="mt-0.5 block text-[11px] leading-snug text-slate-400 dark:text-zinc-500">
+            Hide macro and vendor news. Only signals naming an account in
+            someone&apos;s territory book.
+          </span>
+        </span>
+      </label>
+
       <div className="border-b border-slate-200 pb-3 dark:border-zinc-800">
         <p className="mb-2 text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-zinc-400">Date Range</p>
         <div className="flex overflow-hidden rounded-md border border-slate-200 dark:border-zinc-800">
@@ -147,6 +199,22 @@ function Sidebar({
           ))}
         </div>
       </div>
+
+      <FilterSection
+        title="Patch"
+        options={patchOptions}
+        selected={patchFilter}
+        onToggle={onTogglePatch}
+        colorFor={pillClassForPatch}
+        labelFor={(v) => PATCH_LABELS[v] ?? v}
+      />
+
+      <FilterSection
+        title="AE"
+        options={aeOptions}
+        selected={aeFilter}
+        onToggle={onToggleAe}
+      />
 
       <FilterSection
         title="Practice Area"

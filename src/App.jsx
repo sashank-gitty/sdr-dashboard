@@ -11,12 +11,20 @@ import ErrorState from "./components/ErrorState.jsx"
 import { useTheme } from "./lib/useTheme.js"
 import { useLocalStorageState } from "./lib/useLocalStorageState.js"
 import { computeMetrics } from "./lib/metrics.js"
+import { readViewFromUrl, writeViewToUrl } from "./lib/patchViewUrl.js"
+import { PATCHES, PATCH_LABELS } from "../shared/patches.js"
 
 const DATE_RANGE_DAYS = { "7": 7, "30": 30, "90": 90 }
 
 function toggleValue(list, value) {
   return list.includes(value) ? list.filter((v) => v !== value) : [...list, value]
 }
+
+// A view arriving by URL is an explicit instruction ("show me the FSI
+// feed") and outranks whatever this browser last had selected. Read
+// once at module scope so the initial render already has it and the
+// feed never flashes the wrong contents first.
+const urlView = readViewFromUrl()
 
 function App() {
   const { theme, toggleTheme } = useTheme()
@@ -28,6 +36,22 @@ function App() {
   const [scopeFilter, setScopeFilter] = useLocalStorageState("sdr-dashboard-scope-filter", [])
   const [entityFilter, setEntityFilter] = useLocalStorageState("sdr-dashboard-entity-filter", [])
   const [signalTypeFilter, setSignalTypeFilter] = useLocalStorageState("sdr-dashboard-signal-type-filter", [])
+  const [patchFilter, setPatchFilter] = useLocalStorageState(
+    "sdr-dashboard-patch-filter",
+    [],
+    urlView?.patchFilter,
+  )
+  const [aeFilter, setAeFilter] = useLocalStorageState(
+    "sdr-dashboard-ae-filter",
+    [],
+    urlView?.aeFilter,
+  )
+  const [namedAccountsOnly, setNamedAccountsOnly] = useLocalStorageState(
+    "sdr-dashboard-named-accounts-only",
+    false,
+    urlView?.namedAccountsOnly,
+  )
+  const [viewLinkCopied, setViewLinkCopied] = useState(false)
   const [activeTab, setActiveTab] = useLocalStorageState("sdr-dashboard-active-tab", "all")
   const [activePill, setActivePill] = useLocalStorageState("sdr-dashboard-active-pill", "all")
   const [sidebarOpen, setSidebarOpen] = useLocalStorageState("sdr-dashboard-sidebar-open", true)
@@ -97,13 +121,41 @@ function App() {
     () => [...new Set(signals.map((item) => item.signalType))].sort(),
     [signals],
   )
+  // Patches list every canonical patch rather than only those present in
+  // the feed, so an empty patch reads as "nothing landed in your
+  // territory this week" instead of vanishing from the sidebar.
+  const patchOptions = PATCHES
+  const aeOptions = useMemo(
+    () => [...new Set(signals.flatMap((item) => item.owningAes ?? []))].sort(),
+    [signals],
+  )
+
+  // The territory filters are a different kind of filter from the rest.
+  // Practice area, signal type and the date range narrow what you're
+  // looking at within your own dashboard; patch and AE decide whose
+  // dashboard it is. So these apply above the feed, to the KPI tiles,
+  // volume chart and highlights rail as well — otherwise a rep opening
+  // their own patch link would read the whole team's numbers.
+  const territoryItems = useMemo(() => {
+    if (!patchFilter.length && !aeFilter.length && !namedAccountsOnly) return signals
+    return signals.filter((item) => {
+      if (patchFilter.length && !(item.patches ?? []).some((p) => patchFilter.includes(p))) {
+        return false
+      }
+      if (aeFilter.length && !(item.owningAes ?? []).some((a) => aeFilter.includes(a))) {
+        return false
+      }
+      if (namedAccountsOnly && !(item.matchedAccounts ?? []).length) return false
+      return true
+    })
+  }, [signals, patchFilter, aeFilter, namedAccountsOnly])
 
   // Pure chronological order — used wherever "recent" needs to actually
   // mean recent (the activity timeline, weekly metrics), independent of
   // how the main feed is ranked.
   const chronologicalItems = useMemo(
-    () => [...signals].sort((a, b) => (a.date < b.date ? 1 : -1)),
-    [signals],
+    () => [...territoryItems].sort((a, b) => (a.date < b.date ? 1 : -1)),
+    [territoryItems],
   )
 
   // Main feed order: outreach relevance first (Issue 3 — "most important
@@ -114,12 +166,12 @@ function App() {
   // unfairly floating to the top.
   const sortedItems = useMemo(
     () =>
-      [...signals].sort((a, b) => {
+      [...territoryItems].sort((a, b) => {
         const relDiff = (b.outreachRelevance ?? 3) - (a.outreachRelevance ?? 3)
         if (relDiff !== 0) return relDiff
         return a.date < b.date ? 1 : -1
       }),
-    [signals],
+    [territoryItems],
   )
 
   const metrics = useMemo(() => computeMetrics(chronologicalItems), [chronologicalItems])
@@ -144,7 +196,8 @@ function App() {
       if (cutoff && new Date(`${item.date}T00:00:00`) < cutoff) return false
 
       if (query) {
-        const haystack = `${item.headline} ${item.summary} ${item.entity}`.toLowerCase()
+        const haystack =
+          `${item.headline} ${item.summary} ${item.entity} ${(item.matchedAccounts ?? []).join(" ")}`.toLowerCase()
         if (!haystack.includes(query)) return false
       }
 
@@ -152,14 +205,40 @@ function App() {
     })
   }, [sortedItems, search, dateRange, practiceAreaFilter, scopeFilter, entityFilter, signalTypeFilter])
 
+  // Keep the address bar in step with the territory filters so the
+  // current view is always shareable, not just after pressing a button.
+  useEffect(() => {
+    writeViewToUrl({ patchFilter, aeFilter, namedAccountsOnly })
+  }, [patchFilter, aeFilter, namedAccountsOnly])
+
+  const handleCopyViewLink = async () => {
+    try {
+      await navigator.clipboard.writeText(window.location.href)
+      setViewLinkCopied(true)
+      setTimeout(() => setViewLinkCopied(false), 1500)
+    } catch {
+      // Clipboard access can be denied by the browser; fail silently,
+      // the URL is in the address bar to copy by hand either way.
+    }
+  }
+
   const activeFilterCount =
-    practiceAreaFilter.length + scopeFilter.length + entityFilter.length + signalTypeFilter.length
+    practiceAreaFilter.length +
+    scopeFilter.length +
+    entityFilter.length +
+    signalTypeFilter.length +
+    patchFilter.length +
+    aeFilter.length +
+    (namedAccountsOnly ? 1 : 0)
 
   const handleClearAll = () => {
     setPracticeAreaFilter([])
     setScopeFilter([])
     setEntityFilter([])
     setSignalTypeFilter([])
+    setPatchFilter([])
+    setAeFilter([])
+    setNamedAccountsOnly(false)
   }
 
   const handleClearEverything = () => {
@@ -237,15 +316,25 @@ function App() {
         scopeOptions={scopeOptions}
         entityOptions={entityOptions}
         signalTypeOptions={signalTypeOptions}
+        patchOptions={patchOptions}
+        aeOptions={aeOptions}
         practiceAreaFilter={practiceAreaFilter}
         scopeFilter={scopeFilter}
         entityFilter={entityFilter}
         signalTypeFilter={signalTypeFilter}
+        patchFilter={patchFilter}
+        aeFilter={aeFilter}
+        namedAccountsOnly={namedAccountsOnly}
         onTogglePracticeArea={(v) => setPracticeAreaFilter((list) => toggleValue(list, v))}
         onToggleScope={(v) => setScopeFilter((list) => toggleValue(list, v))}
         onToggleEntity={(v) => setEntityFilter((list) => toggleValue(list, v))}
         onToggleSignalType={(v) => setSignalTypeFilter((list) => toggleValue(list, v))}
+        onTogglePatch={(v) => setPatchFilter((list) => toggleValue(list, v))}
+        onToggleAe={(v) => setAeFilter((list) => toggleValue(list, v))}
+        onToggleNamedAccountsOnly={() => setNamedAccountsOnly((v) => !v)}
         onClearAll={handleClearAll}
+        onCopyViewLink={handleCopyViewLink}
+        viewLinkCopied={viewLinkCopied}
       />
 
       <div className="flex flex-col lg:flex-row">
@@ -262,20 +351,64 @@ function App() {
               scopeOptions={scopeOptions}
               entityOptions={entityOptions}
               signalTypeOptions={signalTypeOptions}
+              patchOptions={patchOptions}
+              aeOptions={aeOptions}
               practiceAreaFilter={practiceAreaFilter}
               scopeFilter={scopeFilter}
               entityFilter={entityFilter}
               signalTypeFilter={signalTypeFilter}
+              patchFilter={patchFilter}
+              aeFilter={aeFilter}
+              namedAccountsOnly={namedAccountsOnly}
               onTogglePracticeArea={(v) => setPracticeAreaFilter((list) => toggleValue(list, v))}
               onToggleScope={(v) => setScopeFilter((list) => toggleValue(list, v))}
               onToggleEntity={(v) => setEntityFilter((list) => toggleValue(list, v))}
               onToggleSignalType={(v) => setSignalTypeFilter((list) => toggleValue(list, v))}
+              onTogglePatch={(v) => setPatchFilter((list) => toggleValue(list, v))}
+              onToggleAe={(v) => setAeFilter((list) => toggleValue(list, v))}
+              onToggleNamedAccountsOnly={() => setNamedAccountsOnly((v) => !v)}
               onClearAll={handleClearAll}
+              onCopyViewLink={handleCopyViewLink}
+              viewLinkCopied={viewLinkCopied}
             />
           </div>
         </div>
 
         <main className="min-w-0 flex-1 px-4 py-5 sm:px-6">
+          {/* The territory filters rescope every number on the page, not
+              just the feed, so say so plainly — otherwise a smaller KPI
+              count reads as signals having gone missing. */}
+          {(patchFilter.length > 0 || aeFilter.length > 0 || namedAccountsOnly) && (
+            <div className="mb-4 flex flex-wrap items-center gap-x-2 gap-y-1 rounded-lg border border-indigo-500/20 bg-indigo-500/5 px-3 py-2 text-xs text-slate-600 dark:text-zinc-300">
+              <span className="font-semibold uppercase tracking-wider text-indigo-600 dark:text-indigo-400">
+                Patch view
+              </span>
+              <span>
+                {[
+                  patchFilter.map((p) => PATCH_LABELS[p] ?? p).join(", "),
+                  aeFilter.join(", "),
+                  namedAccountsOnly ? "named accounts only" : "",
+                ]
+                  .filter(Boolean)
+                  .join(" · ")}
+              </span>
+              <span className="text-slate-400 dark:text-zinc-500">
+                &mdash; every figure below is scoped to this view
+              </span>
+              <button
+                type="button"
+                onClick={() => {
+                  setPatchFilter([])
+                  setAeFilter([])
+                  setNamedAccountsOnly(false)
+                }}
+                className="ml-auto rounded-md border border-slate-200 px-2 py-0.5 font-medium text-slate-500 transition-colors hover:border-slate-300 hover:text-slate-900 dark:border-zinc-700 dark:text-zinc-400 dark:hover:border-zinc-600 dark:hover:text-zinc-100"
+              >
+                Show all patches
+              </button>
+            </div>
+          )}
+
           <div className="mb-5">
             <KpiGrid metrics={metrics} />
           </div>

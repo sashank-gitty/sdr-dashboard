@@ -57,6 +57,38 @@ export const PRACTICE_AREA_LABELS = {
   market_research: "Market Research",
 }
 
+// AE patch (see shared/patches.js) — the territory dimension. Rose and
+// indigo are deliberately absent: both are already spoken for as the
+// severity and relevance accents, and a patch is a neutral fact about
+// which rep owns a signal, never a statement about its urgency.
+const PATCH_STYLES = {
+  fsi: "bg-emerald-500/10 text-emerald-600 border-emerald-500/20 dark:text-emerald-400",
+  tmt: "bg-sky-500/10 text-sky-600 border-sky-500/20 dark:text-sky-400",
+  goods_services: "bg-amber-500/10 text-amber-600 border-amber-500/20 dark:text-amber-400",
+  hcls: "bg-teal-500/10 text-teal-600 border-teal-500/20 dark:text-teal-400",
+  locations: "bg-fuchsia-500/10 text-fuchsia-600 border-fuchsia-500/20 dark:text-fuchsia-400",
+  public_sector: "bg-slate-500/10 text-slate-600 border-slate-500/20 dark:text-zinc-400 dark:border-zinc-500/20",
+}
+
+export { PATCH_LABELS } from "../../shared/patches.js"
+
+export function pillClassForPatch(patch) {
+  return `${PILL_BASE} ${PATCH_STYLES[patch] ?? PATCH_STYLES.public_sector}`
+}
+
+// A signal that names an account someone actually owns is the strongest
+// thing in the feed, so it gets emerald (an existing relationship, a
+// renewal or expansion angle) or amber (a named prospect, a net-new
+// angle) rather than another neutral grey pill.
+const ACCOUNT_STATUS_STYLES = {
+  customer: "bg-emerald-500/10 text-emerald-600 border-emerald-500/20 dark:text-emerald-400",
+  prospect: "bg-amber-500/10 text-amber-600 border-amber-500/20 dark:text-amber-400",
+}
+
+export function pillClassForAccountStatus(status) {
+  return `${PILL_BASE} ${ACCOUNT_STATUS_STYLES[status] ?? ACCOUNT_STATUS_STYLES.prospect}`
+}
+
 function hashString(value) {
   let hash = 0
   for (let i = 0; i < value.length; i += 1) {
@@ -117,4 +149,13 @@ export const PRACTICE_AREA_COLOR_LEGEND = [
   { swatch: "bg-sky-500", label: "Customer Experience", examples: "journey analytics, contact center, digital CX" },
   { swatch: "bg-violet-500", label: "Employee Experience", examples: "engagement, lifecycle, workplace culture" },
   { swatch: "bg-teal-500", label: "Market Research", examples: "synthetic data, UX/UI testing, video feedback, brand tracking" },
+]
+
+export const PATCH_COLOR_LEGEND = [
+  { swatch: "bg-emerald-500", label: "FSI", examples: "banks, insurers, super, wealth, fintech, professional services" },
+  { swatch: "bg-sky-500", label: "TMT", examples: "software, telco, media" },
+  { swatch: "bg-amber-500", label: "Goods & Services", examples: "FMCG, mining, energy, agriculture, manufacturing, transport" },
+  { swatch: "bg-teal-500", label: "HCLS", examples: "hospitals, aged care, pharma, biotech" },
+  { swatch: "bg-fuchsia-500", label: "Locations", examples: "retail, hospitality, travel, property" },
+  { swatch: "bg-slate-400", label: "Public Sector", examples: "government, agencies, defence, public education" },
 ]

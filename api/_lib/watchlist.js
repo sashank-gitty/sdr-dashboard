@@ -44,20 +44,91 @@ export const VENDOR_WATCHLIST = [
   "Tracksuit",
 ]
 
-export const ACCOUNT_WATCHLIST = [
-  "Commonwealth Bank of Australia",
-  "National Australia Bank",
-  "Westpac",
-  "ANZ Bank Australia",
-  "Bendigo Bank",
-  "Bank of Sydney",
-  "Woolworths customer experience",
-  "Coles Flybuys",
-  "Telstra customer experience",
-  "Qantas customer experience",
-  "OneNZ",
-  "Nufarm",
-]
+// The account queries are derived from the AE territory book
+// (api/_lib/accountRegistry.js) rather than hand-written. The previous
+// hand-written list watched the ANZ enterprise majors — CBA, NAB,
+// Westpac, Telstra, Qantas, Woolworths — and not one of them appears in
+// any of the four AEs' territories, which are corporate/mid-market. So
+// every account-level signal the pipeline collected was about companies
+// nobody on this team can sell to.
+//
+// The territory book has ~1,700 accounts and the cron runs once a day,
+// so they cannot all be queried by name every run. Coverage is split:
+//
+//   - Customers (~105) are queried by name on rotation. They're the
+//     highest-value watch (renewal risk, expansion, churn) and small
+//     enough to cycle through in a few days.
+//   - Prospects rotate too, but a ~1,600-deep list cycles slowly, so
+//     name-matching is opportunistic for them. Their real coverage
+//     comes from the thematic patch tagging the normalizer applies to
+//     sector and regulatory news, which lands in a patch view without
+//     needing the account named at all.
+//
+// Tune the two per-run constants below against the `queried` figure in
+// the /api/ingest response summary if the function starts running long.
+import { ACCOUNT_REGISTRY } from "./accountRegistry.js"
+
+const CUSTOMER_QUERIES_PER_RUN = 25
+const PROSPECT_QUERIES_PER_RUN = 10
+
+// Registry names are legal entity names, frequently in caps
+// ("BRIDGESTONE MINING SOLUTIONS AUSTRALIA PTY LTD"). Google News does
+// better with the trading name, so drop the legal suffix and de-shout.
+function toSearchQuery(name) {
+  const trimmed = name
+    .replace(/\([^)]*\)/g, " ")
+    .replace(
+      /\b(pty\.?|proprietary|ltd\.?|limited|inc\.?|incorporated|llc|plc)\b/gi,
+      " ",
+    )
+    .replace(/[.,]/g, " ")
+    .replace(/\s+/g, " ")
+    .trim()
+
+  // Only re-case names that are shouted; leave "Rea Group Ltd." alone.
+  const deShouted =
+    trimmed === trimmed.toUpperCase()
+      ? trimmed
+          .toLowerCase()
+          .replace(/\b[a-z]/g, (c) => c.toUpperCase())
+      : trimmed
+  return deShouted
+}
+
+function queriesFor(status) {
+  return [
+    ...new Set(
+      ACCOUNT_REGISTRY.filter((a) => (a.status ?? null) === status)
+        .map((a) => toSearchQuery(a.name))
+        // A one-word query like "Aon" returns mostly noise; the
+        // normalizer would skip it anyway, so don't spend the fetch.
+        .filter((q) => q.length >= 8),
+    ),
+  ].sort()
+}
+
+export const CUSTOMER_ACCOUNT_QUERIES = queriesFor("customer")
+export const PROSPECT_ACCOUNT_QUERIES = queriesFor("prospect")
+
+// Deterministic day-indexed window so consecutive daily runs advance
+// through the list instead of re-querying the same slice. Wraps around.
+function rotatingSlice(list, size, dayIndex) {
+  if (list.length === 0 || size <= 0) return []
+  if (list.length <= size) return list
+  const start = (dayIndex * size) % list.length
+  const end = start + size
+  return end <= list.length
+    ? list.slice(start, end)
+    : [...list.slice(start), ...list.slice(0, end - list.length)]
+}
+
+export function accountQueriesForRun(date = new Date()) {
+  const dayIndex = Math.floor(date.getTime() / 86_400_000)
+  return [
+    ...rotatingSlice(CUSTOMER_ACCOUNT_QUERIES, CUSTOMER_QUERIES_PER_RUN, dayIndex),
+    ...rotatingSlice(PROSPECT_ACCOUNT_QUERIES, PROSPECT_QUERIES_PER_RUN, dayIndex),
+  ]
+}
 
 export const REGULATORY_WATCHLIST = [
   "AFCA Australia complaints",
@@ -111,11 +182,20 @@ export const MARKET_RESEARCH_WATCHLIST = [
   "ad testing Australia marketing",
 ]
 
-export const FULL_WATCHLIST = [
+// Everything except the account queries is stable run to run — these
+// are themes, not names, so there's nothing to rotate through.
+export const STANDING_WATCHLIST = [
   ...VENDOR_WATCHLIST,
-  ...ACCOUNT_WATCHLIST,
   ...REGULATORY_WATCHLIST,
   ...MACRO_WATCHLIST,
   ...EX_WATCHLIST,
   ...MARKET_RESEARCH_WATCHLIST,
 ]
+
+/**
+ * The queries for one ingest run: the standing thematic watchlist plus
+ * today's rotating slice of named territory accounts.
+ */
+export function watchlistForRun(date = new Date()) {
+  return [...STANDING_WATCHLIST, ...accountQueriesForRun(date)]
+}

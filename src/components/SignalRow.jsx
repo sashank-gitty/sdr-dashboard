@@ -1,5 +1,14 @@
 import { useState } from "react"
-import { pillClassForScope, pillClassForSignalType, pillClassForPracticeArea, PRACTICE_AREA_LABELS, REGULATORY_ACCENT } from "../lib/colors.js"
+import {
+  pillClassForScope,
+  pillClassForSignalType,
+  pillClassForPracticeArea,
+  pillClassForPatch,
+  pillClassForAccountStatus,
+  PRACTICE_AREA_LABELS,
+  PATCH_LABELS,
+  REGULATORY_ACCENT,
+} from "../lib/colors.js"
 import { REGULATORY_SIGNAL_TYPES, HIGH_RELEVANCE_THRESHOLD } from "../lib/relevance.js"
 import Checkbox from "./Checkbox.jsx"
 
@@ -25,6 +34,12 @@ function SignalRow({ item, reviewed, onToggleReviewed, selected, onToggleSelect 
   const isRegulatory = REGULATORY_SIGNAL_TYPES.has(item.signalType)
   const isHighRelevance = (item.outreachRelevance ?? 0) >= HIGH_RELEVANCE_THRESHOLD
   const practiceAreaLabel = PRACTICE_AREA_LABELS[item.practiceArea] ?? PRACTICE_AREA_LABELS.cx
+
+  // Territory attribution. Rows predating migration 005 have none of
+  // this, so every field is treated as optional.
+  const patches = item.patches ?? []
+  const matchedAccounts = item.matchedAccounts ?? []
+  const owningAes = item.owningAes ?? []
 
   const handleCopy = async () => {
     try {
@@ -117,6 +132,33 @@ function SignalRow({ item, reviewed, onToggleReviewed, selected, onToggleSelect 
           <span className="rounded-full border border-violet-500/20 bg-violet-500/10 px-2 py-0.5 text-[11px] font-semibold text-violet-600 dark:text-violet-400">
             {item.entity}
           </span>
+
+          {/* A matched account outranks everything else on the card: it
+              means a company in someone's territory book is in the news
+              today, which is the whole point of the patch views. */}
+          {matchedAccounts.length > 0 && (
+            <span
+              title={
+                `${item.accountStatus === "customer" ? "Existing customer" : "Prospect"} in ` +
+                `${owningAes.length ? owningAes.join(" / ") : "the"} territory: ` +
+                matchedAccounts.join(", ")
+              }
+              className={`rounded-full px-2 py-0.5 text-[11px] font-semibold ${pillClassForAccountStatus(item.accountStatus)}`}
+            >
+              {item.accountStatus === "customer" ? "Customer" : "Prospect"}
+              {owningAes.length > 0 && ` · ${owningAes.join(" / ")}`}
+            </span>
+          )}
+
+          {patches.map((patch) => (
+            <span
+              key={patch}
+              title={`Patch: ${PATCH_LABELS[patch] ?? patch}`}
+              className={`rounded-full px-2 py-0.5 text-[11px] font-semibold ${pillClassForPatch(patch)}`}
+            >
+              {PATCH_LABELS[patch] ?? patch}
+            </span>
+          ))}
 
           <div className="ml-auto flex items-center gap-1.5">
             <button
