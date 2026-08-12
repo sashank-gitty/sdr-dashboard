@@ -1,5 +1,5 @@
 import { useState } from "react"
-import { pillClassForScope, pillClassForSignalType } from "../lib/colors.js"
+import { pillClassForScope, pillClassForSignalType, pillClassForPracticeArea, PRACTICE_AREA_LABELS } from "../lib/colors.js"
 
 const DATE_RANGES = [
   { value: "7", label: "7d" },
@@ -17,7 +17,7 @@ function swatchClassFor(colorFor, option) {
 
 const SEARCHABLE_THRESHOLD = 8
 
-function FilterSection({ title, options, selected, onToggle, colorFor }) {
+function FilterSection({ title, options, selected, onToggle, colorFor, labelFor }) {
   const [open, setOpen] = useState(
     () => typeof window === "undefined" || window.innerWidth > 900,
   )
@@ -76,7 +76,9 @@ function FilterSection({ title, options, selected, onToggle, colorFor }) {
                   {colorFor && (
                     <span className={`h-2 w-2 flex-shrink-0 rounded-full ${swatchClassFor(colorFor, option)}`} />
                   )}
-                  <span className="truncate capitalize">{option}</span>
+                  <span className={labelFor ? "truncate" : "truncate capitalize"}>
+                    {labelFor ? labelFor(option) : option}
+                  </span>
                 </label>
               ))
             )}
@@ -90,18 +92,22 @@ function FilterSection({ title, options, selected, onToggle, colorFor }) {
 function Sidebar({
   dateRange,
   onDateRangeChange,
+  practiceAreaOptions,
   scopeOptions,
   entityOptions,
   signalTypeOptions,
+  practiceAreaFilter,
   scopeFilter,
   entityFilter,
   signalTypeFilter,
+  onTogglePracticeArea,
   onToggleScope,
   onToggleEntity,
   onToggleSignalType,
   onClearAll,
 }) {
-  const activeCount = scopeFilter.length + entityFilter.length + signalTypeFilter.length
+  const activeCount =
+    practiceAreaFilter.length + scopeFilter.length + entityFilter.length + signalTypeFilter.length
 
   return (
     <aside className="flex h-full flex-col gap-1 overflow-y-auto border-r border-slate-200 bg-white/60 p-4 dark:border-zinc-800 dark:bg-zinc-900/40 lg:sticky lg:top-[57px] lg:h-[calc(100vh-57px)]">
@@ -141,6 +147,15 @@ function Sidebar({
           ))}
         </div>
       </div>
+
+      <FilterSection
+        title="Practice Area"
+        options={practiceAreaOptions}
+        selected={practiceAreaFilter}
+        onToggle={onTogglePracticeArea}
+        colorFor={pillClassForPracticeArea}
+        labelFor={(v) => PRACTICE_AREA_LABELS[v] ?? v}
+      />
 
       <FilterSection
         title="Scope"

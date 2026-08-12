@@ -41,6 +41,22 @@ const SCOPE_STYLES = {
   micro: "bg-indigo-500/10 text-indigo-600 border-indigo-500/20 dark:text-indigo-400",
 }
 
+// Practice area (see shared/practiceAreas.js): a third, independent
+// dimension alongside scope and signal type, so CX/EX/Market Research
+// stay visually distinct from both the severity accent (rose, reserved
+// for regulatory) and the relevance accent (indigo) introduced earlier.
+const PRACTICE_AREA_STYLES = {
+  cx: "bg-sky-500/10 text-sky-600 border-sky-500/20 dark:text-sky-400",
+  ex: "bg-violet-500/10 text-violet-600 border-violet-500/20 dark:text-violet-400",
+  market_research: "bg-teal-500/10 text-teal-600 border-teal-500/20 dark:text-teal-400",
+}
+
+export const PRACTICE_AREA_LABELS = {
+  cx: "CX",
+  ex: "EX",
+  market_research: "Market Research",
+}
+
 function hashString(value) {
   let hash = 0
   for (let i = 0; i < value.length; i += 1) {
@@ -58,6 +74,10 @@ export function pillClassForSignalType(signalType) {
 
 export function pillClassForScope(scope) {
   return `${PILL_BASE} ${SCOPE_STYLES[scope] ?? SCOPE_STYLES.macro}`
+}
+
+export function pillClassForPracticeArea(practiceArea) {
+  return `${PILL_BASE} ${PRACTICE_AREA_STYLES[practiceArea] ?? PRACTICE_AREA_STYLES.cx}`
 }
 
 // Used for chart strokes / dots where a hex value is required instead of a class.
@@ -91,4 +111,10 @@ export const SIGNAL_TYPE_COLOR_LEGEND = [
 export const SCOPE_COLOR_LEGEND = [
   { swatch: "bg-indigo-500", label: "Micro", examples: "account-level signal" },
   { swatch: "bg-slate-400", label: "Macro", examples: "market-level signal" },
+]
+
+export const PRACTICE_AREA_COLOR_LEGEND = [
+  { swatch: "bg-sky-500", label: "Customer Experience", examples: "journey analytics, contact center, digital CX" },
+  { swatch: "bg-violet-500", label: "Employee Experience", examples: "engagement, lifecycle, workplace culture" },
+  { swatch: "bg-teal-500", label: "Market Research", examples: "synthetic data, UX/UI testing, video feedback, brand tracking" },
 ]

@@ -1,4 +1,4 @@
-import { SIGNAL_TYPE_COLOR_LEGEND, SCOPE_COLOR_LEGEND } from "../lib/colors.js"
+import { SIGNAL_TYPE_COLOR_LEGEND, SCOPE_COLOR_LEGEND, PRACTICE_AREA_COLOR_LEGEND } from "../lib/colors.js"
 
 function LegendRow({ swatch, label, examples }) {
   return (
@@ -15,7 +15,15 @@ function LegendRow({ swatch, label, examples }) {
 function TagLegend() {
   return (
     <div className="mb-3 rounded-lg border border-slate-200 bg-white/60 p-3 backdrop-blur-sm dark:border-zinc-800 dark:bg-zinc-900/60">
-      <div className="grid grid-cols-1 gap-x-6 sm:grid-cols-2">
+      <div className="grid grid-cols-1 gap-x-6 sm:grid-cols-2 xl:grid-cols-3">
+        <div>
+          <p className="mb-1 text-[11px] font-semibold uppercase tracking-wider text-slate-400 dark:text-zinc-500">
+            Practice Area Colors
+          </p>
+          {PRACTICE_AREA_COLOR_LEGEND.map((entry) => (
+            <LegendRow key={entry.label} {...entry} />
+          ))}
+        </div>
         <div>
           <p className="mb-1 text-[11px] font-semibold uppercase tracking-wider text-slate-400 dark:text-zinc-500">
             Signal Type Colors

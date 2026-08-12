@@ -75,7 +75,7 @@ export default async function handler(req, res) {
 
           const dedupeKey = raw.sourceUrl
           await sql`
-            INSERT INTO signals (id, headline, summary, source_url, date, scope, entity, signal_type, origin, dedupe_key, outreach_relevance)
+            INSERT INTO signals (id, headline, summary, source_url, date, scope, entity, signal_type, practice_area, origin, dedupe_key, outreach_relevance)
             VALUES (
               ${idFor(dedupeKey)},
               ${cleanTitle(raw.title)},
@@ -85,6 +85,7 @@ export default async function handler(req, res) {
               ${normalized.scope},
               ${normalized.entity},
               ${normalized.signalType},
+              ${normalized.practiceArea},
               'news',
               ${dedupeKey},
               ${normalized.outreachRelevance}

@@ -21,6 +21,7 @@ export default async function handler(req, res) {
         scope,
         entity,
         signal_type AS "signalType",
+        practice_area AS "practiceArea",
         origin,
         outreach_relevance AS "outreachRelevance",
         (reviewed_at IS NOT NULL) AS reviewed

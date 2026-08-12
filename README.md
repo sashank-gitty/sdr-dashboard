@@ -9,7 +9,7 @@ A single-page competitor and industry news/signal intelligence dashboard, built 
 - Tabbed, filterable signal queue (All / Macro / Micro) with quick filter pills (This Week, Regulatory & Pain Points, Leadership Moves, Competitor Moves)
 - Per-signal quick actions: copy to clipboard, mark reviewed
 - Right-rail activity stream + rule-based weekly highlights (most active entity, leading signal type, regulatory pressure)
-- Sidebar filters by date range, scope (macro/micro), entity, and signal type — filters combine
+- Sidebar filters by date range, practice area (CX / EX / Market Research), scope (macro/micro), entity, and signal type — filters combine
 - Global search plus a `Cmd/Ctrl+K` command palette for fast lookup and quick actions
 - Full dark / light theme support (persisted to `localStorage`, defaults to system preference)
 
@@ -34,6 +34,7 @@ Row shape (camelCase over the wire, snake_case in Postgres):
   "scope": "macro | micro",
   "entity": "string",
   "signalType": "see shared/signalTypes.js for the canonical list",
+  "practiceArea": "cx | ex | market_research — see shared/practiceAreas.js",
   "origin": "seed | news | community"
 }
 ```
@@ -44,11 +45,11 @@ Row shape (camelCase over the wire, snake_case in Postgres):
 2. **Set env vars** (Vercel dashboard → Project → Settings → Environment Variables):
    - `ANTHROPIC_API_KEY` — used by the ingest pipeline's normalization step.
    - `CRON_SECRET` — any random string you generate; Vercel automatically sends it as `Authorization: Bearer $CRON_SECRET` when invoking the cron job, and `/api/ingest` checks it matches.
-3. **Run the migration**: open the Neon/Postgres query editor in the Vercel dashboard and run the contents of `db/migrations/001_create_signals.sql`.
+3. **Run the migrations**: open the Neon/Postgres query editor in the Vercel dashboard and run each file in `db/migrations/` in order (`001_...` through `004_...` as of this writing — check the directory for the current last one).
 4. **Seed existing data**: locally, `vercel env pull .env.local`, then `node --env-file=.env.local db/seed.mjs`.
 5. **Verify ingestion manually before trusting the cron**: `curl -H "Authorization: Bearer $CRON_SECRET" https://<your-deploy>/api/ingest` and check the response summary (`queried`, `rawItems`, `afterDedupe`, `normalized`, `inserted`, `errors`).
 
-Not yet verified end-to-end (blocked by this dev environment's network policy, needs checking against a real deploy): the Google News RSS fetch and redirect-resolution, and actual Claude normalization output quality. Also worth knowing: Vercel Hobby plan cron jobs are capped at once/day and function execution time is capped — `vercel.json` requests `maxDuration: 60` for `/api/ingest`, but if the watchlist (currently 39 queries) or `MAX_ITEMS_PER_RUN` (25) turns out too slow for your plan's actual limits, trim either in `api/_lib/watchlist.js` / `api/ingest.js`.
+Not yet verified end-to-end (blocked by this dev environment's network policy, needs checking against a real deploy): the Google News RSS fetch and redirect-resolution, and actual Claude normalization output quality. Also worth knowing: Vercel Hobby plan cron jobs are capped at once/day and function execution time is capped — `vercel.json` requests `maxDuration: 60` for `/api/ingest`, but if the watchlist (currently ~70 queries, up from ~39 after the EX/market-research expansion — `api/_lib/fetchNews.js`'s fetch concurrency was raised from 5 to 10 to compensate) or `MAX_ITEMS_PER_RUN` (25) turns out too slow for your plan's actual limits, trim either in `api/_lib/watchlist.js` / `api/ingest.js`. Watch the first few post-deploy `summary` responses from `/api/ingest` closely for this.
 
 ## Development
 
