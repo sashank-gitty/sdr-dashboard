@@ -6,8 +6,9 @@ A single-page competitor and industry news/signal intelligence dashboard, built 
 
 - KPI summary row (total signals, weekly trend, regulatory/pain-point signals, entities tracked) with sparklines
 - 30-day macro vs. micro signal volume chart
-- Tabbed, filterable signal queue (All / Macro / Micro) with quick filter pills (This Week, Regulatory & Pain Points, Leadership Moves, Competitor Moves)
-- Per-signal quick actions: copy to clipboard, mark reviewed
+- Main feed ranked by LLM-scored outreach relevance (not just recency), one-line collapsed summaries that expand on click
+- Tabbed, filterable signal queue (All / Macro / Micro) with quick filter pills (High Relevance, This Week, Regulatory & Pain Points, Leadership Moves, Competitor Moves)
+- Per-signal quick actions: copy to clipboard, mark reviewed (durable — backed by Postgres, not localStorage)
 - Right-rail activity stream + rule-based weekly highlights (most active entity, leading signal type, regulatory pressure)
 - Sidebar filters by date range, scope (macro/micro), entity, and signal type — filters combine
 - Global search plus a `Cmd/Ctrl+K` command palette for fast lookup and quick actions
@@ -19,8 +20,10 @@ Signal data lives in Postgres (Neon, connected via Vercel's native integration),
 
 - **`GET /api/signals`** — the frontend fetches this at runtime instead of importing a static file.
 - **`POST /api/ingest`** — pulls Google News RSS for a watchlist of tracked entities/topics (`api/_lib/watchlist.js`), dedupes against existing rows, normalizes new items into the schema via a Claude API call (`api/_lib/normalize.js`), and inserts them. Triggered on a daily cron (`vercel.json`), protected by `CRON_SECRET`.
-- **`db/migrations/001_create_signals.sql`** — the `signals` table schema.
+- **`db/migrations/`** — schema, applied in order (001 core table, 002 `outreach_relevance`, 003 `reviewed_at`).
 - **`db/seed.mjs`** — one-time migration of the old static dataset into Postgres (skips the placeholder `example.com` entries).
+- **`db/backfill-relevance.mjs`** — one-time relevance scoring pass for rows that predate ingest-time scoring.
+- **`POST /api/reviews`** — durable "Mark Reviewed" state, `{ids, reviewed}` bulk update.
 
 Row shape (camelCase over the wire, snake_case in Postgres):
 
@@ -33,8 +36,10 @@ Row shape (camelCase over the wire, snake_case in Postgres):
   "date": "YYYY-MM-DD",
   "scope": "macro | micro",
   "entity": "string",
-  "signalType": "see shared/signalTypes.js for the canonical list",
-  "origin": "seed | news | community"
+  "signalType": "see shared/signalTypes.js for the canonical list, or 'community insight' for last30days-derived rows",
+  "origin": "seed | news | community",
+  "outreachRelevance": "integer 1-5, or null if not yet scored",
+  "reviewed": "boolean"
 }
 ```
 
@@ -48,7 +53,13 @@ Row shape (camelCase over the wire, snake_case in Postgres):
 4. **Seed existing data**: locally, `vercel env pull .env.local`, then `node --env-file=.env.local db/seed.mjs`.
 5. **Verify ingestion manually before trusting the cron**: `curl -H "Authorization: Bearer $CRON_SECRET" https://<your-deploy>/api/ingest` and check the response summary (`queried`, `rawItems`, `afterDedupe`, `normalized`, `inserted`, `errors`).
 
-Not yet verified end-to-end (blocked by this dev environment's network policy, needs checking against a real deploy): the Google News RSS fetch and redirect-resolution, and actual Claude normalization output quality. Also worth knowing: Vercel Hobby plan cron jobs are capped at once/day and function execution time is capped — `vercel.json` requests `maxDuration: 60` for `/api/ingest`, but if the watchlist (currently 39 queries) or `MAX_ITEMS_PER_RUN` (25) turns out too slow for your plan's actual limits, trim either in `api/_lib/watchlist.js` / `api/ingest.js`.
+Verified live against a real deployment and database: RSS fetch, redirect resolution, Claude normalization, and relevance scoring all confirmed working. Worth knowing: Vercel Hobby plan cron jobs are capped at once/day and function execution time is capped — `vercel.json` requests `maxDuration: 60` for `/api/ingest`, but if the watchlist (currently 39 queries) or `MAX_ITEMS_PER_RUN` (25) turns out too slow for your plan's actual limits, trim either in `api/_lib/watchlist.js` / `api/ingest.js`.
+
+**Preview deployments use an isolated Neon database branch** (configured when the Postgres integration was connected). Any new migration needs running on *both* the production and preview branches, or the preview deployment will 500 on a missing column until it's caught up — this has bitten twice already. Worth turning off Preview branching to remove the recurring foot-gun if you don't specifically need isolated preview data.
+
+## Community signals (Issue 5)
+
+A third data source beyond the news pipeline: `last30days` (a separate Claude Code skill) run locally against tracked entities, transformed into the same schema, and pushed in as `origin: 'community'` rows — visually distinct in the feed (pink left-border accent + badge). This cannot run on Vercel; it needs a real Claude Code session with genuine internet access, which a serverless function doesn't have. See `scripts/local/README.md` for the full setup (manual push via `db/push-community-signals.mjs`, or a semi-scheduled local `launchd` job) — the scheduled version is built but not yet verified end-to-end against a real macOS machine.
 
 ## Development
 
