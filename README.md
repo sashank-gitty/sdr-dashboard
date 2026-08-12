@@ -11,7 +11,7 @@ A single-page competitor and industry news/signal intelligence dashboard, built 
 - Right-rail activity stream + rule-based weekly highlights (most active entity, leading signal type, regulatory pressure)
 - Sidebar filters by date range, patch, AE, practice area (CX / EX / Market Research), scope (macro/micro), entity, and signal type — filters combine
 - Per-AE patch views: filter to a territory (FSI / TMT / Goods & Services / HCLS / Locations / Public Sector) or to a single AE, and share the result as a link
-- "Named accounts only" toggle to drop macro and vendor news and see just the signals naming a real account in the territory book
+- Account coverage switch: **Named** (only accounts someone already owns) or **Unassigned** (named companies in the news that match nothing in the territory book — whitespace nobody is covering)
 - Global search plus a `Cmd/Ctrl+K` command palette for fast lookup and quick actions
 - Full dark / light theme support (persisted to `localStorage`, defaults to system preference)
 
@@ -33,7 +33,8 @@ independent sources populate it:
    account, the owning AE, and whether they're a customer or a prospect.
    Deterministic and precision-first — a wrong match would file a signal
    into the wrong rep's territory, which is worse than no match. This is
-   the strong case, and what the "Named accounts only" toggle keeps.
+   the strong case, and what the Account Coverage switch isolates in
+   either direction.
 2. **Thematic tagging** by the ingest normalizer, for the majority of
    signals that name no account at all. Broader coverage, softer
    confidence — this is how sector and regulatory news reaches the reps
@@ -64,16 +65,52 @@ The registry is server-side only. It is not imported anywhere under
 `src/`, so the account book never ships in the browser bundle — the
 derived tags travel to the client on each signal row instead.
 
+### Whitespace: finding unassigned accounts
+
+Patch views answer "what's happening to accounts we own". The **Unassigned**
+setting on the Account Coverage switch answers the opposite question, and
+it exists because a thin territory is a normal situation: which named
+companies are in the news that match *nothing* in the territory book?
+
+A signal qualifies as unassigned when it matched no account, has micro
+scope (a macro story about "the Australian retail sector" names no
+company to call), and carries at least one patch. That last condition is
+what keeps the view useful — the ingest normalizer deliberately assigns
+no patch to vendor and competitor news, so a NICE product launch is
+filtered out even though it is also a named company nobody owns.
+
+Combine it with a patch to scope the hunt: `?patch=fsi&accounts=unassigned`
+is "financial services companies in the news that nobody is covering".
+
+Two things feed this view specifically:
+
+- **`MARKET_ENTRY_WATCHLIST`** in `api/_lib/watchlist.js` — queries for
+  companies arriving in ANZ: winning a local licence (AFSL, APRA,
+  RBNZ), registering a local entity, opening an office, appointing a
+  first country manager. The `new entrant` signal type already existed
+  in the taxonomy, but nothing was searching for it, so the class was
+  never collected at all.
+- **The relevance rubric** (`shared/relevanceRubric.js`) scores ANZ
+  market entry as a 5 whether or not the company is on anyone's account
+  list. Without that it scored mid-tier and sank below the fold, since
+  the rest of the rubric is written around tracked accounts. Changing
+  the rubric changes scoring for everything, so re-run
+  `db/backfill-relevance.mjs` after editing it.
+
 ### Sharing a patch view
 
-The patch, AE and named-accounts filters are mirrored into the query
+The patch, AE and account-coverage filters are mirrored into the query
 string, so any view can be handed to the rep who owns it as a link:
 
 ```
-/?patch=fsi                     FSI signals
-/?ae=Terence%20Fong             everything in Terence's territory
-/?patch=tmt&accounts=1          TMT, named accounts only
+/?patch=fsi                        FSI signals
+/?ae=Terence%20Fong                everything in Terence's territory
+/?patch=tmt&accounts=named         TMT, accounts someone already owns
+/?patch=fsi&accounts=unassigned    FSI whitespace — companies nobody covers
 ```
+
+(`accounts=1` from before the Unassigned view existed still resolves to
+`named`, so links already handed out keep working.)
 
 "Copy link to this view" in the sidebar copies the current one. A link
 overrides whatever that browser last had selected, so it works for
@@ -129,7 +166,7 @@ Row shape (camelCase over the wire, snake_case in Postgres):
 
 Not yet verified end-to-end (blocked by this dev environment's network policy, needs checking against a real deploy): the Google News RSS fetch and redirect-resolution, and actual Claude normalization output quality. Also worth knowing: Vercel Hobby plan cron jobs are capped at once/day and function execution time is capped — `vercel.json` requests `maxDuration: 60` for `/api/ingest`, but if the watchlist or `MAX_ITEMS_PER_RUN` (25) turns out too slow for your plan's actual limits, trim either in `api/_lib/watchlist.js` / `api/ingest.js`. Watch the first few post-deploy `summary` responses from `/api/ingest` closely for this.
 
-On watchlist size: a run queries the 58 standing thematic queries plus a rotating slice of named territory accounts (25 customers + 10 prospects), so ~93 per run, up from ~70. `api/_lib/fetchNews.js`'s fetch concurrency is 10. The territory book has ~1,700 accounts and the cron runs daily, so they can't all be queried by name every run — customers cycle every few days, prospects far more slowly, and the thematic patch tagging is what gives prospects their real coverage. The two per-run constants at the top of `api/_lib/watchlist.js` are the dials.
+On watchlist size: a run queries the 72 standing thematic queries (including the market-entry set) plus a rotating slice of named territory accounts (25 customers + 10 prospects), so ~107 per run, up from ~70. `api/_lib/fetchNews.js`'s fetch concurrency is 10. The territory book has ~1,700 accounts and the cron runs daily, so they can't all be queried by name every run — customers cycle every few days, prospects far more slowly, and the thematic patch tagging is what gives prospects their real coverage. The two per-run constants at the top of `api/_lib/watchlist.js` are the dials.
 
 Also watch `accountMatched` in the ingest summary. If it sits at zero run after run, the watchlist and the territory book have drifted apart and the patch views are running on thematic tags alone. That is exactly what had happened before the territory book was wired in: the hand-written account watchlist tracked the ANZ enterprise majors (CBA, NAB, Westpac, Telstra, Qantas, Woolworths) and not one of them appears in any of the four AEs' territories, which are corporate/mid-market.
 

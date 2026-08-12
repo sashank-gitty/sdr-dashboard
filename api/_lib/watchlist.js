@@ -148,6 +148,37 @@ export const MACRO_WATCHLIST = [
   "Australia insurance claims regulation",
 ]
 
+// Market entry and local expansion — companies arriving in ANZ, getting
+// licensed to sell here, or standing up a local entity.
+//
+// This is whitespace hunting, and it's a different motion from the rest
+// of the watchlist. Everything above looks for news about accounts
+// someone already owns; these queries look for companies that are on
+// nobody's list yet. A global business that just won an Australian
+// licence has a real local team being hired, a launch to run, and no
+// incumbent vendor relationship here — and because they're unassigned,
+// whoever finds them first gets them.
+//
+// The signal-type taxonomy already had "new entrant" for exactly this,
+// but nothing was searching for it, so the class never got collected.
+// Pair these with the Unassigned view in the dashboard.
+export const MARKET_ENTRY_WATCHLIST = [
+  "expands into Australia",
+  "launches in Australia",
+  "enters Australian market",
+  "opens Australian office",
+  "Australian expansion global company",
+  "AFSL Australian financial services licence granted",
+  "APRA licence granted",
+  "ASIC licence granted new",
+  "Reserve Bank New Zealand licence granted",
+  "enters New Zealand market",
+  "establishes Australian subsidiary",
+  "appoints Australia country manager",
+  "appoints managing director Australia",
+  "first Australian hire global expansion",
+]
+
 // Employee Experience: engagement, lifecycle, workplace culture, and the
 // regulatory/legislative side of the ANZ employment relationship (pay
 // equity reporting, right to disconnect, enterprise bargaining) — all of
@@ -188,6 +219,7 @@ export const STANDING_WATCHLIST = [
   ...VENDOR_WATCHLIST,
   ...REGULATORY_WATCHLIST,
   ...MACRO_WATCHLIST,
+  ...MARKET_ENTRY_WATCHLIST,
   ...EX_WATCHLIST,
   ...MARKET_RESEARCH_WATCHLIST,
 ]

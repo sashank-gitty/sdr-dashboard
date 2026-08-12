@@ -10,6 +10,7 @@ import {
   REGULATORY_ACCENT,
 } from "../lib/colors.js"
 import { REGULATORY_SIGNAL_TYPES, HIGH_RELEVANCE_THRESHOLD } from "../lib/relevance.js"
+import { matchesAccountCoverage } from "../lib/accountCoverage.js"
 import Checkbox from "./Checkbox.jsx"
 
 const MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
@@ -40,6 +41,7 @@ function SignalRow({ item, reviewed, onToggleReviewed, selected, onToggleSelect 
   const patches = item.patches ?? []
   const matchedAccounts = item.matchedAccounts ?? []
   const owningAes = item.owningAes ?? []
+  const isUnassigned = matchesAccountCoverage(item, "unassigned")
 
   const handleCopy = async () => {
     try {
@@ -147,6 +149,19 @@ function SignalRow({ item, reviewed, onToggleReviewed, selected, onToggleSelect 
             >
               {item.accountStatus === "customer" ? "Customer" : "Prospect"}
               {owningAes.length > 0 && ` · ${owningAes.join(" / ")}`}
+            </span>
+          )}
+
+          {/* The inverse case, and just as worth surfacing: a specific
+              company in the news that matched nothing in the territory
+              book. Nobody is covering it. Shares its definition with the
+              Unassigned filter so the badge and the view can't drift. */}
+          {isUnassigned && (
+            <span
+              title="Unassigned — this company matched no account in the territory book"
+              className="rounded-full border border-indigo-500/20 bg-indigo-500/10 px-2 py-0.5 text-[11px] font-semibold text-indigo-600 dark:text-indigo-400"
+            >
+              Unassigned
             </span>
           )}
 

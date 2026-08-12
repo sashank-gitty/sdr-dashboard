@@ -7,6 +7,11 @@ import {
   PRACTICE_AREA_LABELS,
   PATCH_LABELS,
 } from "../lib/colors.js"
+import {
+  ACCOUNT_COVERAGE_MODES,
+  ACCOUNT_COVERAGE_SHORT_LABELS,
+  ACCOUNT_COVERAGE_HINTS,
+} from "../lib/accountCoverage.js"
 
 const DATE_RANGES = [
   { value: "7", label: "7d" },
@@ -111,14 +116,14 @@ function Sidebar({
   signalTypeFilter,
   patchFilter,
   aeFilter,
-  namedAccountsOnly,
+  accountCoverage,
   onTogglePracticeArea,
   onToggleScope,
   onToggleEntity,
   onToggleSignalType,
   onTogglePatch,
   onToggleAe,
-  onToggleNamedAccountsOnly,
+  onAccountCoverageChange,
   onClearAll,
   onCopyViewLink,
   viewLinkCopied,
@@ -130,7 +135,7 @@ function Sidebar({
     signalTypeFilter.length +
     patchFilter.length +
     aeFilter.length +
-    (namedAccountsOnly ? 1 : 0)
+    (accountCoverage === "all" ? 0 : 1)
 
   return (
     <aside className="flex h-full flex-col gap-1 overflow-y-auto border-r border-slate-200 bg-white/60 p-4 dark:border-zinc-800 dark:bg-zinc-900/40 lg:sticky lg:top-[57px] lg:h-[calc(100vh-57px)]">
@@ -164,21 +169,36 @@ function Sidebar({
         </button>
       </div>
 
-      <label className="flex cursor-pointer items-start gap-2 border-b border-slate-200 py-3 text-[13px] text-slate-600 dark:border-zinc-800 dark:text-zinc-400">
-        <input
-          type="checkbox"
-          checked={namedAccountsOnly}
-          onChange={onToggleNamedAccountsOnly}
-          className="mt-0.5 h-3.5 w-3.5 flex-shrink-0 accent-indigo-600"
-        />
-        <span>
-          <span className="font-semibold text-slate-700 dark:text-zinc-200">Named accounts only</span>
-          <span className="mt-0.5 block text-[11px] leading-snug text-slate-400 dark:text-zinc-500">
-            Hide macro and vendor news. Only signals naming an account in
-            someone&apos;s territory book.
-          </span>
-        </span>
-      </label>
+      {/* Two opposite workflows share this control. "Named" is patch
+          defence — what's happening to accounts we own. "Unassigned" is
+          whitespace hunting — named companies in the news that match
+          nothing in the book, which is where the next account comes
+          from when a territory is thin. */}
+      <div className="border-b border-slate-200 py-3 dark:border-zinc-800">
+        <p className="mb-2 text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-zinc-400">
+          Account Coverage
+        </p>
+        <div className="flex overflow-hidden rounded-md border border-slate-200 dark:border-zinc-800">
+          {ACCOUNT_COVERAGE_MODES.map((mode) => (
+            <button
+              key={mode}
+              type="button"
+              onClick={() => onAccountCoverageChange(mode)}
+              title={ACCOUNT_COVERAGE_HINTS[mode]}
+              className={`flex-1 py-1.5 text-xs font-semibold transition-colors ${
+                accountCoverage === mode
+                  ? "bg-indigo-500/10 text-indigo-600 dark:text-indigo-400"
+                  : "text-slate-500 hover:bg-slate-100 dark:text-zinc-400 dark:hover:bg-zinc-800"
+              }`}
+            >
+              {ACCOUNT_COVERAGE_SHORT_LABELS[mode]}
+            </button>
+          ))}
+        </div>
+        <p className="mt-1.5 text-[11px] leading-snug text-slate-400 dark:text-zinc-500">
+          {ACCOUNT_COVERAGE_HINTS[accountCoverage]}
+        </p>
+      </div>
 
       <div className="border-b border-slate-200 pb-3 dark:border-zinc-800">
         <p className="mb-2 text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-zinc-400">Date Range</p>

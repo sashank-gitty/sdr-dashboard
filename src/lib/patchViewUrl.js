@@ -8,6 +8,7 @@
 // where they were. A link therefore says "this patch, this rep" and
 // lets the recipient's own preferences apply to everything else.
 import { PATCHES } from "../../shared/patches.js"
+import { ACCOUNT_COVERAGE_MODES } from "./accountCoverage.js"
 
 const PATCH_PARAM = "patch"
 const AE_PARAM = "ae"
@@ -39,8 +40,15 @@ export function readViewFromUrl() {
     // obvious cause.
     patchFilter: parseList(params.get(PATCH_PARAM)).filter((p) => PATCHES.includes(p)),
     aeFilter: parseList(params.get(AE_PARAM)),
-    namedAccountsOnly: params.get(ACCOUNTS_PARAM) === "1",
+    accountCoverage: parseCoverage(params.get(ACCOUNTS_PARAM)),
   }
+}
+
+function parseCoverage(raw) {
+  // "accounts=1" was the original boolean form of this parameter, from
+  // before "unassigned" existed. Links already handed out still work.
+  if (raw === "1") return "named"
+  return ACCOUNT_COVERAGE_MODES.includes(raw) ? raw : "all"
 }
 
 /**
@@ -48,7 +56,7 @@ export function readViewFromUrl() {
  * replaceState, not pushState: ticking filter boxes shouldn't stack up
  * history entries that make Back feel broken.
  */
-export function writeViewToUrl({ patchFilter, aeFilter, namedAccountsOnly }) {
+export function writeViewToUrl({ patchFilter, aeFilter, accountCoverage }) {
   if (typeof window === "undefined") return
 
   const params = new URLSearchParams(window.location.search)
@@ -59,7 +67,7 @@ export function writeViewToUrl({ patchFilter, aeFilter, namedAccountsOnly }) {
   if (aeFilter.length) params.set(AE_PARAM, aeFilter.join(","))
   else params.delete(AE_PARAM)
 
-  if (namedAccountsOnly) params.set(ACCOUNTS_PARAM, "1")
+  if (accountCoverage && accountCoverage !== "all") params.set(ACCOUNTS_PARAM, accountCoverage)
   else params.delete(ACCOUNTS_PARAM)
 
   const query = params.toString()

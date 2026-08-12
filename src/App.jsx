@@ -13,6 +13,7 @@ import { useLocalStorageState } from "./lib/useLocalStorageState.js"
 import { computeMetrics } from "./lib/metrics.js"
 import { readViewFromUrl, writeViewToUrl } from "./lib/patchViewUrl.js"
 import { PATCHES, PATCH_LABELS } from "../shared/patches.js"
+import { matchesAccountCoverage, ACCOUNT_COVERAGE_LABELS } from "./lib/accountCoverage.js"
 
 const DATE_RANGE_DAYS = { "7": 7, "30": 30, "90": 90 }
 
@@ -46,10 +47,10 @@ function App() {
     [],
     urlView?.aeFilter,
   )
-  const [namedAccountsOnly, setNamedAccountsOnly] = useLocalStorageState(
-    "sdr-dashboard-named-accounts-only",
-    false,
-    urlView?.namedAccountsOnly,
+  const [accountCoverage, setAccountCoverage] = useLocalStorageState(
+    "sdr-dashboard-account-coverage",
+    "all",
+    urlView?.accountCoverage,
   )
   const [viewLinkCopied, setViewLinkCopied] = useState(false)
   const [activeTab, setActiveTab] = useLocalStorageState("sdr-dashboard-active-tab", "all")
@@ -137,7 +138,7 @@ function App() {
   // volume chart and highlights rail as well — otherwise a rep opening
   // their own patch link would read the whole team's numbers.
   const territoryItems = useMemo(() => {
-    if (!patchFilter.length && !aeFilter.length && !namedAccountsOnly) return signals
+    if (!patchFilter.length && !aeFilter.length && accountCoverage === "all") return signals
     return signals.filter((item) => {
       if (patchFilter.length && !(item.patches ?? []).some((p) => patchFilter.includes(p))) {
         return false
@@ -145,10 +146,10 @@ function App() {
       if (aeFilter.length && !(item.owningAes ?? []).some((a) => aeFilter.includes(a))) {
         return false
       }
-      if (namedAccountsOnly && !(item.matchedAccounts ?? []).length) return false
+      if (!matchesAccountCoverage(item, accountCoverage)) return false
       return true
     })
-  }, [signals, patchFilter, aeFilter, namedAccountsOnly])
+  }, [signals, patchFilter, aeFilter, accountCoverage])
 
   // Pure chronological order — used wherever "recent" needs to actually
   // mean recent (the activity timeline, weekly metrics), independent of
@@ -208,8 +209,8 @@ function App() {
   // Keep the address bar in step with the territory filters so the
   // current view is always shareable, not just after pressing a button.
   useEffect(() => {
-    writeViewToUrl({ patchFilter, aeFilter, namedAccountsOnly })
-  }, [patchFilter, aeFilter, namedAccountsOnly])
+    writeViewToUrl({ patchFilter, aeFilter, accountCoverage })
+  }, [patchFilter, aeFilter, accountCoverage])
 
   const handleCopyViewLink = async () => {
     try {
@@ -229,7 +230,7 @@ function App() {
     signalTypeFilter.length +
     patchFilter.length +
     aeFilter.length +
-    (namedAccountsOnly ? 1 : 0)
+    (accountCoverage === "all" ? 0 : 1)
 
   const handleClearAll = () => {
     setPracticeAreaFilter([])
@@ -238,7 +239,7 @@ function App() {
     setSignalTypeFilter([])
     setPatchFilter([])
     setAeFilter([])
-    setNamedAccountsOnly(false)
+    setAccountCoverage("all")
   }
 
   const handleClearEverything = () => {
@@ -324,14 +325,14 @@ function App() {
         signalTypeFilter={signalTypeFilter}
         patchFilter={patchFilter}
         aeFilter={aeFilter}
-        namedAccountsOnly={namedAccountsOnly}
+        accountCoverage={accountCoverage}
         onTogglePracticeArea={(v) => setPracticeAreaFilter((list) => toggleValue(list, v))}
         onToggleScope={(v) => setScopeFilter((list) => toggleValue(list, v))}
         onToggleEntity={(v) => setEntityFilter((list) => toggleValue(list, v))}
         onToggleSignalType={(v) => setSignalTypeFilter((list) => toggleValue(list, v))}
         onTogglePatch={(v) => setPatchFilter((list) => toggleValue(list, v))}
         onToggleAe={(v) => setAeFilter((list) => toggleValue(list, v))}
-        onToggleNamedAccountsOnly={() => setNamedAccountsOnly((v) => !v)}
+        onAccountCoverageChange={setAccountCoverage}
         onClearAll={handleClearAll}
         onCopyViewLink={handleCopyViewLink}
         viewLinkCopied={viewLinkCopied}
@@ -359,14 +360,14 @@ function App() {
               signalTypeFilter={signalTypeFilter}
               patchFilter={patchFilter}
               aeFilter={aeFilter}
-              namedAccountsOnly={namedAccountsOnly}
+              accountCoverage={accountCoverage}
               onTogglePracticeArea={(v) => setPracticeAreaFilter((list) => toggleValue(list, v))}
               onToggleScope={(v) => setScopeFilter((list) => toggleValue(list, v))}
               onToggleEntity={(v) => setEntityFilter((list) => toggleValue(list, v))}
               onToggleSignalType={(v) => setSignalTypeFilter((list) => toggleValue(list, v))}
               onTogglePatch={(v) => setPatchFilter((list) => toggleValue(list, v))}
               onToggleAe={(v) => setAeFilter((list) => toggleValue(list, v))}
-              onToggleNamedAccountsOnly={() => setNamedAccountsOnly((v) => !v)}
+              onAccountCoverageChange={setAccountCoverage}
               onClearAll={handleClearAll}
               onCopyViewLink={handleCopyViewLink}
               viewLinkCopied={viewLinkCopied}
@@ -378,7 +379,7 @@ function App() {
           {/* The territory filters rescope every number on the page, not
               just the feed, so say so plainly — otherwise a smaller KPI
               count reads as signals having gone missing. */}
-          {(patchFilter.length > 0 || aeFilter.length > 0 || namedAccountsOnly) && (
+          {(patchFilter.length > 0 || aeFilter.length > 0 || accountCoverage !== "all") && (
             <div className="mb-4 flex flex-wrap items-center gap-x-2 gap-y-1 rounded-lg border border-indigo-500/20 bg-indigo-500/5 px-3 py-2 text-xs text-slate-600 dark:text-zinc-300">
               <span className="font-semibold uppercase tracking-wider text-indigo-600 dark:text-indigo-400">
                 Patch view
@@ -387,7 +388,7 @@ function App() {
                 {[
                   patchFilter.map((p) => PATCH_LABELS[p] ?? p).join(", "),
                   aeFilter.join(", "),
-                  namedAccountsOnly ? "named accounts only" : "",
+                  accountCoverage === "all" ? "" : ACCOUNT_COVERAGE_LABELS[accountCoverage].toLowerCase(),
                 ]
                   .filter(Boolean)
                   .join(" · ")}
@@ -400,7 +401,7 @@ function App() {
                 onClick={() => {
                   setPatchFilter([])
                   setAeFilter([])
-                  setNamedAccountsOnly(false)
+                  setAccountCoverage("all")
                 }}
                 className="ml-auto rounded-md border border-slate-200 px-2 py-0.5 font-medium text-slate-500 transition-colors hover:border-slate-300 hover:text-slate-900 dark:border-zinc-700 dark:text-zinc-400 dark:hover:border-zinc-600 dark:hover:text-zinc-100"
               >
