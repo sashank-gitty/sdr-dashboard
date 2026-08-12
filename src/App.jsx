@@ -28,7 +28,6 @@ function App() {
   const [signalTypeFilter, setSignalTypeFilter] = useLocalStorageState("sdr-dashboard-signal-type-filter", [])
   const [activeTab, setActiveTab] = useLocalStorageState("sdr-dashboard-active-tab", "all")
   const [activePill, setActivePill] = useLocalStorageState("sdr-dashboard-active-pill", "all")
-  const [reviewedIds, setReviewedIds] = useLocalStorageState("sdr-dashboard-reviewed-ids", [])
   const [sidebarOpen, setSidebarOpen] = useLocalStorageState("sdr-dashboard-sidebar-open", true)
   const [paletteOpen, setPaletteOpen] = useState(false)
 
@@ -36,8 +35,6 @@ function App() {
   const [loading, setLoading] = useState(true)
   const [fetchError, setFetchError] = useState(null)
   const [reloadToken, setReloadToken] = useState(0)
-
-  const reviewedSet = useMemo(() => new Set(reviewedIds), [reviewedIds])
 
   useEffect(() => {
     const controller = new AbortController()
@@ -160,12 +157,43 @@ function App() {
     setActivePill("all")
   }
 
+  // "Mark Reviewed" is durable server state (Issue 4), not localStorage —
+  // updates optimistically so the UI stays snappy, then rolls back per-item
+  // to whatever it actually was before if the write fails.
+  const postReview = async (ids, reviewed) => {
+    const res = await fetch("/api/reviews", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ ids, reviewed }),
+    })
+    if (!res.ok) throw new Error(`Server responded ${res.status}`)
+  }
+
   const handleToggleReviewed = (id) => {
-    setReviewedIds((prev) => (prev.includes(id) ? prev.filter((v) => v !== id) : [...prev, id]))
+    const current = signals.find((s) => s.id === id)
+    if (!current) return
+    const next = !current.reviewed
+
+    setSignals((prev) => prev.map((s) => (s.id === id ? { ...s, reviewed: next } : s)))
+
+    postReview([id], next).catch((err) => {
+      console.error("Failed to update review state:", err)
+      setSignals((prev) => prev.map((s) => (s.id === id ? { ...s, reviewed: !next } : s)))
+    })
   }
 
   const handleMarkManyReviewed = (ids) => {
-    setReviewedIds((prev) => [...new Set([...prev, ...ids])])
+    const idSet = new Set(ids)
+    const previous = new Map(signals.filter((s) => idSet.has(s.id)).map((s) => [s.id, s.reviewed]))
+
+    setSignals((prev) => prev.map((s) => (idSet.has(s.id) ? { ...s, reviewed: true } : s)))
+
+    postReview(ids, true).catch((err) => {
+      console.error("Failed to update review state:", err)
+      setSignals((prev) =>
+        prev.map((s) => (idSet.has(s.id) ? { ...s, reviewed: previous.get(s.id) ?? s.reviewed } : s)),
+      )
+    })
   }
 
   if (fetchError) {
@@ -225,7 +253,6 @@ function App() {
             <SignalQueue
               items={filteredItems}
               today={metrics.today}
-              reviewedIds={reviewedSet}
               onToggleReviewed={handleToggleReviewed}
               onMarkManyReviewed={handleMarkManyReviewed}
               loading={loading}

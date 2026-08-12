@@ -30,7 +30,6 @@ function daysBetween(a, b) {
 function SignalQueue({
   items,
   today,
-  reviewedIds,
   onToggleReviewed,
   onMarkManyReviewed,
   loading,
@@ -189,7 +188,7 @@ function SignalQueue({
             <SignalRow
               key={item.id}
               item={item}
-              reviewed={reviewedIds.has(item.id)}
+              reviewed={item.reviewed}
               onToggleReviewed={onToggleReviewed}
               selected={selectedIds.has(item.id)}
               onToggleSelect={toggleSelectOne}
