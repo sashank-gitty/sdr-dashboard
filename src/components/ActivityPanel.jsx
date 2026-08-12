@@ -1,4 +1,4 @@
-import { pillClassForScope } from "../lib/colors.js"
+import { pillClassForScope, REGULATORY_ACCENT } from "../lib/colors.js"
 
 const MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
 
@@ -48,7 +48,7 @@ function ActivityPanel({ recentItems, metrics }) {
             label="Regulatory Pressure"
             value={metrics.riskThisWeekCount > 0 ? `${metrics.riskThisWeekCount} open signal${metrics.riskThisWeekCount === 1 ? "" : "s"}` : "None this week"}
             sub={metrics.riskThisWeekCount > 0 ? "Regulation & pain-point signals worth a proactive touch" : "No compliance or pain-point signals logged"}
-            accentClass={metrics.riskThisWeekCount > 0 ? "bg-amber-500" : "bg-slate-300 dark:bg-zinc-700"}
+            accentClass={metrics.riskThisWeekCount > 0 ? REGULATORY_ACCENT.swatch : "bg-slate-300 dark:bg-zinc-700"}
           />
         </div>
       </section>

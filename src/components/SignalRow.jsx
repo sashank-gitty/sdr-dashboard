@@ -1,5 +1,6 @@
 import { useState } from "react"
-import { pillClassForScope, pillClassForSignalType } from "../lib/colors.js"
+import { pillClassForScope, pillClassForSignalType, REGULATORY_ACCENT } from "../lib/colors.js"
+import { REGULATORY_SIGNAL_TYPES, HIGH_RELEVANCE_THRESHOLD } from "../lib/relevance.js"
 import Checkbox from "./Checkbox.jsx"
 
 const MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
@@ -21,6 +22,9 @@ function SignalRow({ item, reviewed, onToggleReviewed, selected, onToggleSelect 
   const [copied, setCopied] = useState(false)
   const [expanded, setExpanded] = useState(false)
 
+  const isRegulatory = REGULATORY_SIGNAL_TYPES.has(item.signalType)
+  const isHighRelevance = (item.outreachRelevance ?? 0) >= HIGH_RELEVANCE_THRESHOLD
+
   const handleCopy = async () => {
     try {
       await navigator.clipboard.writeText(`${item.headline}\n\n${item.summary}\n${item.sourceUrl}`)
@@ -33,12 +37,24 @@ function SignalRow({ item, reviewed, onToggleReviewed, selected, onToggleSelect 
 
   return (
     <article
-      className={`group flex gap-3 rounded-lg border bg-white/60 p-4 backdrop-blur-sm transition-all duration-200 ease-spring hover:-translate-y-0.5 dark:bg-zinc-900/60 ${
+      className={`group relative flex gap-3 overflow-hidden rounded-lg border bg-white/60 p-4 backdrop-blur-sm transition-all duration-200 ease-spring hover:-translate-y-0.5 dark:bg-zinc-900/60 ${
         reviewed
           ? "border-slate-200 opacity-60 dark:border-zinc-800"
           : "border-slate-200 hover:border-slate-300 hover:shadow-md dark:border-zinc-800 dark:hover:border-zinc-700"
       } ${selected ? "ring-2 ring-indigo-500/40" : ""}`}
     >
+      {/* Persistent marker so regulatory/pain-point and high-relevance
+          signals stand out while scrolling the unfiltered feed, not just
+          when a quick filter is applied. Severity (rose) takes priority
+          over general relevance (indigo) when a card is both. */}
+      {(isRegulatory || isHighRelevance) && (
+        <span
+          aria-hidden="true"
+          title={isRegulatory ? "Regulatory / pain-point signal" : "High outreach relevance"}
+          className={`absolute inset-y-0 left-0 w-1 ${isRegulatory ? REGULATORY_ACCENT.swatch : "bg-indigo-500"}`}
+        />
+      )}
+
       <div className="pt-1">
         <Checkbox checked={selected} onChange={() => onToggleSelect(item.id)} label={`Select ${item.headline}`} />
       </div>
