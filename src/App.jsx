@@ -206,6 +206,7 @@ function App() {
 
   return (
     <div className="min-h-screen bg-slate-50 dark:bg-zinc-950">
+      <h1 className="sr-only">SDR Command Center &mdash; Signal Intelligence Dashboard</h1>
       <Header
         search={search}
         onSearchChange={setSearch}
