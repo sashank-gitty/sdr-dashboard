@@ -22,12 +22,16 @@ export default async function handler(req, res) {
         entity,
         signal_type AS "signalType",
         origin,
-        outreach_relevance AS "outreachRelevance"
+        outreach_relevance AS "outreachRelevance",
+        (reviewed_at IS NOT NULL) AS reviewed
       FROM signals
       ORDER BY date DESC, created_at DESC
     `
 
-    res.setHeader("Cache-Control", "s-maxage=300, stale-while-revalidate=600")
+    // No edge caching here: "reviewed" state changes on every click and
+    // needs to be fresh across devices — that's the whole point of moving
+    // it off localStorage (Issue 4). This is a low-traffic personal tool,
+    // so the DB load from skipping the cache is a non-issue.
     res.status(200).json(rows)
   } catch (err) {
     console.error("GET /api/signals failed:", err)
