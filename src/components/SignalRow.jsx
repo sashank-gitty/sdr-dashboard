@@ -1,5 +1,5 @@
 import { useState } from "react"
-import { pillClassForScope, pillClassForSignalType, REGULATORY_ACCENT } from "../lib/colors.js"
+import { pillClassForScope, pillClassForSignalType, pillClassForPracticeArea, PRACTICE_AREA_LABELS, REGULATORY_ACCENT } from "../lib/colors.js"
 import { REGULATORY_SIGNAL_TYPES, HIGH_RELEVANCE_THRESHOLD } from "../lib/relevance.js"
 import Checkbox from "./Checkbox.jsx"
 
@@ -24,6 +24,7 @@ function SignalRow({ item, reviewed, onToggleReviewed, selected, onToggleSelect 
 
   const isRegulatory = REGULATORY_SIGNAL_TYPES.has(item.signalType)
   const isHighRelevance = (item.outreachRelevance ?? 0) >= HIGH_RELEVANCE_THRESHOLD
+  const practiceAreaLabel = PRACTICE_AREA_LABELS[item.practiceArea] ?? PRACTICE_AREA_LABELS.cx
 
   const handleCopy = async () => {
     try {
@@ -64,6 +65,12 @@ function SignalRow({ item, reviewed, onToggleReviewed, selected, onToggleSelect 
           <time className="font-mono text-xs font-semibold tabular-nums text-slate-500 dark:text-zinc-400">
             {formatDate(item.date)}
           </time>
+          <span
+            title={`Practice area: ${practiceAreaLabel}`}
+            className={`rounded-full px-2 py-0.5 text-[11px] font-semibold ${pillClassForPracticeArea(item.practiceArea)}`}
+          >
+            {practiceAreaLabel}
+          </span>
           <span
             title={item.scope === "micro" ? "Account-level signal — specific to one company" : "Market-level signal — broader industry or economic context"}
             className={`rounded-full px-2 py-0.5 text-[11px] font-semibold capitalize ${pillClassForScope(item.scope)}`}

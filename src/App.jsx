@@ -24,6 +24,7 @@ function App() {
 
   const [search, setSearch] = useState("")
   const [dateRange, setDateRange] = useLocalStorageState("sdr-dashboard-date-range", "all")
+  const [practiceAreaFilter, setPracticeAreaFilter] = useLocalStorageState("sdr-dashboard-practice-area-filter", [])
   const [scopeFilter, setScopeFilter] = useLocalStorageState("sdr-dashboard-scope-filter", [])
   const [entityFilter, setEntityFilter] = useLocalStorageState("sdr-dashboard-entity-filter", [])
   const [signalTypeFilter, setSignalTypeFilter] = useLocalStorageState("sdr-dashboard-signal-type-filter", [])
@@ -80,6 +81,10 @@ function App() {
     return () => window.removeEventListener("keydown", handleKey)
   }, [])
 
+  const practiceAreaOptions = useMemo(
+    () => [...new Set(signals.map((item) => item.practiceArea))].sort(),
+    [signals],
+  )
   const scopeOptions = useMemo(
     () => [...new Set(signals.map((item) => item.scope))].sort(),
     [signals],
@@ -132,6 +137,7 @@ function App() {
       : null
 
     return sortedItems.filter((item) => {
+      if (practiceAreaFilter.length && !practiceAreaFilter.includes(item.practiceArea)) return false
       if (scopeFilter.length && !scopeFilter.includes(item.scope)) return false
       if (entityFilter.length && !entityFilter.includes(item.entity)) return false
       if (signalTypeFilter.length && !signalTypeFilter.includes(item.signalType)) return false
@@ -144,11 +150,13 @@ function App() {
 
       return true
     })
-  }, [sortedItems, search, dateRange, scopeFilter, entityFilter, signalTypeFilter])
+  }, [sortedItems, search, dateRange, practiceAreaFilter, scopeFilter, entityFilter, signalTypeFilter])
 
-  const activeFilterCount = scopeFilter.length + entityFilter.length + signalTypeFilter.length
+  const activeFilterCount =
+    practiceAreaFilter.length + scopeFilter.length + entityFilter.length + signalTypeFilter.length
 
   const handleClearAll = () => {
+    setPracticeAreaFilter([])
     setScopeFilter([])
     setEntityFilter([])
     setSignalTypeFilter([])
@@ -225,12 +233,15 @@ function App() {
         onClose={() => setMobileFiltersOpen(false)}
         dateRange={dateRange}
         onDateRangeChange={setDateRange}
+        practiceAreaOptions={practiceAreaOptions}
         scopeOptions={scopeOptions}
         entityOptions={entityOptions}
         signalTypeOptions={signalTypeOptions}
+        practiceAreaFilter={practiceAreaFilter}
         scopeFilter={scopeFilter}
         entityFilter={entityFilter}
         signalTypeFilter={signalTypeFilter}
+        onTogglePracticeArea={(v) => setPracticeAreaFilter((list) => toggleValue(list, v))}
         onToggleScope={(v) => setScopeFilter((list) => toggleValue(list, v))}
         onToggleEntity={(v) => setEntityFilter((list) => toggleValue(list, v))}
         onToggleSignalType={(v) => setSignalTypeFilter((list) => toggleValue(list, v))}
@@ -247,12 +258,15 @@ function App() {
             <Sidebar
               dateRange={dateRange}
               onDateRangeChange={setDateRange}
+              practiceAreaOptions={practiceAreaOptions}
               scopeOptions={scopeOptions}
               entityOptions={entityOptions}
               signalTypeOptions={signalTypeOptions}
+              practiceAreaFilter={practiceAreaFilter}
               scopeFilter={scopeFilter}
               entityFilter={entityFilter}
               signalTypeFilter={signalTypeFilter}
+              onTogglePracticeArea={(v) => setPracticeAreaFilter((list) => toggleValue(list, v))}
               onToggleScope={(v) => setScopeFilter((list) => toggleValue(list, v))}
               onToggleEntity={(v) => setEntityFilter((list) => toggleValue(list, v))}
               onToggleSignalType={(v) => setSignalTypeFilter((list) => toggleValue(list, v))}
