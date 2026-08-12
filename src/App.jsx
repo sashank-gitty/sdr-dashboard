@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from "react"
 import Sidebar from "./components/Sidebar.jsx"
+import FilterDrawer from "./components/FilterDrawer.jsx"
 import Header from "./components/Header.jsx"
 import KpiGrid from "./components/KpiGrid.jsx"
 import VolumeChart from "./components/VolumeChart.jsx"
@@ -30,6 +31,7 @@ function App() {
   const [activePill, setActivePill] = useLocalStorageState("sdr-dashboard-active-pill", "all")
   const [sidebarOpen, setSidebarOpen] = useLocalStorageState("sdr-dashboard-sidebar-open", true)
   const [paletteOpen, setPaletteOpen] = useState(false)
+  const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false)
 
   const [signals, setSignals] = useState([])
   const [loading, setLoading] = useState(true)
@@ -144,6 +146,8 @@ function App() {
     })
   }, [sortedItems, search, dateRange, scopeFilter, entityFilter, signalTypeFilter])
 
+  const activeFilterCount = scopeFilter.length + entityFilter.length + signalTypeFilter.length
+
   const handleClearAll = () => {
     setScopeFilter([])
     setEntityFilter([])
@@ -211,11 +215,30 @@ function App() {
         onToggleTheme={toggleTheme}
         sidebarOpen={sidebarOpen}
         onToggleSidebar={() => setSidebarOpen((v) => !v)}
+        activeFilterCount={activeFilterCount}
+        onOpenMobileFilters={() => setMobileFiltersOpen(true)}
+      />
+
+      <FilterDrawer
+        open={mobileFiltersOpen}
+        onClose={() => setMobileFiltersOpen(false)}
+        dateRange={dateRange}
+        onDateRangeChange={setDateRange}
+        scopeOptions={scopeOptions}
+        entityOptions={entityOptions}
+        signalTypeOptions={signalTypeOptions}
+        scopeFilter={scopeFilter}
+        entityFilter={entityFilter}
+        signalTypeFilter={signalTypeFilter}
+        onToggleScope={(v) => setScopeFilter((list) => toggleValue(list, v))}
+        onToggleEntity={(v) => setEntityFilter((list) => toggleValue(list, v))}
+        onToggleSignalType={(v) => setSignalTypeFilter((list) => toggleValue(list, v))}
+        onClearAll={handleClearAll}
       />
 
       <div className="flex flex-col lg:flex-row">
         <div
-          className={`flex-shrink-0 overflow-hidden transition-all duration-300 ease-spring ${
+          className={`hidden flex-shrink-0 overflow-hidden transition-all duration-300 ease-spring lg:block ${
             sidebarOpen ? "lg:w-64 lg:opacity-100" : "lg:w-0 lg:opacity-0"
           }`}
         >
