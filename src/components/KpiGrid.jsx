@@ -1,4 +1,4 @@
-import Sparkline from "./Sparkline.jsx"
+import { REGULATORY_ACCENT } from "../lib/colors.js"
 
 function TrendBadge({ pct, delta, positiveIsGood = true, invert = false }) {
   if (pct === null) {
@@ -26,24 +26,37 @@ function TrendBadge({ pct, delta, positiveIsGood = true, invert = false }) {
   )
 }
 
-function KpiCard({ label, value, sub, sparkValues, sparkClassName, children, featured = false }) {
+// Two prominence tiers: "featured" tiles (the ones with a real weekly delta
+// worth reacting to) render their number much larger, with an accent color
+// that doubles as the severity read — rose for the highest-urgency tile,
+// indigo for the merely-important one. Static count tiles (no delta) stay
+// small and neutral so the hierarchy is unambiguous at a glance.
+const ACCENT_STYLES = {
+  indigo: {
+    border: "border-indigo-500/30 hover:border-indigo-500/50 dark:border-indigo-500/30 dark:hover:border-indigo-500/50",
+    value: "text-slate-900 dark:text-zinc-50",
+  },
+  rose: {
+    border: REGULATORY_ACCENT.border,
+    value: REGULATORY_ACCENT.text,
+  },
+}
+
+function KpiCard({ label, value, sub, children, featured = false, accent = "indigo" }) {
+  const accentStyles = ACCENT_STYLES[accent] ?? ACCENT_STYLES.indigo
+
   return (
     <div
       className={`group rounded-lg border bg-white/60 p-4 backdrop-blur-sm transition-all duration-200 ease-spring hover:-translate-y-0.5 hover:shadow-md dark:bg-zinc-900/60 ${
         featured
-          ? "border-indigo-500/30 hover:border-indigo-500/50 dark:border-indigo-500/30 dark:hover:border-indigo-500/50"
+          ? accentStyles.border
           : "border-slate-200 hover:border-slate-300 dark:border-zinc-800 dark:hover:border-zinc-700"
       }`}
     >
-      <div className="flex items-start justify-between gap-2">
-        <p className="text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-zinc-400">{label}</p>
-        {sparkValues && (
-          <Sparkline values={sparkValues} width={72} height={24} strokeClassName={sparkClassName} />
-        )}
-      </div>
+      <p className="text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-zinc-400">{label}</p>
       <p
-        className={`mt-2 font-mono font-semibold tabular-nums text-slate-900 dark:text-zinc-50 ${
-          featured ? "text-5xl" : "text-2xl"
+        className={`mt-2 font-mono font-semibold tabular-nums ${
+          featured ? `text-5xl ${accentStyles.value}` : "text-2xl text-slate-900 dark:text-zinc-50"
         }`}
       >
         {value}
@@ -54,7 +67,6 @@ function KpiCard({ label, value, sub, sparkValues, sparkClassName, children, fea
 }
 
 function KpiGrid({ metrics }) {
-  const dailyTotals = metrics.dailyBuckets.map((b) => b.total)
   const riskDelta = metrics.riskThisWeekCount - metrics.riskLastWeekCount
 
   return (
@@ -62,25 +74,26 @@ function KpiGrid({ metrics }) {
       <KpiCard
         label="Total Signals Tracked"
         value={metrics.totalSignals}
-        sparkValues={dailyTotals}
-        sparkClassName="stroke-indigo-500 dark:stroke-indigo-400"
         sub={<span className="text-xs text-slate-400 dark:text-zinc-500">last 30 days of activity</span>}
       />
 
       <KpiCard
         featured
+        accent="indigo"
         label="Signals This Week"
         value={metrics.thisWeekCount}
         sub={<TrendBadge pct={metrics.weekOverWeekPct} delta={metrics.weekOverWeekDelta} />}
       />
 
       <KpiCard
+        featured
+        accent="rose"
         label="Regulatory &amp; Pain-Point Signals"
         value={metrics.riskThisWeekCount}
         sub={
           <span
-            title="Signals tagged regulation or pain point — usually the fastest path to a relevant, timely outreach angle"
-            className="inline-flex items-center gap-1 text-xs font-semibold tabular-nums text-amber-600 dark:text-amber-400"
+            title="Signals tagged regulation or pain point — the highest-urgency category, usually the fastest path to a relevant, timely outreach angle"
+            className={`inline-flex items-center gap-1 text-xs font-semibold tabular-nums ${REGULATORY_ACCENT.text}`}
           >
             {riskDelta === 0 ? "→" : riskDelta > 0 ? "↑" : "↓"} {Math.abs(riskDelta)}
             <span className="font-normal text-slate-400 dark:text-zinc-500">vs last week</span>

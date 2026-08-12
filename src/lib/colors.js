@@ -1,10 +1,15 @@
 // Semantic pill styling. Every signal type is assigned an intentional
-// accent rather than an arbitrary one: emerald/teal reads as a positive
-// business signal, amber/orange as pressure or urgency worth acting on,
-// rose as competitive threat, indigo/violet as a strategic/primary shift,
-// and slate/cyan/sky/fuchsia round out the remaining neutral-to-notable
+// accent rather than an arbitrary one: rose is reserved exclusively for
+// the highest-urgency category (regulation / pain point — signals that
+// need a reaction), amber/orange read as notable-but-lower-urgency
+// pressure (new entrant, restructure), emerald/teal reads as a positive
+// business signal, indigo/violet as a strategic/primary shift, and
+// slate/cyan/sky/fuchsia round out the remaining neutral-to-notable
 // categories. Classes are full literal strings (not built by concatenation)
-// so Tailwind's scanner picks them up.
+// so Tailwind's scanner picks them up. Rose is intentionally not reused
+// anywhere else in this map — see REGULATORY_ACCENT below, which is the
+// single source of truth this same rose is pulled from in the KPI tile,
+// the highlights rail, and each feed card's persistent accent border.
 const PILL_BASE = "border"
 
 const SIGNAL_TYPE_STYLES = {
@@ -18,10 +23,10 @@ const SIGNAL_TYPE_STYLES = {
   "brand move": "bg-fuchsia-500/10 text-fuchsia-600 border-fuchsia-500/20 dark:text-fuchsia-400",
   "leadership change": "bg-violet-500/10 text-violet-600 border-violet-500/20 dark:text-violet-400",
   "digital transformation": "bg-indigo-500/10 text-indigo-600 border-indigo-500/20 dark:text-indigo-400",
-  "new entrant": "bg-rose-500/10 text-rose-600 border-rose-500/20 dark:text-rose-400",
+  "new entrant": "bg-amber-500/10 text-amber-600 border-amber-500/20 dark:text-amber-400",
   restructure: "bg-orange-500/10 text-orange-600 border-orange-500/20 dark:text-orange-400",
-  regulation: "bg-amber-500/10 text-amber-600 border-amber-500/20 dark:text-amber-400",
-  "pain point": "bg-amber-500/10 text-amber-600 border-amber-500/20 dark:text-amber-400",
+  regulation: "bg-rose-500/10 text-rose-600 border-rose-500/20 dark:text-rose-400",
+  "pain point": "bg-rose-500/10 text-rose-600 border-rose-500/20 dark:text-rose-400",
 }
 
 const FALLBACK_STYLES = [
@@ -61,13 +66,24 @@ export const SCOPE_HEX = {
   micro: "#6366f1",
 }
 
+// Single accent used everywhere Regulatory & Pain-Point needs to read as
+// the highest-urgency category — the KPI tile, the highlights rail dot,
+// and each feed card's persistent left accent all pull from this one
+// object instead of hardcoding the color independently in three places.
+export const REGULATORY_ACCENT = {
+  swatch: "bg-rose-500",
+  text: "text-rose-600 dark:text-rose-400",
+  border: "border-rose-500/30 hover:border-rose-500/50 dark:border-rose-500/30 dark:hover:border-rose-500/50",
+  borderLeft: "border-l-rose-500",
+}
+
 // Legend copy for the color families above — grouped by the same intent
 // described there, not a 1:1 per-signal-type listing (that already exists
 // in the Signal Type filter checklist, swatch and all).
 export const SIGNAL_TYPE_COLOR_LEGEND = [
+  { swatch: "bg-rose-500", label: "Highest urgency — needs a reaction", examples: "regulation, pain point" },
   { swatch: "bg-emerald-500", label: "Positive business signal", examples: "funding, earnings, partnership" },
-  { swatch: "bg-amber-500", label: "Pressure or urgency", examples: "regulation, pain point, restructure" },
-  { swatch: "bg-rose-500", label: "Competitive threat", examples: "new entrant" },
+  { swatch: "bg-amber-500", label: "Notable pressure", examples: "new entrant, restructure" },
   { swatch: "bg-indigo-500", label: "Strategic / primary shift", examples: "leadership change, digital transformation" },
   { swatch: "bg-sky-500", label: "Other market signal", examples: "product launch, research shift, analyst report, market shift, brand move" },
 ]

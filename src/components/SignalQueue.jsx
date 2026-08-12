@@ -3,6 +3,7 @@ import SignalRow from "./SignalRow.jsx"
 import SkeletonRow from "./SkeletonRow.jsx"
 import Checkbox from "./Checkbox.jsx"
 import TagLegend from "./TagLegend.jsx"
+import { REGULATORY_SIGNAL_TYPES, HIGH_RELEVANCE_THRESHOLD } from "../lib/relevance.js"
 
 const TABS = [
   { id: "all", label: "All Signals" },
@@ -11,7 +12,6 @@ const TABS = [
 ]
 
 const COMPETITOR_SIGNAL_TYPES = new Set(["product launch", "new entrant", "brand move"])
-const RISK_SIGNAL_TYPES = new Set(["regulation", "pain point"])
 
 const PILLS = [
   { id: "all", label: "All" },
@@ -22,7 +22,6 @@ const PILLS = [
   { id: "competitor", label: "Competitor Moves" },
 ]
 
-const HIGH_RELEVANCE_THRESHOLD = 4
 const INITIAL_VISIBLE_COUNT = 20
 const LOAD_MORE_INCREMENT = 15
 
@@ -68,7 +67,7 @@ function SignalQueue({
       case "this-week":
         return tabFiltered.filter((i) => daysBetween(today, new Date(`${i.date}T00:00:00`)) <= 6)
       case "regulatory":
-        return tabFiltered.filter((i) => RISK_SIGNAL_TYPES.has(i.signalType))
+        return tabFiltered.filter((i) => REGULATORY_SIGNAL_TYPES.has(i.signalType))
       case "leadership":
         return tabFiltered.filter((i) => i.signalType === "leadership change")
       case "competitor":
@@ -156,8 +155,8 @@ function SignalQueue({
             }`}
           >
             <span className="flex h-2.5 w-2.5 items-center gap-px overflow-hidden rounded-sm">
+              <span className="h-full w-1/3 bg-rose-500" />
               <span className="h-full w-1/3 bg-emerald-500" />
-              <span className="h-full w-1/3 bg-amber-500" />
               <span className="h-full w-1/3 bg-indigo-500" />
             </span>
             Legend

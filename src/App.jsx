@@ -240,10 +240,10 @@ function App() {
       <div className="flex flex-col lg:flex-row">
         <div
           className={`hidden flex-shrink-0 overflow-hidden transition-all duration-300 ease-spring lg:block ${
-            sidebarOpen ? "lg:w-64 lg:opacity-100" : "lg:w-0 lg:opacity-0"
+            sidebarOpen ? "lg:w-60 lg:opacity-100" : "lg:w-0 lg:opacity-0"
           }`}
         >
-          <div className="lg:w-64">
+          <div className="lg:w-60">
             <Sidebar
               dateRange={dateRange}
               onDateRangeChange={setDateRange}
@@ -273,7 +273,7 @@ function App() {
             <VolumeChart buckets={metrics.dailyBuckets} />
           </div>
 
-          <div className="grid grid-cols-1 gap-6 xl:grid-cols-[minmax(0,1fr)_360px]">
+          <div className="grid grid-cols-1 gap-6 xl:grid-cols-[minmax(0,1fr)_320px]">
             <SignalQueue
               items={filteredItems}
               today={metrics.today}
