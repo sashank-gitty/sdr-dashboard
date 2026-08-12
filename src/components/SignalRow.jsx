@@ -70,9 +70,9 @@ function SignalRow({ item, reviewed, onToggleReviewed, selected, onToggleSelect 
           </a>
         </div>
 
-        <h2 className="mb-1.5 text-[15px] font-semibold leading-snug text-slate-900 dark:text-zinc-50">
+        <h3 className="mb-1.5 text-[15px] font-semibold leading-snug text-slate-900 dark:text-zinc-50">
           {item.headline}
-        </h2>
+        </h3>
 
         <button
           type="button"

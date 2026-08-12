@@ -60,3 +60,19 @@ export const SCOPE_HEX = {
   macro: "#64748b",
   micro: "#6366f1",
 }
+
+// Legend copy for the color families above — grouped by the same intent
+// described there, not a 1:1 per-signal-type listing (that already exists
+// in the Signal Type filter checklist, swatch and all).
+export const SIGNAL_TYPE_COLOR_LEGEND = [
+  { swatch: "bg-emerald-500", label: "Positive business signal", examples: "funding, earnings, partnership" },
+  { swatch: "bg-amber-500", label: "Pressure or urgency", examples: "regulation, pain point, restructure" },
+  { swatch: "bg-rose-500", label: "Competitive threat", examples: "new entrant" },
+  { swatch: "bg-indigo-500", label: "Strategic / primary shift", examples: "leadership change, digital transformation" },
+  { swatch: "bg-sky-500", label: "Other market signal", examples: "product launch, research shift, analyst report, market shift, brand move" },
+]
+
+export const SCOPE_COLOR_LEGEND = [
+  { swatch: "bg-indigo-500", label: "Micro", examples: "account-level signal" },
+  { swatch: "bg-slate-400", label: "Macro", examples: "market-level signal" },
+]

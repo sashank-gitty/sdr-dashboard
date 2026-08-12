@@ -26,7 +26,26 @@ function SidebarIcon(props) {
   )
 }
 
-function Header({ search, onSearchChange, searchInputRef, onOpenPalette, theme, onToggleTheme, sidebarOpen, onToggleSidebar }) {
+function FilterIcon(props) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" {...props}>
+      <path d="M4 6h16M7 12h10M10 18h4" />
+    </svg>
+  )
+}
+
+function Header({
+  search,
+  onSearchChange,
+  searchInputRef,
+  onOpenPalette,
+  theme,
+  onToggleTheme,
+  sidebarOpen,
+  onToggleSidebar,
+  activeFilterCount = 0,
+  onOpenMobileFilters,
+}) {
   return (
     <header className="sticky top-0 z-30 border-b border-slate-200 bg-white/80 backdrop-blur-sm dark:border-zinc-800 dark:bg-zinc-950/80">
       <div className="flex flex-wrap items-center gap-3 px-4 py-3 sm:px-6">
@@ -100,6 +119,21 @@ function Header({ search, onSearchChange, searchInputRef, onOpenPalette, theme, 
             </kbd>
           </button>
         </div>
+
+        <button
+          type="button"
+          onClick={onOpenMobileFilters}
+          aria-label={`Open filters${activeFilterCount > 0 ? ` (${activeFilterCount} active)` : ""}`}
+          className="inline-flex shrink-0 items-center gap-1.5 rounded-md border border-slate-200 px-2.5 py-1.5 text-xs font-medium text-slate-500 transition-colors hover:border-slate-300 hover:text-slate-900 lg:hidden dark:border-zinc-800 dark:text-zinc-400 dark:hover:border-zinc-700 dark:hover:text-zinc-100"
+        >
+          <FilterIcon className="h-3.5 w-3.5" />
+          Filters
+          {activeFilterCount > 0 && (
+            <span className="inline-flex h-4 min-w-4 items-center justify-center rounded-full bg-indigo-500/10 px-1 text-[10px] font-semibold text-indigo-600 dark:text-indigo-400">
+              {activeFilterCount}
+            </span>
+          )}
+        </button>
 
         <ThemeToggle theme={theme} onToggle={onToggleTheme} />
       </div>
