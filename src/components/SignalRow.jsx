@@ -1,8 +1,20 @@
 import { useState } from "react"
-import { pillClassForScope, pillClassForSignalType } from "../lib/colors.js"
+import {
+  pillClassForScope,
+  pillClassForSignalType,
+  pillClassForPracticeArea,
+  pillClassForPatch,
+  pillClassForAccountStatus,
+  PRACTICE_AREA_LABELS,
+  PATCH_LABELS,
+  REGULATORY_ACCENT,
+} from "../lib/colors.js"
+import { REGULATORY_SIGNAL_TYPES, HIGH_RELEVANCE_THRESHOLD } from "../lib/relevance.js"
+import { matchesAccountCoverage } from "../lib/accountCoverage.js"
 import Checkbox from "./Checkbox.jsx"
 
 const MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
+const MAX_INLINE_PATCHES = 2
 
 function formatDate(dateString) {
   const [year, month, day] = dateString.split("-").map(Number)
@@ -17,9 +29,19 @@ function domainFromUrl(url) {
   }
 }
 
-function SignalRow({ item, reviewed, onToggleReviewed, selected, onToggleSelect }) {
+function SignalRow({ item, reviewed, onToggleReviewed, onOpen, selected, onToggleSelect }) {
   const [copied, setCopied] = useState(false)
-  const [expanded, setExpanded] = useState(false)
+
+  const isRegulatory = REGULATORY_SIGNAL_TYPES.has(item.signalType)
+  const isHighRelevance = (item.outreachRelevance ?? 0) >= HIGH_RELEVANCE_THRESHOLD
+  const practiceAreaLabel = PRACTICE_AREA_LABELS[item.practiceArea] ?? PRACTICE_AREA_LABELS.cx
+
+  // Territory attribution. Rows predating migration 005 have none of
+  // this, so every field is treated as optional.
+  const patches = item.patches ?? []
+  const matchedAccounts = item.matchedAccounts ?? []
+  const owningAes = item.owningAes ?? []
+  const isUnassigned = matchesAccountCoverage(item, "unassigned")
 
   const handleCopy = async () => {
     try {
@@ -35,12 +57,36 @@ function SignalRow({ item, reviewed, onToggleReviewed, selected, onToggleSelect 
 
   return (
     <article
-      className={`group flex gap-3 rounded-lg border bg-white/60 p-4 backdrop-blur-sm transition-all duration-200 ease-spring hover:-translate-y-0.5 dark:bg-zinc-900/60 ${
+      className={`group relative flex gap-3 overflow-hidden rounded-lg border bg-white/60 p-4 backdrop-blur-sm transition-all duration-200 ease-spring hover:-translate-y-0.5 dark:bg-zinc-900/60 ${
         reviewed
           ? "border-slate-200 opacity-60 dark:border-zinc-800"
           : "border-slate-200 hover:border-slate-300 hover:shadow-md dark:border-zinc-800 dark:hover:border-zinc-700"
-      } ${selected ? "ring-2 ring-indigo-500/40" : ""} ${isCommunity ? "border-l-4 !border-l-pink-500" : ""}`}
+      } ${selected ? "ring-2 ring-indigo-500/40" : ""}`}
     >
+      {/* Persistent marker so regulatory/pain-point, high-relevance, and
+          community-sourced signals stand out while scrolling the
+          unfiltered feed, not just when a quick filter is applied. One
+          shared mechanism, explicit priority order — severity (rose)
+          beats general relevance (indigo) beats provenance (pink) when a
+          card qualifies for more than one, since a child span painting
+          over its parent's border silently hid whichever lost that fight
+          otherwise, with no way to tell that was intentional. */}
+      {(isRegulatory || isHighRelevance || isCommunity) && (
+        <span
+          aria-hidden="true"
+          title={
+            isRegulatory
+              ? "Regulatory / pain-point signal"
+              : isHighRelevance
+                ? "High outreach relevance"
+                : "Sourced from community research (last30days), not the news pipeline"
+          }
+          className={`absolute inset-y-0 left-0 w-1 ${
+            isRegulatory ? REGULATORY_ACCENT.swatch : isHighRelevance ? "bg-indigo-500" : "bg-pink-500"
+          }`}
+        />
+      )}
+
       <div className="pt-1">
         <Checkbox checked={selected} onChange={() => onToggleSelect(item.id)} label={`Select ${item.headline}`} />
       </div>
@@ -58,6 +104,12 @@ function SignalRow({ item, reviewed, onToggleReviewed, selected, onToggleSelect 
               Community
             </span>
           )}
+          <span
+            title={`Practice area: ${practiceAreaLabel}`}
+            className={`rounded-full px-2 py-0.5 text-[11px] font-semibold ${pillClassForPracticeArea(item.practiceArea)}`}
+          >
+            {practiceAreaLabel}
+          </span>
           <span
             title={item.scope === "micro" ? "Account-level signal — specific to one company" : "Market-level signal — broader industry or economic context"}
             className={`rounded-full px-2 py-0.5 text-[11px] font-semibold capitalize ${pillClassForScope(item.scope)}`}
@@ -80,30 +132,76 @@ function SignalRow({ item, reviewed, onToggleReviewed, selected, onToggleSelect 
           </a>
         </div>
 
-        <h2 className="mb-1.5 text-[15px] font-semibold leading-snug text-slate-900 dark:text-zinc-50">
-          {item.headline}
-        </h2>
-
         <button
           type="button"
-          onClick={() => setExpanded((v) => !v)}
-          className="mb-3 block w-full text-left"
-          aria-expanded={expanded}
+          onClick={() => onOpen(item.id)}
+          className="mb-1.5 block text-left text-[15px] font-semibold leading-snug text-slate-900 transition-colors hover:text-indigo-600 dark:text-zinc-50 dark:hover:text-indigo-400"
         >
-          <p
-            className={`text-sm leading-relaxed text-slate-600 dark:text-zinc-400 ${expanded ? "" : "line-clamp-1"}`}
-          >
-            {item.summary}
-          </p>
-          <span className="text-xs font-medium text-indigo-600 hover:underline dark:text-indigo-400">
-            {expanded ? "Show less" : "Show more"}
-          </span>
+          {item.headline}
         </button>
+
+        <p className="mb-3 line-clamp-2 text-sm leading-relaxed text-slate-600 dark:text-zinc-400">{item.summary}</p>
 
         <div className="flex flex-wrap items-center gap-2">
           <span className="rounded-full border border-violet-500/20 bg-violet-500/10 px-2 py-0.5 text-[11px] font-semibold text-violet-600 dark:text-violet-400">
             {item.entity}
           </span>
+
+          {/* A matched account outranks everything else on the card: it
+              means a company in someone's territory book is in the news
+              today, which is the whole point of the patch views. */}
+          {matchedAccounts.length > 0 && (
+            <span
+              title={
+                `${item.accountStatus === "customer" ? "Existing customer" : "Prospect"} in ` +
+                `${owningAes.length ? owningAes.join(" / ") : "the"} territory: ` +
+                matchedAccounts.join(", ")
+              }
+              className={`rounded-full px-2 py-0.5 text-[11px] font-semibold ${pillClassForAccountStatus(item.accountStatus)}`}
+            >
+              {item.accountStatus === "customer" ? "Customer" : "Prospect"}
+              {owningAes.length > 0 && ` · ${owningAes.join(" / ")}`}
+            </span>
+          )}
+
+          {/* The inverse case, and just as worth surfacing: a specific
+              company in the news that matched nothing in the territory
+              book. Nobody is covering it. Shares its definition with the
+              Unassigned filter so the badge and the view can't drift. */}
+          {isUnassigned && (
+            <span
+              title="Unassigned — this company matched no account in the territory book"
+              className="rounded-full border border-indigo-500/20 bg-indigo-500/10 px-2 py-0.5 text-[11px] font-semibold text-indigo-600 dark:text-indigo-400"
+            >
+              Unassigned
+            </span>
+          )}
+
+          {/* A signal can legitimately carry every patch (a Fair Work
+              ruling touches employers across the board), and one pill
+              per patch made those cards the busiest thing on the page.
+              Cap what renders inline; the rest collapse into a single
+              "+N" chip whose tooltip lists them. */}
+          {patches.slice(0, MAX_INLINE_PATCHES).map((patch) => (
+            <span
+              key={patch}
+              title={`Patch: ${PATCH_LABELS[patch] ?? patch}`}
+              className={`rounded-full px-2 py-0.5 text-[11px] font-semibold ${pillClassForPatch(patch)}`}
+            >
+              {PATCH_LABELS[patch] ?? patch}
+            </span>
+          ))}
+          {patches.length > MAX_INLINE_PATCHES && (
+            <span
+              title={`Also: ${patches
+                .slice(MAX_INLINE_PATCHES)
+                .map((p) => PATCH_LABELS[p] ?? p)
+                .join(", ")}`}
+              className="rounded-full border border-slate-200 px-2 py-0.5 text-[11px] font-semibold text-slate-500 dark:border-zinc-700 dark:text-zinc-400"
+            >
+              +{patches.length - MAX_INLINE_PATCHES}
+            </span>
+          )}
 
           <div className="ml-auto flex items-center gap-1.5">
             <button

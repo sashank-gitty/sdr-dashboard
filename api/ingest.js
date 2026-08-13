@@ -2,7 +2,8 @@ import { createHash } from "node:crypto"
 import { sql } from "./_lib/db.js"
 import { fetchWatchlist } from "./_lib/fetchNews.js"
 import { normalizeItem } from "./_lib/normalize.js"
-import { FULL_WATCHLIST } from "./_lib/watchlist.js"
+import { attributeEntity } from "./_lib/matchAccounts.js"
+import { watchlistForRun } from "./_lib/watchlist.js"
 
 // Hard cap on LLM normalization calls per run — bounds both cost and
 // Vercel function execution time regardless of how many raw RSS items
@@ -37,13 +38,29 @@ export default async function handler(req, res) {
     return
   }
 
-  const summary = { queried: FULL_WATCHLIST.length, rawItems: 0, afterDedupe: 0, normalized: 0, inserted: 0, errors: [] }
+  // The account slice of the watchlist rotates by day, so this has to
+  // be resolved per run rather than read from a module constant.
+  const watchlist = watchlistForRun()
+
+  const summary = {
+    queried: watchlist.length,
+    rawItems: 0,
+    afterDedupe: 0,
+    normalized: 0,
+    inserted: 0,
+    // How many of the inserted signals named an account in the AE
+    // territory book. Worth watching: if this stays at zero run after
+    // run, the watchlist and the territory book have drifted apart
+    // again and the patch views will be running on thematic tags alone.
+    accountMatched: 0,
+    errors: [],
+  }
 
   try {
     const existing = await sql`SELECT dedupe_key FROM signals`
     const existingKeys = new Set(existing.map((r) => r.dedupe_key))
 
-    const rawItems = await fetchWatchlist(FULL_WATCHLIST)
+    const rawItems = await fetchWatchlist(watchlist)
     summary.rawItems = rawItems.length
 
     const seenInBatch = new Set()
@@ -73,9 +90,20 @@ export default async function handler(req, res) {
           if (!normalized) continue
           summary.normalized += 1
 
+          // Deterministic territory attribution from the entity the
+          // normalizer resolved. A named-account hit is authoritative,
+          // so its patches replace the model's thematic guess rather
+          // than merging with it — "this is Terence's account" beats
+          // "this looks like TMT news".
+          const attribution = attributeEntity(normalized.entity)
+          const patches = attribution.patches.length
+            ? attribution.patches
+            : normalized.patches
+          if (attribution.matchedAccounts.length) summary.accountMatched += 1
+
           const dedupeKey = raw.sourceUrl
           await sql`
-            INSERT INTO signals (id, headline, summary, source_url, date, scope, entity, signal_type, origin, dedupe_key, outreach_relevance)
+            INSERT INTO signals (id, headline, summary, source_url, date, scope, entity, signal_type, practice_area, origin, dedupe_key, outreach_relevance, patches, matched_accounts, owning_aes, account_status)
             VALUES (
               ${idFor(dedupeKey)},
               ${cleanTitle(raw.title)},
@@ -85,9 +113,14 @@ export default async function handler(req, res) {
               ${normalized.scope},
               ${normalized.entity},
               ${normalized.signalType},
+              ${normalized.practiceArea},
               'news',
               ${dedupeKey},
-              ${normalized.outreachRelevance}
+              ${normalized.outreachRelevance},
+              ${patches},
+              ${attribution.matchedAccounts},
+              ${attribution.owningAes},
+              ${attribution.accountStatus}
             )
             ON CONFLICT (dedupe_key) DO NOTHING
           `

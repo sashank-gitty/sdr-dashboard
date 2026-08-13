@@ -20,9 +20,18 @@ async function main() {
   console.log(`Seeding ${realItems.length} signals (skipping ${skipped} example.com placeholder rows)...`)
 
   for (const item of realItems) {
+    // Older rows in data.json predate the practiceArea/outreachRelevance
+    // fields (Issue: EX/market-research expansion) — fall back to the
+    // same 'cx' the DB column itself defaults to, and leave relevance
+    // null for the existing backfill pass to fill in, exactly matching
+    // pre-expansion behavior for those rows.
     await sql`
-      INSERT INTO signals (id, headline, summary, source_url, date, scope, entity, signal_type, origin, dedupe_key)
-      VALUES (${item.id}, ${item.headline}, ${item.summary}, ${item.sourceUrl}, ${item.date}, ${item.scope}, ${item.entity}, ${item.signalType}, 'seed', ${item.sourceUrl})
+      INSERT INTO signals (id, headline, summary, source_url, date, scope, entity, signal_type, practice_area, origin, dedupe_key, outreach_relevance)
+      VALUES (
+        ${item.id}, ${item.headline}, ${item.summary}, ${item.sourceUrl}, ${item.date},
+        ${item.scope}, ${item.entity}, ${item.signalType}, ${item.practiceArea ?? "cx"},
+        'seed', ${item.sourceUrl}, ${item.outreachRelevance ?? null}
+      )
       ON CONFLICT (dedupe_key) DO NOTHING
     `
   }

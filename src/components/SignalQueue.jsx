@@ -1,93 +1,52 @@
-import { useEffect, useMemo, useRef, useState } from "react"
+import { useEffect, useState } from "react"
 import SignalRow from "./SignalRow.jsx"
 import SkeletonRow from "./SkeletonRow.jsx"
 import Checkbox from "./Checkbox.jsx"
+import TagLegend from "./TagLegend.jsx"
 
-const TABS = [
-  { id: "all", label: "All Signals" },
-  { id: "macro", label: "Macro" },
-  { id: "micro", label: "Micro" },
-]
+// 20 cards on first paint, each carrying several badges, read as a wall
+// of content before anyone had scrolled or filtered anything. 10 gives
+// a screenful without feeling like a dump; Load More still reaches
+// everything.
+const INITIAL_VISIBLE_COUNT = 10
+const LOAD_MORE_INCREMENT = 15
 
-const COMPETITOR_SIGNAL_TYPES = new Set(["product launch", "new entrant", "brand move"])
-const RISK_SIGNAL_TYPES = new Set(["regulation", "pain point"])
-
-const PILLS = [
-  { id: "all", label: "All" },
-  { id: "high-relevance", label: "High Relevance" },
-  { id: "this-week", label: "This Week" },
-  { id: "regulatory", label: "Regulatory & Pain Points" },
-  { id: "leadership", label: "Leadership Moves" },
-  { id: "competitor", label: "Competitor Moves" },
-]
-
-const HIGH_RELEVANCE_THRESHOLD = 4
-
-function daysBetween(a, b) {
-  return Math.round((a.getTime() - b.getTime()) / (24 * 60 * 60 * 1000))
-}
-
-function SignalQueue({
-  items,
-  today,
-  onToggleReviewed,
-  onMarkManyReviewed,
-  loading,
-  activeTab,
-  onTabChange,
-  activePill,
-  onPillChange,
-  onClearEverything,
-}) {
+// Scope (Macro/Micro/All) and the quick-filter shortcuts used to live here
+// as a second, tab-shaped filtering system alongside the sidebar's
+// checkboxes — two controls silently filtering the same fields. Both now
+// live in the filter panel as regular facets; this component just renders
+// whatever `items` it's handed.
+function SignalQueue({ items, onToggleReviewed, onMarkManyReviewed, onOpenSignal, loading, onClearEverything }) {
   const [selectedIds, setSelectedIds] = useState(() => new Set())
-  const tabsRef = useRef(null)
+  const [visibleCount, setVisibleCount] = useState(INITIAL_VISIBLE_COUNT)
+  const [legendOpen, setLegendOpen] = useState(false)
 
-  const tabCounts = useMemo(
-    () => ({
-      all: items.length,
-      macro: items.filter((i) => i.scope === "macro").length,
-      micro: items.filter((i) => i.scope === "micro").length,
-    }),
-    [items],
-  )
+  // Rendering all matching cards at once made the desktop feed one
+  // unbroken column with no natural stopping point. Reveal them in pages
+  // instead — every signal is still counted, still reachable, this only
+  // changes how many render up front.
+  useEffect(() => {
+    setVisibleCount(INITIAL_VISIBLE_COUNT)
+  }, [items])
 
-  const tabFiltered = useMemo(
-    () => (activeTab === "all" ? items : items.filter((i) => i.scope === activeTab)),
-    [items, activeTab],
-  )
-
-  const pillFiltered = useMemo(() => {
-    switch (activePill) {
-      case "high-relevance":
-        return tabFiltered.filter((i) => (i.outreachRelevance ?? 0) >= HIGH_RELEVANCE_THRESHOLD)
-      case "this-week":
-        return tabFiltered.filter((i) => daysBetween(today, new Date(`${i.date}T00:00:00`)) <= 6)
-      case "regulatory":
-        return tabFiltered.filter((i) => RISK_SIGNAL_TYPES.has(i.signalType))
-      case "leadership":
-        return tabFiltered.filter((i) => i.signalType === "leadership change")
-      case "competitor":
-        return tabFiltered.filter((i) => COMPETITOR_SIGNAL_TYPES.has(i.signalType))
-      default:
-        return tabFiltered
-    }
-  }, [tabFiltered, activePill, today])
+  const visibleItems = items.slice(0, visibleCount)
+  const hasMore = visibleCount < items.length
 
   // Selection is scoped to what's currently visible — stale picks from a
   // previous filter shouldn't silently linger in the bulk-action count.
   useEffect(() => {
     setSelectedIds((prev) => {
-      const visibleIds = new Set(pillFiltered.map((i) => i.id))
+      const visibleIds = new Set(items.map((i) => i.id))
       const next = new Set([...prev].filter((id) => visibleIds.has(id)))
       return next.size === prev.size ? prev : next
     })
-  }, [pillFiltered])
+  }, [items])
 
-  const allVisibleSelected = pillFiltered.length > 0 && pillFiltered.every((i) => selectedIds.has(i.id))
-  const someVisibleSelected = pillFiltered.some((i) => selectedIds.has(i.id))
+  const allVisibleSelected = items.length > 0 && items.every((i) => selectedIds.has(i.id))
+  const someVisibleSelected = items.some((i) => selectedIds.has(i.id))
 
   const toggleSelectAll = () => {
-    setSelectedIds(allVisibleSelected ? new Set() : new Set(pillFiltered.map((i) => i.id)))
+    setSelectedIds(allVisibleSelected ? new Set() : new Set(items.map((i) => i.id)))
   }
 
   const toggleSelectOne = (id) => {
@@ -106,73 +65,57 @@ function SignalQueue({
 
   return (
     <div>
-      <div ref={tabsRef} className="sticky top-[57px] z-20 -mx-1 mb-4 bg-slate-50/95 px-1 pt-1 backdrop-blur-sm dark:bg-zinc-950/95">
-        <div className="flex flex-wrap items-center gap-1 border-b border-slate-200 dark:border-zinc-800">
-          {TABS.map((tab) => (
-            <button
-              key={tab.id}
-              type="button"
-              onClick={() => onTabChange(tab.id)}
-              className={`relative px-3 py-2 text-sm font-semibold transition-colors ${
-                activeTab === tab.id
-                  ? "text-indigo-600 dark:text-indigo-400"
-                  : "text-slate-500 hover:text-slate-900 dark:text-zinc-400 dark:hover:text-zinc-100"
-              }`}
-            >
-              {tab.label}{" "}
-              <span className="font-mono text-xs tabular-nums text-slate-400 dark:text-zinc-500">
-                ({tabCounts[tab.id]})
-              </span>
-              {activeTab === tab.id && (
-                <span className="absolute inset-x-0 -bottom-px h-0.5 rounded-full bg-indigo-500 transition-all duration-300 ease-spring" />
-              )}
-            </button>
-          ))}
-        </div>
+      <div className="sticky top-[57px] z-20 -mx-1 mb-4 flex flex-wrap items-center gap-3 bg-slate-50/95 px-1 py-3 backdrop-blur-sm dark:bg-zinc-950/95">
+        <p className="text-sm font-semibold text-slate-700 dark:text-zinc-200">
+          {items.length} signal{items.length === 1 ? "" : "s"}
+        </p>
 
-        <div className="flex flex-wrap items-center gap-1.5 py-3">
-          {PILLS.map((pill) => (
-            <button
-              key={pill.id}
-              type="button"
-              onClick={() => onPillChange(pill.id)}
-              className={`rounded-full border px-2.5 py-1 text-xs font-medium transition-all duration-200 ease-spring ${
-                activePill === pill.id
-                  ? "border-indigo-500/30 bg-indigo-500/10 text-indigo-600 dark:text-indigo-400"
-                  : "border-slate-200 text-slate-500 hover:border-slate-300 hover:text-slate-900 dark:border-zinc-800 dark:text-zinc-400 dark:hover:border-zinc-700 dark:hover:text-zinc-100"
-              }`}
-            >
-              {pill.label}
-            </button>
-          ))}
+        <button
+          type="button"
+          onClick={() => setLegendOpen((v) => !v)}
+          aria-expanded={legendOpen}
+          className={`flex items-center gap-1.5 rounded-md px-2 py-1 text-xs font-medium transition-colors ${
+            legendOpen
+              ? "text-indigo-600 dark:text-indigo-400"
+              : "text-slate-400 hover:text-slate-700 dark:text-zinc-500 dark:hover:text-zinc-300"
+          }`}
+        >
+          <span className="flex h-2.5 w-2.5 items-center gap-px overflow-hidden rounded-sm">
+            <span className="h-full w-1/3 bg-rose-500" />
+            <span className="h-full w-1/3 bg-emerald-500" />
+            <span className="h-full w-1/3 bg-indigo-500" />
+          </span>
+          Legend
+        </button>
 
-          {pillFiltered.length > 0 && (
-            <div className="ml-auto flex items-center gap-2">
-              <div
-                onClick={toggleSelectAll}
-                className="flex cursor-pointer items-center gap-1.5 rounded-md px-1.5 py-1 text-xs font-medium text-slate-500 hover:bg-slate-100 dark:text-zinc-400 dark:hover:bg-zinc-800"
-              >
-                <Checkbox checked={allVisibleSelected} indeterminate={!allVisibleSelected && someVisibleSelected} onChange={toggleSelectAll} label="Select all visible signals" />
-                {selectedIds.size > 0 ? `${selectedIds.size} selected` : "Select all"}
-              </div>
-              {selectedIds.size > 0 && (
-                <button
-                  type="button"
-                  onClick={handleBulkMarkReviewed}
-                  className="rounded-md border border-emerald-500/30 bg-emerald-500/10 px-2.5 py-1 text-xs font-semibold text-emerald-600 transition-colors hover:bg-emerald-500/20 dark:text-emerald-400"
-                >
-                  Mark {selectedIds.size} Reviewed
-                </button>
-              )}
+        {items.length > 0 && (
+          <div className="ml-auto flex items-center gap-2">
+            <div
+              onClick={toggleSelectAll}
+              className="flex cursor-pointer items-center gap-1.5 rounded-md px-1.5 py-1 text-xs font-medium text-slate-500 hover:bg-slate-100 dark:text-zinc-400 dark:hover:bg-zinc-800"
+            >
+              <Checkbox checked={allVisibleSelected} indeterminate={!allVisibleSelected && someVisibleSelected} onChange={toggleSelectAll} label="Select all visible signals" />
+              {selectedIds.size > 0 ? `${selectedIds.size} selected` : "Select all"}
             </div>
-          )}
-        </div>
+            {selectedIds.size > 0 && (
+              <button
+                type="button"
+                onClick={handleBulkMarkReviewed}
+                className="rounded-md border border-emerald-500/30 bg-emerald-500/10 px-2.5 py-1 text-xs font-semibold text-emerald-600 transition-colors hover:bg-emerald-500/20 dark:text-emerald-400"
+              >
+                Mark {selectedIds.size} Reviewed
+              </button>
+            )}
+          </div>
+        )}
       </div>
+
+      {legendOpen && <TagLegend />}
 
       <div className="flex flex-col gap-2.5">
         {loading ? (
           Array.from({ length: 5 }).map((_, i) => <SkeletonRow key={i} />)
-        ) : pillFiltered.length === 0 ? (
+        ) : items.length === 0 ? (
           <div className="flex flex-col items-center gap-3 rounded-lg border border-dashed border-slate-300 py-12 text-center dark:border-zinc-700">
             <p className="text-sm text-slate-400 dark:text-zinc-500">No signals match the current filters.</p>
             <button
@@ -184,16 +127,31 @@ function SignalQueue({
             </button>
           </div>
         ) : (
-          pillFiltered.map((item) => (
-            <SignalRow
-              key={item.id}
-              item={item}
-              reviewed={item.reviewed}
-              onToggleReviewed={onToggleReviewed}
-              selected={selectedIds.has(item.id)}
-              onToggleSelect={toggleSelectOne}
-            />
-          ))
+          <>
+            {visibleItems.map((item) => (
+              <SignalRow
+                key={item.id}
+                item={item}
+                reviewed={item.reviewed}
+                onToggleReviewed={onToggleReviewed}
+                onOpen={onOpenSignal}
+                selected={selectedIds.has(item.id)}
+                onToggleSelect={toggleSelectOne}
+              />
+            ))}
+            {hasMore && (
+              <button
+                type="button"
+                onClick={() => setVisibleCount((v) => v + LOAD_MORE_INCREMENT)}
+                className="mt-1 self-center rounded-md border border-slate-200 px-4 py-2 text-xs font-semibold text-slate-600 transition-colors hover:border-slate-300 hover:text-slate-900 dark:border-zinc-800 dark:text-zinc-300 dark:hover:border-zinc-700 dark:hover:text-zinc-100"
+              >
+                Load {Math.min(LOAD_MORE_INCREMENT, items.length - visibleCount)} more{" "}
+                <span className="font-normal text-slate-400 dark:text-zinc-500">
+                  ({items.length - visibleCount} remaining)
+                </span>
+              </button>
+            )}
+          </>
         )}
       </div>
     </div>

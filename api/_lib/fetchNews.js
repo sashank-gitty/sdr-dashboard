@@ -41,11 +41,14 @@ export async function fetchQuery(query) {
 }
 
 // Runs queries with bounded concurrency rather than one-at-a-time — a
-// plain sequential loop over ~30 watchlist entries (each doing an RSS
-// fetch plus up to 10 redirect-resolution fetches) is slow enough to risk
-// tripping Vercel's function timeout. Concurrency is capped, not
-// unbounded, to avoid hammering Google News from a single IP.
-const CONCURRENCY = 5
+// plain sequential loop over the watchlist (each doing an RSS fetch plus
+// up to 10 redirect-resolution fetches) is slow enough to risk tripping
+// Vercel's function timeout. Concurrency is capped, not unbounded, to
+// avoid hammering Google News from a single IP. Raised from 5 to 10 when
+// the watchlist grew to cover EX and market research alongside CX
+// (~39 -> ~70 queries) — still bounded, just enough to keep total wall
+// time roughly where it was before the watchlist expanded.
+const CONCURRENCY = 10
 
 export async function fetchWatchlist(watchlist) {
   const results = []

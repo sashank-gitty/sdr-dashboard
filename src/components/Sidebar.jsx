@@ -1,11 +1,29 @@
 import { useState } from "react"
-import { pillClassForScope, pillClassForSignalType } from "../lib/colors.js"
+import {
+  pillClassForSignalType,
+  pillClassForPracticeArea,
+  pillClassForPatch,
+  PRACTICE_AREA_LABELS,
+  PATCH_LABELS,
+} from "../lib/colors.js"
+import { QUICK_FILTERS, isQuickFilterActive } from "../lib/quickFilters.js"
+import {
+  ACCOUNT_COVERAGE_MODES,
+  ACCOUNT_COVERAGE_SHORT_LABELS,
+  ACCOUNT_COVERAGE_HINTS,
+} from "../lib/accountCoverage.js"
 
 const DATE_RANGES = [
   { value: "7", label: "7d" },
   { value: "30", label: "30d" },
   { value: "90", label: "90d" },
   { value: "all", label: "All" },
+]
+
+const SCOPE_OPTIONS = [
+  { id: "all", label: "All", value: [] },
+  { id: "macro", label: "Macro", value: ["macro"] },
+  { id: "micro", label: "Micro", value: ["micro"] },
 ]
 
 function swatchClassFor(colorFor, option) {
@@ -17,10 +35,13 @@ function swatchClassFor(colorFor, option) {
 
 const SEARCHABLE_THRESHOLD = 8
 
-function FilterSection({ title, options, selected, onToggle, colorFor }) {
-  const [open, setOpen] = useState(
-    () => typeof window === "undefined" || window.innerWidth > 900,
-  )
+function FilterSection({ title, options, selected, onToggle, colorFor, labelFor }) {
+  // Collapsed by default, even on desktop. With five of these stacked
+  // (Patch, AE, Practice Area, Signal Type, Entity), rendering every
+  // checkbox in every list up front meant 70+ options on screen before
+  // anyone had touched a filter. A section with an active selection
+  // still opens itself below, so a filter already in use stays visible.
+  const [open, setOpen] = useState(() => selected.length > 0)
   const [query, setQuery] = useState("")
 
   const showSearch = options.length > SEARCHABLE_THRESHOLD
@@ -76,7 +97,9 @@ function FilterSection({ title, options, selected, onToggle, colorFor }) {
                   {colorFor && (
                     <span className={`h-2 w-2 flex-shrink-0 rounded-full ${swatchClassFor(colorFor, option)}`} />
                   )}
-                  <span className="truncate capitalize">{option}</span>
+                  <span className={labelFor ? "truncate" : "truncate capitalize"}>
+                    {labelFor ? labelFor(option) : option}
+                  </span>
                 </label>
               ))
             )}
@@ -87,40 +110,177 @@ function FilterSection({ title, options, selected, onToggle, colorFor }) {
   )
 }
 
+// Scope only ever has two real values, so a segmented control reads
+// better than a checkbox list — and having exactly one control for it
+// (instead of this plus a separate Macro/Micro/All tab bar elsewhere)
+// means it can't disagree with itself.
+function ScopeControl({ scopeFilter, scopeCounts, onScopeChange }) {
+  const current = scopeFilter.length === 0 ? "all" : scopeFilter[0]
+
+  return (
+    <div className="border-b border-slate-200 pb-3 dark:border-zinc-800">
+      <p className="mb-2 text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-zinc-400">Scope</p>
+      <div className="flex overflow-hidden rounded-md border border-slate-200 dark:border-zinc-800">
+        {SCOPE_OPTIONS.map((option) => (
+          <button
+            key={option.id}
+            type="button"
+            onClick={() => onScopeChange(option.value)}
+            className={`flex-1 py-1.5 text-xs font-semibold transition-colors ${
+              current === option.id
+                ? "bg-indigo-500/10 text-indigo-600 dark:text-indigo-400"
+                : "text-slate-500 hover:bg-slate-100 dark:text-zinc-400 dark:hover:bg-zinc-800"
+            }`}
+          >
+            {option.label}{" "}
+            <span className="font-mono text-[10px] tabular-nums text-slate-400 dark:text-zinc-500">
+              ({scopeCounts[option.id] ?? 0})
+            </span>
+          </button>
+        ))}
+      </div>
+    </div>
+  )
+}
+
+// Same segmented-control shape as ScopeControl, because it's the same
+// kind of choice: three mutually exclusive views of the whole feed.
+//
+// The two non-default modes are opposites, and both are real workflows.
+// "Named" is patch defence — what's happening to accounts we own.
+// "Unassigned" is whitespace hunting — named companies in the news that
+// match nothing in the territory book, which is where the next account
+// comes from when a patch is thin.
+function AccountCoverageControl({ accountCoverage, onAccountCoverageChange }) {
+  return (
+    <div className="border-b border-slate-200 py-3 dark:border-zinc-800">
+      <p className="mb-2 text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-zinc-400">
+        Account Coverage
+      </p>
+      {/* The explanation of what each mode means lives in the button's
+          title tooltip rather than as permanent text underneath — one
+          fewer paragraph on screen at all times, at the cost of it only
+          showing on hover. Worth it: three segmented controls in a row
+          (Date Range, Scope, this) each printing their own caption line
+          was a lot of standing text for something used occasionally. */}
+      <div className="flex overflow-hidden rounded-md border border-slate-200 dark:border-zinc-800">
+        {ACCOUNT_COVERAGE_MODES.map((mode) => (
+          <button
+            key={mode}
+            type="button"
+            onClick={() => onAccountCoverageChange(mode)}
+            title={ACCOUNT_COVERAGE_HINTS[mode]}
+            className={`flex-1 py-1.5 text-xs font-semibold transition-colors ${
+              accountCoverage === mode
+                ? "bg-indigo-500/10 text-indigo-600 dark:text-indigo-400"
+                : "text-slate-500 hover:bg-slate-100 dark:text-zinc-400 dark:hover:bg-zinc-800"
+            }`}
+          >
+            {ACCOUNT_COVERAGE_SHORT_LABELS[mode]}
+          </button>
+        ))}
+      </div>
+    </div>
+  )
+}
+
+// Shortcuts that set a combination of the same facets below — not a
+// second, competing filtering system. Multiple can be active at once
+// (e.g. High Relevance + This Week), which the old single-select pill row
+// couldn't do.
+function QuickFilters({ urlState, onToggleQuickFilter }) {
+  return (
+    <div className="border-b border-slate-200 py-3 dark:border-zinc-800">
+      <p className="mb-2 text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-zinc-400">
+        Quick Filters
+      </p>
+      <div className="flex flex-wrap gap-1.5">
+        {QUICK_FILTERS.map((quickFilter) => {
+          const active = isQuickFilterActive(quickFilter, urlState)
+          return (
+            <button
+              key={quickFilter.id}
+              type="button"
+              onClick={() => onToggleQuickFilter(quickFilter)}
+              aria-pressed={active}
+              className={`rounded-full border px-2.5 py-1 text-xs font-medium transition-all duration-200 ease-spring ${
+                active
+                  ? "border-indigo-500/30 bg-indigo-500/10 text-indigo-600 dark:text-indigo-400"
+                  : "border-slate-200 text-slate-500 hover:border-slate-300 hover:text-slate-900 dark:border-zinc-800 dark:text-zinc-400 dark:hover:border-zinc-700 dark:hover:text-zinc-100"
+              }`}
+            >
+              {quickFilter.label}
+            </button>
+          )
+        })}
+      </div>
+    </div>
+  )
+}
+
 function Sidebar({
   dateRange,
   onDateRangeChange,
-  scopeOptions,
+  scopeFilter,
+  scopeCounts,
+  onScopeChange,
+  practiceAreaOptions,
   entityOptions,
   signalTypeOptions,
-  scopeFilter,
+  practiceAreaFilter,
   entityFilter,
   signalTypeFilter,
-  onToggleScope,
+  onTogglePracticeArea,
   onToggleEntity,
   onToggleSignalType,
+  urlState,
+  onToggleQuickFilter,
+  patchOptions,
+  aeOptions,
+  patchFilter,
+  aeFilter,
+  accountCoverage,
+  onTogglePatch,
+  onToggleAe,
+  onAccountCoverageChange,
+  activeFilterCount,
   onClearAll,
+  onCopyViewLink,
+  viewLinkCopied,
 }) {
-  const activeCount = scopeFilter.length + entityFilter.length + signalTypeFilter.length
-
   return (
     <aside className="flex h-full flex-col gap-1 overflow-y-auto border-r border-slate-200 bg-white/60 p-4 dark:border-zinc-800 dark:bg-zinc-900/40 lg:sticky lg:top-[57px] lg:h-[calc(100vh-57px)]">
+      {/* One header row instead of two stacked blocks — the share
+          action used to be its own bordered section with a full-width
+          button; it's compact enough to sit inline with Clear all. The
+          whole view is URL-backed, so this one click hands the rep who
+          owns it a link rather than a list of checkboxes to re-tick. */}
       <div className="mb-1 flex items-center gap-2 pb-3">
         <span className="text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-zinc-400">Filters</span>
-        {activeCount > 0 && (
+        {activeFilterCount > 0 && (
           <span className="rounded-full bg-indigo-500/10 px-1.5 py-0.5 text-[11px] font-semibold text-indigo-600 dark:text-indigo-400">
-            {activeCount} active
+            {activeFilterCount}
           </span>
         )}
         <button
           type="button"
-          onClick={onClearAll}
-          disabled={activeCount === 0}
-          className="ml-auto rounded-md border border-slate-200 px-2 py-1 text-xs font-medium text-slate-500 transition-colors hover:border-slate-300 hover:text-slate-900 disabled:cursor-default disabled:opacity-40 dark:border-zinc-800 dark:text-zinc-400 dark:hover:border-zinc-700 dark:hover:text-zinc-100"
+          onClick={onCopyViewLink}
+          title="Copy link to this view"
+          className="ml-auto rounded-md border border-slate-200 px-2 py-1 text-xs font-medium text-slate-500 transition-colors hover:border-slate-300 hover:text-slate-900 dark:border-zinc-800 dark:text-zinc-400 dark:hover:border-zinc-700 dark:hover:text-zinc-100"
         >
-          Clear all
+          {viewLinkCopied ? "Copied" : "Share"}
+        </button>
+        <button
+          type="button"
+          onClick={onClearAll}
+          disabled={activeFilterCount === 0}
+          className="rounded-md border border-slate-200 px-2 py-1 text-xs font-medium text-slate-500 transition-colors hover:border-slate-300 hover:text-slate-900 disabled:cursor-default disabled:opacity-40 dark:border-zinc-800 dark:text-zinc-400 dark:hover:border-zinc-700 dark:hover:text-zinc-100"
+        >
+          Clear
         </button>
       </div>
+
+      <QuickFilters urlState={urlState} onToggleQuickFilter={onToggleQuickFilter} />
 
       <div className="border-b border-slate-200 pb-3 dark:border-zinc-800">
         <p className="mb-2 text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-zinc-400">Date Range</p>
@@ -142,12 +302,31 @@ function Sidebar({
         </div>
       </div>
 
+      <ScopeControl scopeFilter={scopeFilter} scopeCounts={scopeCounts} onScopeChange={onScopeChange} />
+
+      <AccountCoverageControl
+        accountCoverage={accountCoverage}
+        onAccountCoverageChange={onAccountCoverageChange}
+      />
+
       <FilterSection
-        title="Scope"
-        options={scopeOptions}
-        selected={scopeFilter}
-        onToggle={onToggleScope}
-        colorFor={pillClassForScope}
+        title="Patch"
+        options={patchOptions}
+        selected={patchFilter}
+        onToggle={onTogglePatch}
+        colorFor={pillClassForPatch}
+        labelFor={(v) => PATCH_LABELS[v] ?? v}
+      />
+
+      <FilterSection title="AE" options={aeOptions} selected={aeFilter} onToggle={onToggleAe} />
+
+      <FilterSection
+        title="Practice Area"
+        options={practiceAreaOptions}
+        selected={practiceAreaFilter}
+        onToggle={onTogglePracticeArea}
+        colorFor={pillClassForPracticeArea}
+        labelFor={(v) => PRACTICE_AREA_LABELS[v] ?? v}
       />
 
       <FilterSection

@@ -21,8 +21,13 @@ export default async function handler(req, res) {
         scope,
         entity,
         signal_type AS "signalType",
+        practice_area AS "practiceArea",
         origin,
         outreach_relevance AS "outreachRelevance",
+        patches,
+        matched_accounts AS "matchedAccounts",
+        owning_aes AS "owningAes",
+        account_status AS "accountStatus",
         (reviewed_at IS NOT NULL) AS reviewed
       FROM signals
       ORDER BY date DESC, created_at DESC
