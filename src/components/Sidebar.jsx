@@ -1,6 +1,17 @@
 import { useState } from "react"
-import { pillClassForSignalType, pillClassForPracticeArea, PRACTICE_AREA_LABELS } from "../lib/colors.js"
+import {
+  pillClassForSignalType,
+  pillClassForPracticeArea,
+  pillClassForPatch,
+  PRACTICE_AREA_LABELS,
+  PATCH_LABELS,
+} from "../lib/colors.js"
 import { QUICK_FILTERS, isQuickFilterActive } from "../lib/quickFilters.js"
+import {
+  ACCOUNT_COVERAGE_MODES,
+  ACCOUNT_COVERAGE_SHORT_LABELS,
+  ACCOUNT_COVERAGE_HINTS,
+} from "../lib/accountCoverage.js"
 
 const DATE_RANGES = [
   { value: "7", label: "7d" },
@@ -129,6 +140,44 @@ function ScopeControl({ scopeFilter, scopeCounts, onScopeChange }) {
   )
 }
 
+// Same segmented-control shape as ScopeControl, because it's the same
+// kind of choice: three mutually exclusive views of the whole feed.
+//
+// The two non-default modes are opposites, and both are real workflows.
+// "Named" is patch defence — what's happening to accounts we own.
+// "Unassigned" is whitespace hunting — named companies in the news that
+// match nothing in the territory book, which is where the next account
+// comes from when a patch is thin.
+function AccountCoverageControl({ accountCoverage, onAccountCoverageChange }) {
+  return (
+    <div className="border-b border-slate-200 py-3 dark:border-zinc-800">
+      <p className="mb-2 text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-zinc-400">
+        Account Coverage
+      </p>
+      <div className="flex overflow-hidden rounded-md border border-slate-200 dark:border-zinc-800">
+        {ACCOUNT_COVERAGE_MODES.map((mode) => (
+          <button
+            key={mode}
+            type="button"
+            onClick={() => onAccountCoverageChange(mode)}
+            title={ACCOUNT_COVERAGE_HINTS[mode]}
+            className={`flex-1 py-1.5 text-xs font-semibold transition-colors ${
+              accountCoverage === mode
+                ? "bg-indigo-500/10 text-indigo-600 dark:text-indigo-400"
+                : "text-slate-500 hover:bg-slate-100 dark:text-zinc-400 dark:hover:bg-zinc-800"
+            }`}
+          >
+            {ACCOUNT_COVERAGE_SHORT_LABELS[mode]}
+          </button>
+        ))}
+      </div>
+      <p className="mt-1.5 text-[11px] leading-snug text-slate-400 dark:text-zinc-500">
+        {ACCOUNT_COVERAGE_HINTS[accountCoverage]}
+      </p>
+    </div>
+  )
+}
+
 // Shortcuts that set a combination of the same facets below — not a
 // second, competing filtering system. Multiple can be active at once
 // (e.g. High Relevance + This Week), which the old single-select pill row
@@ -180,8 +229,18 @@ function Sidebar({
   onToggleSignalType,
   urlState,
   onToggleQuickFilter,
+  patchOptions,
+  aeOptions,
+  patchFilter,
+  aeFilter,
+  accountCoverage,
+  onTogglePatch,
+  onToggleAe,
+  onAccountCoverageChange,
   activeFilterCount,
   onClearAll,
+  onCopyViewLink,
+  viewLinkCopied,
 }) {
   return (
     <aside className="flex h-full flex-col gap-1 overflow-y-auto border-r border-slate-200 bg-white/60 p-4 dark:border-zinc-800 dark:bg-zinc-900/40 lg:sticky lg:top-[57px] lg:h-[calc(100vh-57px)]">
@@ -199,6 +258,19 @@ function Sidebar({
           className="ml-auto rounded-md border border-slate-200 px-2 py-1 text-xs font-medium text-slate-500 transition-colors hover:border-slate-300 hover:text-slate-900 disabled:cursor-default disabled:opacity-40 dark:border-zinc-800 dark:text-zinc-400 dark:hover:border-zinc-700 dark:hover:text-zinc-100"
         >
           Clear all
+        </button>
+      </div>
+
+      {/* The whole view is URL-backed, so any state of this sidebar can
+          be handed to the rep who owns it as a link rather than a list
+          of checkboxes to re-tick. */}
+      <div className="border-b border-slate-200 pb-3 dark:border-zinc-800">
+        <button
+          type="button"
+          onClick={onCopyViewLink}
+          className="w-full rounded-md border border-slate-200 px-2 py-1.5 text-xs font-medium text-slate-500 transition-colors hover:border-slate-300 hover:text-slate-900 dark:border-zinc-800 dark:text-zinc-400 dark:hover:border-zinc-700 dark:hover:text-zinc-100"
+        >
+          {viewLinkCopied ? "Link copied" : "Copy link to this view"}
         </button>
       </div>
 
@@ -225,6 +297,22 @@ function Sidebar({
       </div>
 
       <ScopeControl scopeFilter={scopeFilter} scopeCounts={scopeCounts} onScopeChange={onScopeChange} />
+
+      <AccountCoverageControl
+        accountCoverage={accountCoverage}
+        onAccountCoverageChange={onAccountCoverageChange}
+      />
+
+      <FilterSection
+        title="Patch"
+        options={patchOptions}
+        selected={patchFilter}
+        onToggle={onTogglePatch}
+        colorFor={pillClassForPatch}
+        labelFor={(v) => PATCH_LABELS[v] ?? v}
+      />
+
+      <FilterSection title="AE" options={aeOptions} selected={aeFilter} onToggle={onToggleAe} />
 
       <FilterSection
         title="Practice Area"

@@ -15,6 +15,8 @@ import { useUrlState } from "./lib/useUrlState.js"
 import { computeMetrics } from "./lib/metrics.js"
 import { HIGH_RELEVANCE_THRESHOLD } from "./lib/relevance.js"
 import { isQuickFilterActive, clearPatchFor } from "./lib/quickFilters.js"
+import { PATCHES, PATCH_LABELS } from "../shared/patches.js"
+import { matchesAccountCoverage, ACCOUNT_COVERAGE_LABELS } from "./lib/accountCoverage.js"
 
 const DATE_RANGE_DAYS = { "7": 7, "30": 30, "90": 90 }
 const EMPTY_ARRAY = []
@@ -44,9 +46,20 @@ function App() {
   const unreviewedOnly = urlState.reviewed === "false"
   const openSignalId = urlState.signal ?? null
 
+  // Territory facets. Unrecognized patch identifiers are dropped rather
+  // than trusted — these come off a URL someone could have hand-edited,
+  // and an unknown one would empty the feed with no visible cause.
+  const patchFilter = useMemo(
+    () => (urlState.patch ?? EMPTY_ARRAY).filter((p) => PATCHES.includes(p)),
+    [urlState.patch],
+  )
+  const aeFilter = urlState.ae ?? EMPTY_ARRAY
+  const accountCoverage = urlState.accounts ?? "all"
+
   const [sidebarOpen, setSidebarOpen] = useLocalStorageState("sdr-dashboard-sidebar-open", true)
   const [paletteOpen, setPaletteOpen] = useState(false)
   const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false)
+  const [viewLinkCopied, setViewLinkCopied] = useState(false)
 
   const [signals, setSignals] = useState([])
   const [loading, setLoading] = useState(true)
@@ -107,13 +120,44 @@ function App() {
     () => [...new Set(signals.map((item) => item.signalType))].sort(),
     [signals],
   )
+  // Every canonical patch, not just those present in the feed, so an
+  // empty patch reads as "nothing landed in your territory this week"
+  // rather than vanishing from the sidebar.
+  const patchOptions = PATCHES
+  const aeOptions = useMemo(
+    () => [...new Set(signals.flatMap((item) => item.owningAes ?? []))].sort(),
+    [signals],
+  )
+
+  // Territory filters are a different kind of filter from the rest.
+  // Practice area, signal type and the date range narrow what you're
+  // looking at within your own dashboard; patch, AE and account coverage
+  // decide whose dashboard it is. So they apply above the feed, to the
+  // KPI tiles, volume chart and highlights rail as well — otherwise a
+  // rep opening their own patch link would read the whole team's numbers.
+  const territoryItems = useMemo(() => {
+    if (!patchFilter.length && !aeFilter.length && accountCoverage === "all") return signals
+    return signals.filter((item) => {
+      // Patch and AE are set-valued on a signal, so these are "overlaps"
+      // tests, not equality: a Fair Work ruling tagged for three patches
+      // belongs in all three reps' views.
+      if (patchFilter.length && !(item.patches ?? []).some((p) => patchFilter.includes(p))) {
+        return false
+      }
+      if (aeFilter.length && !(item.owningAes ?? []).some((a) => aeFilter.includes(a))) {
+        return false
+      }
+      if (!matchesAccountCoverage(item, accountCoverage)) return false
+      return true
+    })
+  }, [signals, patchFilter, aeFilter, accountCoverage])
 
   // Pure chronological order — used wherever "recent" needs to actually
   // mean recent (the activity timeline, weekly metrics), independent of
   // how the main feed is ranked.
   const chronologicalItems = useMemo(
-    () => [...signals].sort((a, b) => (a.date < b.date ? 1 : -1)),
-    [signals],
+    () => [...territoryItems].sort((a, b) => (a.date < b.date ? 1 : -1)),
+    [territoryItems],
   )
 
   // Main feed order: outreach relevance first (Issue 3 — "most important
@@ -124,12 +168,12 @@ function App() {
   // unfairly floating to the top.
   const sortedItems = useMemo(
     () =>
-      [...signals].sort((a, b) => {
+      [...territoryItems].sort((a, b) => {
         const relDiff = (b.outreachRelevance ?? 3) - (a.outreachRelevance ?? 3)
         if (relDiff !== 0) return relDiff
         return a.date < b.date ? 1 : -1
       }),
-    [signals],
+    [territoryItems],
   )
 
   const metrics = useMemo(() => computeMetrics(chronologicalItems), [chronologicalItems])
@@ -158,7 +202,8 @@ function App() {
       if (unreviewedOnly && item.reviewed) return false
 
       if (query) {
-        const haystack = `${item.headline} ${item.summary} ${item.entity}`.toLowerCase()
+        const haystack =
+          `${item.headline} ${item.summary} ${item.entity} ${(item.matchedAccounts ?? []).join(" ")}`.toLowerCase()
         if (!haystack.includes(query)) return false
       }
 
@@ -189,7 +234,10 @@ function App() {
     entityFilter.length +
     signalTypeFilter.length +
     (relevanceOnly ? 1 : 0) +
-    (unreviewedOnly ? 1 : 0)
+    (unreviewedOnly ? 1 : 0) +
+    patchFilter.length +
+    aeFilter.length +
+    (accountCoverage === "all" ? 0 : 1)
 
   const openItem = useMemo(() => signals.find((s) => s.id === openSignalId) ?? null, [signals, openSignalId])
   const relatedItems = useMemo(() => {
@@ -207,6 +255,18 @@ function App() {
   const toggleQuickFilter = (quickFilter) => {
     updateUrl(isQuickFilterActive(quickFilter, urlState) ? clearPatchFor(quickFilter) : quickFilter.patch)
   }
+  const setAccountCoverage = (mode) => updateUrl({ accounts: mode === "all" ? undefined : mode })
+  const handleCopyViewLink = async () => {
+    try {
+      await navigator.clipboard.writeText(window.location.href)
+      setViewLinkCopied(true)
+      setTimeout(() => setViewLinkCopied(false), 1500)
+    } catch {
+      // Clipboard access can be denied by the browser; fail silently,
+      // the URL is in the address bar to copy by hand either way.
+    }
+  }
+  const clearTerritory = () => updateUrl({ patch: undefined, ae: undefined, accounts: undefined })
   const openSignal = (id) => updateUrl({ signal: id }, { push: true })
   const closeSignal = () => updateUrl({ signal: undefined })
 
@@ -219,6 +279,9 @@ function App() {
       relevance: undefined,
       reviewed: undefined,
       range: undefined,
+      patch: undefined,
+      ae: undefined,
+      accounts: undefined,
     })
   }
 
@@ -287,8 +350,18 @@ function App() {
     onToggleSignalType: (v) => toggleFacet("type", signalTypeFilter, v),
     urlState,
     onToggleQuickFilter: toggleQuickFilter,
+    patchOptions,
+    aeOptions,
+    patchFilter,
+    aeFilter,
+    accountCoverage,
+    onTogglePatch: (v) => toggleFacet("patch", patchFilter, v),
+    onToggleAe: (v) => toggleFacet("ae", aeFilter, v),
+    onAccountCoverageChange: setAccountCoverage,
     activeFilterCount,
     onClearAll: handleClearAll,
+    onCopyViewLink: handleCopyViewLink,
+    viewLinkCopied,
   }
 
   return (
@@ -322,6 +395,38 @@ function App() {
 
         <main className="min-w-0 flex-1 px-4 py-5 sm:px-6">
           <div className="mb-5">
+            {/* The territory filters rescope every number on the page,
+                not just the feed, so say so plainly — otherwise a
+                smaller KPI count reads as signals having gone missing. */}
+            {(patchFilter.length > 0 || aeFilter.length > 0 || accountCoverage !== "all") && (
+              <div className="mb-4 flex flex-wrap items-center gap-x-2 gap-y-1 rounded-lg border border-indigo-500/20 bg-indigo-500/5 px-3 py-2 text-xs text-slate-600 dark:text-zinc-300">
+                <span className="font-semibold uppercase tracking-wider text-indigo-600 dark:text-indigo-400">
+                  Patch view
+                </span>
+                <span>
+                  {[
+                    patchFilter.map((p) => PATCH_LABELS[p] ?? p).join(", "),
+                    aeFilter.join(", "),
+                    accountCoverage === "all"
+                      ? ""
+                      : ACCOUNT_COVERAGE_LABELS[accountCoverage].toLowerCase(),
+                  ]
+                    .filter(Boolean)
+                    .join(" · ")}
+                </span>
+                <span className="text-slate-400 dark:text-zinc-500">
+                  &mdash; every figure below is scoped to this view
+                </span>
+                <button
+                  type="button"
+                  onClick={clearTerritory}
+                  className="ml-auto rounded-md border border-slate-200 px-2 py-0.5 font-medium text-slate-500 transition-colors hover:border-slate-300 hover:text-slate-900 dark:border-zinc-700 dark:text-zinc-400 dark:hover:border-zinc-600 dark:hover:text-zinc-100"
+                >
+                  Show all patches
+                </button>
+              </div>
+            )}
+
             <KpiGrid metrics={metrics} />
           </div>
 

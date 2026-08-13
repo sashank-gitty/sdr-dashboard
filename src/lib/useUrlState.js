@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from "react"
 
-const ARRAY_KEYS = new Set(["practice", "scope", "type", "entity"])
+const ARRAY_KEYS = new Set(["practice", "scope", "type", "entity", "patch", "ae"])
 
 function parseSearch(search) {
   const params = new URLSearchParams(search)
