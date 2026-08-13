@@ -1,16 +1,14 @@
 import { useState } from "react"
 import {
-  pillClassForScope,
   pillClassForSignalType,
-  pillClassForPracticeArea,
   pillClassForPatch,
   pillClassForAccountStatus,
-  PRACTICE_AREA_LABELS,
   PATCH_LABELS,
   REGULATORY_ACCENT,
 } from "../lib/colors.js"
 import { REGULATORY_SIGNAL_TYPES, HIGH_RELEVANCE_THRESHOLD } from "../lib/relevance.js"
 import { matchesAccountCoverage } from "../lib/accountCoverage.js"
+import { buildSignalReason, REASON_TONE_STYLES } from "../lib/signalReason.js"
 import Checkbox from "./Checkbox.jsx"
 
 const MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
@@ -21,6 +19,11 @@ function formatDate(dateString) {
   return `${day} ${MONTHS[month - 1]} ${year}`
 }
 
+function formatShortDate(dateString) {
+  const [, month, day] = dateString.split("-").map(Number)
+  return `${day} ${MONTHS[month - 1]}`
+}
+
 function domainFromUrl(url) {
   try {
     return new URL(url).hostname.replace(/^www\./, "")
@@ -29,19 +32,32 @@ function domainFromUrl(url) {
   }
 }
 
-function SignalRow({ item, reviewed, onToggleReviewed, onOpen, selected, onToggleSelect }) {
+// The accent that runs down the left edge of every card, and the tone dot on
+// the reason line, are one decision (severity → relevance → provenance),
+// resolved here once so the two can't disagree.
+function accentFor({ isRegulatory, isHighRelevance, isCommunity }) {
+  if (isRegulatory) return { swatch: REGULATORY_ACCENT.swatch, title: "Regulatory / pain-point signal" }
+  if (isHighRelevance) return { swatch: "bg-indigo-500", title: "High outreach relevance" }
+  if (isCommunity)
+    return { swatch: "bg-pink-500", title: "Sourced from community research (last30days), not the news pipeline" }
+  return null
+}
+
+function SignalRow({ item, reviewed, onToggleReviewed, onOpen, selected, onToggleSelect, compact = false }) {
   const [copied, setCopied] = useState(false)
 
   const isRegulatory = REGULATORY_SIGNAL_TYPES.has(item.signalType)
   const isHighRelevance = (item.outreachRelevance ?? 0) >= HIGH_RELEVANCE_THRESHOLD
-  const practiceAreaLabel = PRACTICE_AREA_LABELS[item.practiceArea] ?? PRACTICE_AREA_LABELS.cx
+  const isCommunity = item.origin === "community"
 
-  // Territory attribution. Rows predating migration 005 have none of
-  // this, so every field is treated as optional.
   const patches = item.patches ?? []
   const matchedAccounts = item.matchedAccounts ?? []
   const owningAes = item.owningAes ?? []
   const isUnassigned = matchesAccountCoverage(item, "unassigned")
+
+  const reason = buildSignalReason(item)
+  const toneStyles = REASON_TONE_STYLES[reason.tone] ?? REASON_TONE_STYLES.neutral
+  const accent = accentFor({ isRegulatory, isHighRelevance, isCommunity })
 
   const handleCopy = async () => {
     try {
@@ -53,8 +69,79 @@ function SignalRow({ item, reviewed, onToggleReviewed, onOpen, selected, onToggl
     }
   }
 
-  const isCommunity = item.origin === "community"
+  // Compact / table mode: one aligned row per signal, tuned for scanning a
+  // long feed at speed (the Stripe/Clay table posture). Colour is stripped
+  // back to just the priority tone dot and the relevance figure — everything
+  // else that a comfortable card spells out in pills is one open away.
+  if (compact) {
+    return (
+      <article
+        className={`group flex items-center gap-3 rounded-md border bg-white/60 px-3 py-2 backdrop-blur-sm transition-colors dark:bg-zinc-900/60 ${
+          reviewed
+            ? "border-slate-200 opacity-60 dark:border-zinc-800"
+            : "border-slate-200 hover:border-slate-300 dark:border-zinc-800 dark:hover:border-zinc-700"
+        } ${selected ? "ring-2 ring-indigo-500/40" : ""}`}
+      >
+        <Checkbox checked={selected} onChange={() => onToggleSelect(item.id)} label={`Select ${item.headline}`} />
+        <span
+          className={`h-2 w-2 flex-shrink-0 rounded-full ${accent ? accent.swatch : toneStyles.dot}`}
+          title={reason.label}
+          aria-hidden="true"
+        />
+        <time className="hidden w-16 flex-shrink-0 font-mono text-xs font-semibold tabular-nums text-slate-500 dark:text-zinc-400 sm:block">
+          {formatShortDate(item.date)}
+        </time>
+        <span
+          className={`hidden w-28 flex-shrink-0 truncate rounded-full px-2 py-0.5 text-center text-[11px] font-semibold capitalize md:inline-block ${pillClassForSignalType(item.signalType)}`}
+        >
+          {item.signalType}
+        </span>
+        <button
+          type="button"
+          onClick={() => onOpen(item.id)}
+          className="min-w-0 flex-1 truncate text-left text-sm font-medium text-slate-800 transition-colors hover:text-indigo-600 dark:text-zinc-200 dark:hover:text-indigo-400"
+          title={item.headline}
+        >
+          <span className="font-semibold text-slate-900 dark:text-zinc-50">{item.entity}</span>
+          {" — "}
+          {item.headline}
+        </button>
+        <span
+          title={`Outreach relevance ${item.outreachRelevance ?? "—"} / 5`}
+          className={`flex-shrink-0 font-mono text-xs font-semibold tabular-nums ${
+            isHighRelevance ? "text-indigo-600 dark:text-indigo-400" : "text-slate-400 dark:text-zinc-500"
+          }`}
+        >
+          R{item.outreachRelevance ?? "—"}
+        </span>
+        <a
+          href={item.sourceUrl}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="hidden flex-shrink-0 text-xs font-medium text-slate-400 hover:text-indigo-600 dark:text-zinc-500 dark:hover:text-indigo-400 lg:block"
+        >
+          {domainFromUrl(item.sourceUrl)} &#8599;
+        </a>
+        <button
+          type="button"
+          onClick={() => onToggleReviewed(item.id)}
+          title={reviewed ? "Mark as not yet reviewed" : "Mark as reviewed"}
+          className={`flex-shrink-0 rounded-md border px-2 py-1 text-xs font-medium transition-colors ${
+            reviewed
+              ? "border-emerald-500/30 text-emerald-600 dark:text-emerald-400"
+              : "border-slate-200 text-slate-500 hover:border-slate-300 hover:text-slate-900 dark:border-zinc-800 dark:text-zinc-400 dark:hover:border-zinc-700 dark:hover:text-zinc-100"
+          }`}
+        >
+          {reviewed ? "Reviewed" : "Review"}
+        </button>
+      </article>
+    )
+  }
 
+  // Comfortable mode. Practice-area and scope pills that used to sit in the
+  // metadata row have moved into the detail panel — the reason line below the
+  // headline now carries the "why act, and whose account" read those pills
+  // were standing in for, so the card face is both leaner and more directed.
   return (
     <article
       className={`group relative flex gap-3 overflow-hidden rounded-lg border bg-white/60 p-4 backdrop-blur-sm transition-all duration-200 ease-spring hover:-translate-y-0.5 dark:bg-zinc-900/60 ${
@@ -63,27 +150,11 @@ function SignalRow({ item, reviewed, onToggleReviewed, onOpen, selected, onToggl
           : "border-slate-200 hover:border-slate-300 hover:shadow-md dark:border-zinc-800 dark:hover:border-zinc-700"
       } ${selected ? "ring-2 ring-indigo-500/40" : ""}`}
     >
-      {/* Persistent marker so regulatory/pain-point, high-relevance, and
-          community-sourced signals stand out while scrolling the
-          unfiltered feed, not just when a quick filter is applied. One
-          shared mechanism, explicit priority order — severity (rose)
-          beats general relevance (indigo) beats provenance (pink) when a
-          card qualifies for more than one, since a child span painting
-          over its parent's border silently hid whichever lost that fight
-          otherwise, with no way to tell that was intentional. */}
-      {(isRegulatory || isHighRelevance || isCommunity) && (
+      {accent && (
         <span
           aria-hidden="true"
-          title={
-            isRegulatory
-              ? "Regulatory / pain-point signal"
-              : isHighRelevance
-                ? "High outreach relevance"
-                : "Sourced from community research (last30days), not the news pipeline"
-          }
-          className={`absolute inset-y-0 left-0 w-1 ${
-            isRegulatory ? REGULATORY_ACCENT.swatch : isHighRelevance ? "bg-indigo-500" : "bg-pink-500"
-          }`}
+          title={accent.title}
+          className={`absolute inset-y-0 left-0 w-1 ${accent.swatch}`}
         />
       )}
 
@@ -104,18 +175,6 @@ function SignalRow({ item, reviewed, onToggleReviewed, onOpen, selected, onToggl
               Community
             </span>
           )}
-          <span
-            title={`Practice area: ${practiceAreaLabel}`}
-            className={`rounded-full px-2 py-0.5 text-[11px] font-semibold ${pillClassForPracticeArea(item.practiceArea)}`}
-          >
-            {practiceAreaLabel}
-          </span>
-          <span
-            title={item.scope === "micro" ? "Account-level signal — specific to one company" : "Market-level signal — broader industry or economic context"}
-            className={`rounded-full px-2 py-0.5 text-[11px] font-semibold capitalize ${pillClassForScope(item.scope)}`}
-          >
-            {item.scope}
-          </span>
           <span
             title={`Signal type: ${item.signalType}`}
             className={`rounded-full px-2 py-0.5 text-[11px] font-semibold capitalize ${pillClassForSignalType(item.signalType)}`}
@@ -140,6 +199,13 @@ function SignalRow({ item, reviewed, onToggleReviewed, onOpen, selected, onToggl
           {item.headline}
         </button>
 
+        {/* Why this signal is where it is in the feed — the per-item rationale
+            (Rhythm / 6sense) that turns a ranked list into an explained one. */}
+        <p className={`mb-2 flex items-center gap-1.5 text-xs font-medium ${toneStyles.text}`}>
+          <span className={`h-1.5 w-1.5 flex-shrink-0 rounded-full ${toneStyles.dot}`} aria-hidden="true" />
+          {reason.label}
+        </p>
+
         <p className="mb-3 line-clamp-2 text-sm leading-relaxed text-slate-600 dark:text-zinc-400">{item.summary}</p>
 
         <div className="flex flex-wrap items-center gap-2">
@@ -147,9 +213,6 @@ function SignalRow({ item, reviewed, onToggleReviewed, onOpen, selected, onToggl
             {item.entity}
           </span>
 
-          {/* A matched account outranks everything else on the card: it
-              means a company in someone's territory book is in the news
-              today, which is the whole point of the patch views. */}
           {matchedAccounts.length > 0 && (
             <span
               title={
@@ -164,10 +227,6 @@ function SignalRow({ item, reviewed, onToggleReviewed, onOpen, selected, onToggl
             </span>
           )}
 
-          {/* The inverse case, and just as worth surfacing: a specific
-              company in the news that matched nothing in the territory
-              book. Nobody is covering it. Shares its definition with the
-              Unassigned filter so the badge and the view can't drift. */}
           {isUnassigned && (
             <span
               title="Unassigned — this company matched no account in the territory book"
@@ -177,11 +236,6 @@ function SignalRow({ item, reviewed, onToggleReviewed, onOpen, selected, onToggl
             </span>
           )}
 
-          {/* A signal can legitimately carry every patch (a Fair Work
-              ruling touches employers across the board), and one pill
-              per patch made those cards the busiest thing on the page.
-              Cap what renders inline; the rest collapse into a single
-              "+N" chip whose tooltip lists them. */}
           {patches.slice(0, MAX_INLINE_PATCHES).map((patch) => (
             <span
               key={patch}
