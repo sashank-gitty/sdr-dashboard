@@ -15,7 +15,7 @@ import { useUrlState } from "./lib/useUrlState.js"
 import { computeMetrics } from "./lib/metrics.js"
 import { HIGH_RELEVANCE_THRESHOLD } from "./lib/relevance.js"
 import { isQuickFilterActive, clearPatchFor } from "./lib/quickFilters.js"
-import { PATCHES, PATCH_LABELS } from "../shared/patches.js"
+import { PATCHES, PATCH_LABELS, AE_NAMES } from "../shared/patches.js"
 import { matchesAccountCoverage, ACCOUNT_COVERAGE_LABELS } from "./lib/accountCoverage.js"
 
 const DATE_RANGE_DAYS = { "7": 7, "30": 30, "90": 90 }
@@ -120,14 +120,15 @@ function App() {
     () => [...new Set(signals.map((item) => item.signalType))].sort(),
     [signals],
   )
-  // Every canonical patch, not just those present in the feed, so an
-  // empty patch reads as "nothing landed in your territory this week"
-  // rather than vanishing from the sidebar.
+  // Every canonical patch and AE, not just those present in the current
+  // feed. A dynamically-derived AE list would drop a rep from the
+  // sidebar the moment no live signal happens to match one of their
+  // accounts — which is the common case, not the exception, given how
+  // few signals name any account at all. An AE the filter can't select
+  // reads as "this rep doesn't exist" rather than "no matches right
+  // now," so the roster is fixed regardless of what's in signals.
   const patchOptions = PATCHES
-  const aeOptions = useMemo(
-    () => [...new Set(signals.flatMap((item) => item.owningAes ?? []))].sort(),
-    [signals],
-  )
+  const aeOptions = useMemo(() => [...AE_NAMES].sort(), [])
 
   // Territory filters are a different kind of filter from the rest.
   // Practice area, signal type and the date range narrow what you're
