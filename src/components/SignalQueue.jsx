@@ -4,7 +4,11 @@ import SkeletonRow from "./SkeletonRow.jsx"
 import Checkbox from "./Checkbox.jsx"
 import TagLegend from "./TagLegend.jsx"
 
-const INITIAL_VISIBLE_COUNT = 20
+// 20 cards on first paint, each carrying several badges, read as a wall
+// of content before anyone had scrolled or filtered anything. 10 gives
+// a screenful without feeling like a dump; Load More still reaches
+// everything.
+const INITIAL_VISIBLE_COUNT = 10
 const LOAD_MORE_INCREMENT = 15
 
 // Scope (Macro/Micro/All) and the quick-filter shortcuts used to live here

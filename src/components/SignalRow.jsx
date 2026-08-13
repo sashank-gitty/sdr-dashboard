@@ -14,6 +14,7 @@ import { matchesAccountCoverage } from "../lib/accountCoverage.js"
 import Checkbox from "./Checkbox.jsx"
 
 const MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
+const MAX_INLINE_PATCHES = 2
 
 function formatDate(dateString) {
   const [year, month, day] = dateString.split("-").map(Number)
@@ -154,7 +155,12 @@ function SignalRow({ item, reviewed, onToggleReviewed, onOpen, selected, onToggl
             </span>
           )}
 
-          {patches.map((patch) => (
+          {/* A signal can legitimately carry every patch (a Fair Work
+              ruling touches employers across the board), and one pill
+              per patch made those cards the busiest thing on the page.
+              Cap what renders inline; the rest collapse into a single
+              "+N" chip whose tooltip lists them. */}
+          {patches.slice(0, MAX_INLINE_PATCHES).map((patch) => (
             <span
               key={patch}
               title={`Patch: ${PATCH_LABELS[patch] ?? patch}`}
@@ -163,6 +169,17 @@ function SignalRow({ item, reviewed, onToggleReviewed, onOpen, selected, onToggl
               {PATCH_LABELS[patch] ?? patch}
             </span>
           ))}
+          {patches.length > MAX_INLINE_PATCHES && (
+            <span
+              title={`Also: ${patches
+                .slice(MAX_INLINE_PATCHES)
+                .map((p) => PATCH_LABELS[p] ?? p)
+                .join(", ")}`}
+              className="rounded-full border border-slate-200 px-2 py-0.5 text-[11px] font-semibold text-slate-500 dark:border-zinc-700 dark:text-zinc-400"
+            >
+              +{patches.length - MAX_INLINE_PATCHES}
+            </span>
+          )}
 
           <div className="ml-auto flex items-center gap-1.5">
             <button

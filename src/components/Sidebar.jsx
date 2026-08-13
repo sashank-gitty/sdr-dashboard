@@ -36,9 +36,12 @@ function swatchClassFor(colorFor, option) {
 const SEARCHABLE_THRESHOLD = 8
 
 function FilterSection({ title, options, selected, onToggle, colorFor, labelFor }) {
-  const [open, setOpen] = useState(
-    () => typeof window === "undefined" || window.innerWidth > 900,
-  )
+  // Collapsed by default, even on desktop. With five of these stacked
+  // (Patch, AE, Practice Area, Signal Type, Entity), rendering every
+  // checkbox in every list up front meant 70+ options on screen before
+  // anyone had touched a filter. A section with an active selection
+  // still opens itself below, so a filter already in use stays visible.
+  const [open, setOpen] = useState(() => selected.length > 0)
   const [query, setQuery] = useState("")
 
   const showSearch = options.length > SEARCHABLE_THRESHOLD
@@ -154,6 +157,12 @@ function AccountCoverageControl({ accountCoverage, onAccountCoverageChange }) {
       <p className="mb-2 text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-zinc-400">
         Account Coverage
       </p>
+      {/* The explanation of what each mode means lives in the button's
+          title tooltip rather than as permanent text underneath — one
+          fewer paragraph on screen at all times, at the cost of it only
+          showing on hover. Worth it: three segmented controls in a row
+          (Date Range, Scope, this) each printing their own caption line
+          was a lot of standing text for something used occasionally. */}
       <div className="flex overflow-hidden rounded-md border border-slate-200 dark:border-zinc-800">
         {ACCOUNT_COVERAGE_MODES.map((mode) => (
           <button
@@ -171,9 +180,6 @@ function AccountCoverageControl({ accountCoverage, onAccountCoverageChange }) {
           </button>
         ))}
       </div>
-      <p className="mt-1.5 text-[11px] leading-snug text-slate-400 dark:text-zinc-500">
-        {ACCOUNT_COVERAGE_HINTS[accountCoverage]}
-      </p>
     </div>
   )
 }
@@ -244,33 +250,33 @@ function Sidebar({
 }) {
   return (
     <aside className="flex h-full flex-col gap-1 overflow-y-auto border-r border-slate-200 bg-white/60 p-4 dark:border-zinc-800 dark:bg-zinc-900/40 lg:sticky lg:top-[57px] lg:h-[calc(100vh-57px)]">
+      {/* One header row instead of two stacked blocks — the share
+          action used to be its own bordered section with a full-width
+          button; it's compact enough to sit inline with Clear all. The
+          whole view is URL-backed, so this one click hands the rep who
+          owns it a link rather than a list of checkboxes to re-tick. */}
       <div className="mb-1 flex items-center gap-2 pb-3">
         <span className="text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-zinc-400">Filters</span>
         {activeFilterCount > 0 && (
           <span className="rounded-full bg-indigo-500/10 px-1.5 py-0.5 text-[11px] font-semibold text-indigo-600 dark:text-indigo-400">
-            {activeFilterCount} active
+            {activeFilterCount}
           </span>
         )}
         <button
           type="button"
-          onClick={onClearAll}
-          disabled={activeFilterCount === 0}
-          className="ml-auto rounded-md border border-slate-200 px-2 py-1 text-xs font-medium text-slate-500 transition-colors hover:border-slate-300 hover:text-slate-900 disabled:cursor-default disabled:opacity-40 dark:border-zinc-800 dark:text-zinc-400 dark:hover:border-zinc-700 dark:hover:text-zinc-100"
+          onClick={onCopyViewLink}
+          title="Copy link to this view"
+          className="ml-auto rounded-md border border-slate-200 px-2 py-1 text-xs font-medium text-slate-500 transition-colors hover:border-slate-300 hover:text-slate-900 dark:border-zinc-800 dark:text-zinc-400 dark:hover:border-zinc-700 dark:hover:text-zinc-100"
         >
-          Clear all
+          {viewLinkCopied ? "Copied" : "Share"}
         </button>
-      </div>
-
-      {/* The whole view is URL-backed, so any state of this sidebar can
-          be handed to the rep who owns it as a link rather than a list
-          of checkboxes to re-tick. */}
-      <div className="border-b border-slate-200 pb-3 dark:border-zinc-800">
         <button
           type="button"
-          onClick={onCopyViewLink}
-          className="w-full rounded-md border border-slate-200 px-2 py-1.5 text-xs font-medium text-slate-500 transition-colors hover:border-slate-300 hover:text-slate-900 dark:border-zinc-800 dark:text-zinc-400 dark:hover:border-zinc-700 dark:hover:text-zinc-100"
+          onClick={onClearAll}
+          disabled={activeFilterCount === 0}
+          className="rounded-md border border-slate-200 px-2 py-1 text-xs font-medium text-slate-500 transition-colors hover:border-slate-300 hover:text-slate-900 disabled:cursor-default disabled:opacity-40 dark:border-zinc-800 dark:text-zinc-400 dark:hover:border-zinc-700 dark:hover:text-zinc-100"
         >
-          {viewLinkCopied ? "Link copied" : "Copy link to this view"}
+          Clear
         </button>
       </div>
 
