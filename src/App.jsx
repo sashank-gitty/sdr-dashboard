@@ -65,6 +65,7 @@ function App() {
   const [loading, setLoading] = useState(true)
   const [fetchError, setFetchError] = useState(null)
   const [reloadToken, setReloadToken] = useState(0)
+  const [syncStatus, setSyncStatus] = useState(null)
 
   useEffect(() => {
     const controller = new AbortController()
@@ -85,6 +86,18 @@ function App() {
         setFetchError(err.message || "Failed to load signals")
         setLoading(false)
       })
+
+    return () => controller.abort()
+  }, [reloadToken])
+
+  useEffect(() => {
+    const controller = new AbortController()
+    // Best-effort and silent: a broken sync indicator shouldn't ever block
+    // or error out the actual feed, so failures here just leave it hidden.
+    fetch("/api/ingest-status", { signal: controller.signal })
+      .then((res) => (res.ok ? res.json() : null))
+      .then((data) => setSyncStatus(data))
+      .catch(() => {})
 
     return () => controller.abort()
   }, [reloadToken])
@@ -379,6 +392,7 @@ function App() {
         onToggleSidebar={() => setSidebarOpen((v) => !v)}
         activeFilterCount={activeFilterCount}
         onOpenMobileFilters={() => setMobileFiltersOpen(true)}
+        syncStatus={syncStatus}
       />
 
       <FilterDrawer open={mobileFiltersOpen} onClose={() => setMobileFiltersOpen(false)} {...sidebarProps} />

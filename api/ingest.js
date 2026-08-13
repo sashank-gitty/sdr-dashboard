@@ -134,9 +134,24 @@ export default async function handler(req, res) {
 
     await Promise.all(Array.from({ length: NORMALIZE_CONCURRENCY }, worker))
 
+    await logRun("success", summary)
     res.status(200).json(summary)
   } catch (err) {
     console.error("POST /api/ingest failed:", err)
+    await logRun("error", summary, err.message)
     res.status(500).json({ error: "Ingestion run failed", message: err.message, summary })
+  }
+}
+
+// Best-effort: a logging failure shouldn't turn a real ingest success into
+// an error response, so this swallows its own errors rather than throwing.
+async function logRun(status, summary, errorMessage = null) {
+  try {
+    await sql`
+      INSERT INTO ingest_runs (status, summary, error_message)
+      VALUES (${status}, ${JSON.stringify(summary)}, ${errorMessage})
+    `
+  } catch (err) {
+    console.error("ingest: failed to log run:", err)
   }
 }
