@@ -1,4 +1,5 @@
 import { REGULATORY_ACCENT } from "../lib/colors.js"
+import Sparkline from "./Sparkline.jsx"
 
 function TrendBadge({ pct, delta, positiveIsGood = true, invert = false }) {
   if (pct === null) {
@@ -42,12 +43,12 @@ const ACCENT_STYLES = {
   },
 }
 
-function KpiCard({ label, value, sub, children, featured = false, accent = "indigo" }) {
+function KpiCard({ label, value, sub, children, featured = false, accent = "indigo", spark = null }) {
   const accentStyles = ACCENT_STYLES[accent] ?? ACCENT_STYLES.indigo
 
   return (
     <div
-      className={`group rounded-lg border bg-white/60 p-4 backdrop-blur-sm transition-all duration-200 ease-spring hover:-translate-y-0.5 hover:shadow-md dark:bg-zinc-900/60 ${
+      className={`group flex flex-col rounded-lg border bg-white/60 p-4 backdrop-blur-sm transition-all duration-200 ease-spring hover:-translate-y-0.5 hover:shadow-md dark:bg-zinc-900/60 ${
         featured
           ? accentStyles.border
           : "border-slate-200 hover:border-slate-300 dark:border-zinc-800 dark:hover:border-zinc-700"
@@ -62,12 +63,19 @@ function KpiCard({ label, value, sub, children, featured = false, accent = "indi
         {value}
       </p>
       <div className="mt-1.5">{sub ?? children}</div>
+      {spark && (
+        <div className={`mt-auto pt-3 ${spark.className}`}>
+          <Sparkline values={spark.values} height={24} />
+        </div>
+      )}
     </div>
   )
 }
 
 function KpiGrid({ metrics }) {
   const riskDelta = metrics.riskThisWeekCount - metrics.riskLastWeekCount
+  const totalSpark = metrics.dailyBuckets?.map((b) => b.total) ?? []
+  const riskSpark = metrics.dailyBuckets?.map((b) => b.risk) ?? []
 
   return (
     <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-4">
@@ -83,6 +91,7 @@ function KpiGrid({ metrics }) {
         label="Signals This Week"
         value={metrics.thisWeekCount}
         sub={<TrendBadge pct={metrics.weekOverWeekPct} delta={metrics.weekOverWeekDelta} />}
+        spark={{ values: totalSpark, className: "text-indigo-500 dark:text-indigo-400" }}
       />
 
       <KpiCard
@@ -99,6 +108,7 @@ function KpiGrid({ metrics }) {
             <span className="font-normal text-slate-400 dark:text-zinc-500">vs last week</span>
           </span>
         }
+        spark={{ values: riskSpark, className: REGULATORY_ACCENT.text }}
       />
 
       <KpiCard

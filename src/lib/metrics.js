@@ -1,3 +1,5 @@
+import { HIGH_RELEVANCE_THRESHOLD } from "./relevance.js"
+
 const RISK_SIGNAL_TYPES = new Set(["regulation", "pain point"])
 
 function startOfDay(date) {
@@ -51,11 +53,13 @@ export function computeMetrics(items) {
   const entitiesThisWeek = new Set(thisWeek.map((item) => item.entity))
 
   // Daily counts for the last 30 days, oldest first, for sparklines/charts.
+  // `risk` is tracked alongside macro/micro so the regulatory KPI tile can
+  // draw its own trajectory, not just the all-signals one.
   const dailyBuckets = []
   for (let i = 29; i >= 0; i -= 1) {
     const day = daysAgo(i, today)
     const key = day.toISOString().slice(0, 10)
-    dailyBuckets.push({ date: key, macro: 0, micro: 0, total: 0 })
+    dailyBuckets.push({ date: key, macro: 0, micro: 0, total: 0, risk: 0 })
   }
   const bucketIndex = new Map(dailyBuckets.map((b, idx) => [b.date, idx]))
   for (const item of last30) {
@@ -64,7 +68,21 @@ export function computeMetrics(items) {
     dailyBuckets[idx].total += 1
     if (item.scope === "macro") dailyBuckets[idx].macro += 1
     else dailyBuckets[idx].micro += 1
+    if (RISK_SIGNAL_TYPES.has(item.signalType)) dailyBuckets[idx].risk += 1
   }
+
+  // The single answer the top of the page leads with: how many signals this
+  // week actually clear the bar to reach out on, and which one to open first.
+  // Ranked the same way the feed is (relevance, then recency) so "start here"
+  // and the feed's first row never disagree.
+  const actWorthyThisWeek = thisWeek
+    .filter((item) => (item.outreachRelevance ?? 0) >= HIGH_RELEVANCE_THRESHOLD)
+    .sort((a, b) => {
+      const relDiff = (b.outreachRelevance ?? 0) - (a.outreachRelevance ?? 0)
+      if (relDiff !== 0) return relDiff
+      return a.date < b.date ? 1 : -1
+    })
+  const topPrioritySignal = actWorthyThisWeek[0] ?? null
 
   const entityCounts = new Map()
   for (const item of thisWeek) {
@@ -92,5 +110,7 @@ export function computeMetrics(items) {
     dailyBuckets,
     topEntity,
     topSignalType,
+    actWorthyThisWeekCount: actWorthyThisWeek.length,
+    topPrioritySignal,
   }
 }

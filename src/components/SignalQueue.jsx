@@ -16,7 +16,46 @@ const LOAD_MORE_INCREMENT = 15
 // checkboxes — two controls silently filtering the same fields. Both now
 // live in the filter panel as regular facets; this component just renders
 // whatever `items` it's handed.
-function SignalQueue({ items, onToggleReviewed, onMarkManyReviewed, onOpenSignal, loading, onClearEverything }) {
+function DensityToggle({ density, onDensityChange }) {
+  const options = [
+    { id: "comfortable", label: "Cards" },
+    { id: "compact", label: "Compact" },
+  ]
+  return (
+    <div className="flex overflow-hidden rounded-md border border-slate-200 dark:border-zinc-800">
+      {options.map((option) => (
+        <button
+          key={option.id}
+          type="button"
+          onClick={() => onDensityChange(option.id)}
+          aria-pressed={density === option.id}
+          title={option.id === "compact" ? "Dense, table-style rows for fast scanning" : "Roomy cards with full context"}
+          className={`px-2 py-1 text-[11px] font-semibold transition-colors ${
+            density === option.id
+              ? "bg-indigo-500/10 text-indigo-600 dark:text-indigo-400"
+              : "text-slate-500 hover:bg-slate-100 dark:text-zinc-400 dark:hover:bg-zinc-800"
+          }`}
+        >
+          {option.label}
+        </button>
+      ))}
+    </div>
+  )
+}
+
+function SignalQueue({
+  items,
+  onToggleReviewed,
+  onMarkManyReviewed,
+  onOpenSignal,
+  loading,
+  onClearEverything,
+  density = "comfortable",
+  onDensityChange,
+  view = "all",
+  onShowAll,
+}) {
+  const compact = density === "compact"
   const [selectedIds, setSelectedIds] = useState(() => new Set())
   const [visibleCount, setVisibleCount] = useState(INITIAL_VISIBLE_COUNT)
   const [legendOpen, setLegendOpen] = useState(false)
@@ -88,43 +127,76 @@ function SignalQueue({ items, onToggleReviewed, onMarkManyReviewed, onOpenSignal
           Legend
         </button>
 
-        {items.length > 0 && (
-          <div className="ml-auto flex items-center gap-2">
-            <div
-              onClick={toggleSelectAll}
-              className="flex cursor-pointer items-center gap-1.5 rounded-md px-1.5 py-1 text-xs font-medium text-slate-500 hover:bg-slate-100 dark:text-zinc-400 dark:hover:bg-zinc-800"
-            >
-              <Checkbox checked={allVisibleSelected} indeterminate={!allVisibleSelected && someVisibleSelected} onChange={toggleSelectAll} label="Select all visible signals" />
-              {selectedIds.size > 0 ? `${selectedIds.size} selected` : "Select all"}
-            </div>
-            {selectedIds.size > 0 && (
-              <button
-                type="button"
-                onClick={handleBulkMarkReviewed}
-                className="rounded-md border border-emerald-500/30 bg-emerald-500/10 px-2.5 py-1 text-xs font-semibold text-emerald-600 transition-colors hover:bg-emerald-500/20 dark:text-emerald-400"
+        <div className="ml-auto flex items-center gap-2">
+          {items.length > 0 && (
+            <>
+              <div
+                onClick={toggleSelectAll}
+                className="flex cursor-pointer items-center gap-1.5 rounded-md px-1.5 py-1 text-xs font-medium text-slate-500 hover:bg-slate-100 dark:text-zinc-400 dark:hover:bg-zinc-800"
               >
-                Mark {selectedIds.size} Reviewed
-              </button>
-            )}
-          </div>
-        )}
+                <Checkbox checked={allVisibleSelected} indeterminate={!allVisibleSelected && someVisibleSelected} onChange={toggleSelectAll} label="Select all visible signals" />
+                {selectedIds.size > 0 ? `${selectedIds.size} selected` : "Select all"}
+              </div>
+              {selectedIds.size > 0 && (
+                <button
+                  type="button"
+                  onClick={handleBulkMarkReviewed}
+                  className="rounded-md border border-emerald-500/30 bg-emerald-500/10 px-2.5 py-1 text-xs font-semibold text-emerald-600 transition-colors hover:bg-emerald-500/20 dark:text-emerald-400"
+                >
+                  Mark {selectedIds.size} Reviewed
+                </button>
+              )}
+            </>
+          )}
+          {onDensityChange && <DensityToggle density={density} onDensityChange={onDensityChange} />}
+        </div>
       </div>
 
       {legendOpen && <TagLegend />}
 
-      <div className="flex flex-col gap-2.5">
+      {compact && !loading && items.length > 0 && (
+        <div className="mb-1.5 flex items-center gap-3 px-3 text-[10px] font-semibold uppercase tracking-wider text-slate-400 dark:text-zinc-500">
+          <span className="h-3.5 w-3.5 flex-shrink-0" />
+          <span className="h-2 w-2 flex-shrink-0" />
+          <span className="hidden w-16 flex-shrink-0 sm:block">Date</span>
+          <span className="hidden w-28 flex-shrink-0 md:block">Type</span>
+          <span className="min-w-0 flex-1">Signal</span>
+          <span className="flex-shrink-0">Rel</span>
+          <span className="hidden flex-shrink-0 lg:block">Source</span>
+          <span className="w-[52px] flex-shrink-0" />
+        </div>
+      )}
+
+      <div className={`flex flex-col ${compact ? "gap-1.5" : "gap-2.5"}`}>
         {loading ? (
           Array.from({ length: 5 }).map((_, i) => <SkeletonRow key={i} />)
         ) : items.length === 0 ? (
           <div className="flex flex-col items-center gap-3 rounded-lg border border-dashed border-slate-300 py-12 text-center dark:border-zinc-700">
-            <p className="text-sm text-slate-400 dark:text-zinc-500">No signals match the current filters.</p>
-            <button
-              type="button"
-              onClick={onClearEverything}
-              className="rounded-md border border-slate-200 px-3 py-1.5 text-xs font-semibold text-slate-600 transition-colors hover:border-slate-300 hover:text-slate-900 dark:border-zinc-800 dark:text-zinc-300 dark:hover:border-zinc-700 dark:hover:text-zinc-100"
-            >
-              Clear filters
-            </button>
+            {view === "focus" ? (
+              <>
+                <p className="text-sm text-slate-400 dark:text-zinc-500">
+                  Nothing worth acting on this week under the current filters.
+                </p>
+                <button
+                  type="button"
+                  onClick={onShowAll}
+                  className="rounded-md border border-slate-200 px-3 py-1.5 text-xs font-semibold text-slate-600 transition-colors hover:border-slate-300 hover:text-slate-900 dark:border-zinc-800 dark:text-zinc-300 dark:hover:border-zinc-700 dark:hover:text-zinc-100"
+                >
+                  Show all signals
+                </button>
+              </>
+            ) : (
+              <>
+                <p className="text-sm text-slate-400 dark:text-zinc-500">No signals match the current filters.</p>
+                <button
+                  type="button"
+                  onClick={onClearEverything}
+                  className="rounded-md border border-slate-200 px-3 py-1.5 text-xs font-semibold text-slate-600 transition-colors hover:border-slate-300 hover:text-slate-900 dark:border-zinc-800 dark:text-zinc-300 dark:hover:border-zinc-700 dark:hover:text-zinc-100"
+                >
+                  Clear filters
+                </button>
+              </>
+            )}
           </div>
         ) : (
           <>
@@ -137,6 +209,7 @@ function SignalQueue({ items, onToggleReviewed, onMarkManyReviewed, onOpenSignal
                 onOpen={onOpenSignal}
                 selected={selectedIds.has(item.id)}
                 onToggleSelect={toggleSelectOne}
+                compact={compact}
               />
             ))}
             {hasMore && (

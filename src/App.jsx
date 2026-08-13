@@ -2,6 +2,7 @@ import { useEffect, useMemo, useRef, useState } from "react"
 import Sidebar from "./components/Sidebar.jsx"
 import FilterDrawer from "./components/FilterDrawer.jsx"
 import Header from "./components/Header.jsx"
+import HeroSummary from "./components/HeroSummary.jsx"
 import KpiGrid from "./components/KpiGrid.jsx"
 import VolumeChart from "./components/VolumeChart.jsx"
 import SignalQueue from "./components/SignalQueue.jsx"
@@ -57,6 +58,9 @@ function App() {
   const accountCoverage = urlState.accounts ?? "all"
 
   const [sidebarOpen, setSidebarOpen] = useLocalStorageState("sdr-dashboard-sidebar-open", true)
+  // Card vs table density is a display preference, not shareable view state,
+  // so it lives in localStorage like the sidebar and theme, not the URL.
+  const [density, setDensity] = useLocalStorageState("sdr-dashboard-density", "comfortable")
   const [paletteOpen, setPaletteOpen] = useState(false)
   const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false)
   const [viewLinkCopied, setViewLinkCopied] = useState(false)
@@ -253,6 +257,32 @@ function App() {
     aeFilter.length +
     (accountCoverage === "all" ? 0 : 1)
 
+  // Focus vs All (the "personalized single-focus default" pattern). A clean
+  // URL with nothing narrowed opens on Focus — the curated "act on this"
+  // view — while a shared link that already carries filters or a search is
+  // taken at face value as All so focus never silently hides what was
+  // linked. An explicit ?view= always wins over both.
+  const anyNarrowing = activeFilterCount > 0 || Boolean(search)
+  const view =
+    urlState.view === "all" ? "all" : urlState.view === "focus" ? "focus" : anyNarrowing ? "all" : "focus"
+  const setView = (value) => updateUrl({ view: value })
+
+  // Focus layers on top of every active filter: high-relevance triggers from
+  // the last 7 days, ranked exactly like the feed already is. Anchored to
+  // metrics.today (the latest item date) so it reads sensibly against fixture
+  // data regardless of the wall-clock date.
+  const focusItems = useMemo(() => {
+    if (view !== "focus") return filteredItems
+    const cutoff = new Date(metrics.today)
+    cutoff.setHours(0, 0, 0, 0)
+    cutoff.setDate(cutoff.getDate() - 6)
+    return filteredItems.filter(
+      (item) =>
+        (item.outreachRelevance ?? 0) >= HIGH_RELEVANCE_THRESHOLD &&
+        new Date(`${item.date}T00:00:00`) >= cutoff,
+    )
+  }, [view, filteredItems, metrics.today])
+
   const openItem = useMemo(() => signals.find((s) => s.id === openSignalId) ?? null, [signals, openSignalId])
   const relatedItems = useMemo(() => {
     if (!openItem) return []
@@ -409,6 +439,13 @@ function App() {
         </div>
 
         <main className="min-w-0 flex-1 px-4 py-5 sm:px-6">
+          <HeroSummary
+            metrics={metrics}
+            view={view}
+            onViewChange={setView}
+            onOpenSignal={openSignal}
+          />
+
           <div className="mb-5">
             {/* The territory filters rescope every number on the page,
                 not just the feed, so say so plainly — otherwise a
@@ -454,12 +491,16 @@ function App() {
 
           <div className="grid grid-cols-1 gap-6 xl:grid-cols-[minmax(0,1fr)_320px]">
             <SignalQueue
-              items={filteredItems}
+              items={focusItems}
               onToggleReviewed={handleToggleReviewed}
               onMarkManyReviewed={handleMarkManyReviewed}
               onOpenSignal={openSignal}
               loading={loading}
               onClearEverything={handleClearEverything}
+              density={density}
+              onDensityChange={setDensity}
+              view={view}
+              onShowAll={() => setView("all")}
             />
             <div className="xl:sticky xl:top-[73px] xl:self-start">
               <ActivityPanel recentItems={chronologicalItems.slice(0, 8)} metrics={metrics} />

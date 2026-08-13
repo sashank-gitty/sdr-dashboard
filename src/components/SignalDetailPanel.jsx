@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react"
 import { pillClassForScope, pillClassForSignalType, pillClassForPracticeArea, PRACTICE_AREA_LABELS } from "../lib/colors.js"
 import { relevanceTierText } from "../lib/relevanceTiers.js"
+import { buildSignalReason, REASON_TONE_STYLES } from "../lib/signalReason.js"
 
 const MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
 
@@ -45,6 +46,8 @@ function SignalDetailPanel({ item, open, onClose, onToggleReviewed, relatedItems
 
   const practiceAreaLabel = PRACTICE_AREA_LABELS[item.practiceArea] ?? PRACTICE_AREA_LABELS.cx
   const tierText = relevanceTierText(item.outreachRelevance ?? null)
+  const reason = buildSignalReason(item)
+  const reasonTone = REASON_TONE_STYLES[reason.tone] ?? REASON_TONE_STYLES.neutral
 
   const handleCopy = async () => {
     try {
@@ -105,6 +108,11 @@ function SignalDetailPanel({ item, open, onClose, onToggleReviewed, relatedItems
           </div>
 
           <h2 className="text-lg font-semibold leading-snug text-slate-900 dark:text-zinc-50">{item.headline}</h2>
+
+          <p className={`-mt-2 flex items-center gap-1.5 text-xs font-medium ${reasonTone.text}`}>
+            <span className={`h-1.5 w-1.5 flex-shrink-0 rounded-full ${reasonTone.dot}`} aria-hidden="true" />
+            {reason.label}
+          </p>
 
           <div className="flex items-center justify-between gap-3">
             <span className="rounded-full border border-violet-500/20 bg-violet-500/10 px-2 py-0.5 text-[11px] font-semibold text-violet-600 dark:text-violet-400">
