@@ -26,20 +26,33 @@ One exception worth stating outright, because it is easy to skip by mistake: nev
 export async function normalizeItem({ title, snippet, matchedQuery }) {
   const userContent = `Headline: ${title}\nSnippet: ${snippet || "(none)"}\nMatched watchlist query: ${matchedQuery}`
 
-  const response = await anthropic.messages.create({
-    model: "claude-sonnet-5",
-    max_tokens: 500,
-    system: SYSTEM_PROMPT,
-    messages: [{ role: "user", content: userContent }],
-  })
+  // One retry on an empty or unparseable completion, same as
+  // scoreRelevance. This runs on the daily cron, where a dropped item
+  // is a signal that silently never reaches the feed.
+  let parsed = null
+  for (let attempt = 0; attempt < 2 && parsed === null; attempt += 1) {
+    const response = await anthropic.messages.create({
+      model: "claude-sonnet-5",
+      max_tokens: 500,
+      system: SYSTEM_PROMPT,
+      messages: [{ role: "user", content: userContent }],
+    })
 
-  const text = response.content.find((block) => block.type === "text")?.text ?? ""
+    const text = response.content.find((block) => block.type === "text")?.text?.trim() ?? ""
+    if (!text) continue
 
-  let parsed
-  try {
-    parsed = JSON.parse(text.trim())
-  } catch {
-    console.warn("normalizeItem: model did not return valid JSON, skipping:", text.slice(0, 200))
+    try {
+      parsed = JSON.parse(text)
+    } catch {
+      console.warn(
+        `normalizeItem: model did not return valid JSON (attempt ${attempt + 1}):`,
+        text.slice(0, 200),
+      )
+    }
+  }
+
+  if (parsed === null) {
+    console.warn("normalizeItem: no usable response after retry, skipping")
     return null
   }
 

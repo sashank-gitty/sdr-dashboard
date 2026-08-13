@@ -37,28 +37,39 @@ Judge by who the signal affects, not by who it mentions. A prudential ruling on 
 Respond with ONLY a JSON array of patch identifiers, for example ["fsi"] or ["tmt","goods_services"]. Return an empty array [] when the signal has no industry angle at all — vendor product news, competitor funding rounds, and research-methodology stories are about the market being sold into, not about any one territory. Prefer two or three well-chosen patches over listing all six; listing everything is the same as listing nothing. No prose, no markdown fences.`
 
 async function classifyPatches({ headline, summary, entity }) {
-  const response = await anthropic.messages.create({
-    model: "claude-sonnet-5",
-    max_tokens: 100,
-    system: SYSTEM_PROMPT,
-    messages: [
-      {
-        role: "user",
-        content: `Entity: ${entity}\nHeadline: ${headline}\nSummary: ${summary}`,
-      },
-    ],
-  })
+  // One retry on an empty completion. An unusable response here is
+  // indistinguishable from a genuine "no patch" in the output, so
+  // without this a transient blank quietly under-tags a signal and it
+  // never appears in any patch view.
+  for (let attempt = 0; attempt < 2; attempt += 1) {
+    const response = await anthropic.messages.create({
+      model: "claude-sonnet-5",
+      max_tokens: 100,
+      system: SYSTEM_PROMPT,
+      messages: [
+        {
+          role: "user",
+          content: `Entity: ${entity}\nHeadline: ${headline}\nSummary: ${summary}`,
+        },
+      ],
+    })
 
-  const text = response.content.find((block) => block.type === "text")?.text ?? ""
-  let parsed
-  try {
-    parsed = JSON.parse(text.trim())
-  } catch {
-    console.warn(`  ! non-JSON patch response, treating as none: ${text.slice(0, 80)}`)
-    return []
+    const text = response.content.find((block) => block.type === "text")?.text?.trim() ?? ""
+    if (!text) continue
+
+    let parsed
+    try {
+      parsed = JSON.parse(text)
+    } catch {
+      console.warn(`  ! non-JSON patch response (attempt ${attempt + 1}): ${text.slice(0, 80)}`)
+      continue
+    }
+    if (!Array.isArray(parsed)) return []
+    return [...new Set(parsed.filter((p) => PATCHES.includes(p)))]
   }
-  if (!Array.isArray(parsed)) return []
-  return [...new Set(parsed.filter((p) => PATCHES.includes(p)))]
+
+  console.warn("  ! no usable patch response after retry, treating as none")
+  return []
 }
 
 async function main() {
