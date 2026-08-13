@@ -1,0 +1,277 @@
+import { useMemo, useState } from "react"
+import { linkProps } from "../lib/router.js"
+import { SIGNAL_GROUPS, countByGroup, filterByGroup, iconForSignal } from "../lib/signalGroups.js"
+import { PATCH_LABELS, PATCHES, AE_NAMES } from "../../shared/patches.js"
+import { pillClassForSignalType } from "../lib/colors.js"
+import { accountKey } from "../lib/accountModel.js"
+import { useAlerts } from "../lib/useAlerts.js"
+import {
+  PageHeader,
+  Card,
+  Button,
+  Pill,
+  TabStrip,
+  FilterSelect,
+  SearchInput,
+  EmptyState,
+  Modal,
+  Field,
+  TextInput,
+  Radio,
+  Toggle,
+  Highlight,
+  AccountAvatar,
+} from "../components/ui.jsx"
+import { AlertIcon } from "../components/icons.jsx"
+
+const MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
+
+function formatDate(dateString) {
+  const [year, month, day] = dateString.split("-").map(Number)
+  return `${String(day).padStart(2, "0")} ${MONTHS[month - 1]} ${year}`
+}
+
+const RANGE_OPTIONS = [
+  { value: "7", label: "Last 7 days" },
+  { value: "30", label: "Last 30 days" },
+  { value: "90", label: "Last 90 days" },
+  { value: "180", label: "Last 6 months" },
+]
+
+function CreateAlertModal({ open, onClose, onCreate, query, days, group, patch, ae }) {
+  const [name, setName] = useState("")
+  const [frequency, setFrequency] = useState("daily")
+  const [emailCc, setEmailCc] = useState("")
+  const [active, setActive] = useState(true)
+
+  const rangeLabel = RANGE_OPTIONS.find((r) => r.value === days)?.label.toLowerCase() ?? "all time"
+
+  const handleCreate = () => {
+    onCreate({ name: name.trim() || query || "Untitled alert", query, days, group, patch, ae, frequency, emailCc, active })
+    setName("")
+    setEmailCc("")
+    setFrequency("daily")
+    setActive(true)
+    onClose()
+  }
+
+  return (
+    <Modal
+      open={open}
+      onClose={onClose}
+      title="Create Search Alert"
+      footer={
+        <>
+          <Button onClick={onClose}>Close</Button>
+          <Button variant="primary" className="ml-auto" onClick={handleCreate}>
+            Create
+          </Button>
+        </>
+      }
+    >
+      <div className="mb-5 flex items-start gap-3 rounded-lg border border-slate-200 bg-slate-50 px-3 py-2.5 dark:border-zinc-800 dark:bg-zinc-800/40">
+        <AlertIcon className="mt-0.5 h-4 w-4 flex-shrink-0 text-slate-400 dark:text-zinc-500" />
+        <div className="min-w-0">
+          <p className="truncate text-[13px] font-semibold text-slate-900 dark:text-zinc-100">
+            {query ? `"${query}"` : "All signals"}
+          </p>
+          <p className="text-[12px] text-slate-500 dark:text-zinc-400">in the {rangeLabel}</p>
+        </div>
+      </div>
+
+      <div className="space-y-4">
+        <Field label="Alert Name">
+          <TextInput value={name} onChange={(e) => setName(e.target.value)} placeholder={query || "Untitled alert"} />
+        </Field>
+
+        <div>
+          <p className="mb-1.5 text-[12px] font-medium text-slate-500 dark:text-zinc-400">Alert Frequency</p>
+          <div className="space-y-2">
+            <Radio name="frequency" value="daily" checked={frequency === "daily"} onChange={setFrequency} label="Daily" />
+            <Radio name="frequency" value="weekly" checked={frequency === "weekly"} onChange={setFrequency} label="Weekly" />
+          </div>
+        </div>
+
+        <Field label="Email CC">
+          <TextInput value={emailCc} onChange={(e) => setEmailCc(e.target.value)} placeholder="teammate@example.com" />
+        </Field>
+
+        <Toggle checked={active} onChange={setActive} label="Active" />
+
+        {/* Saying this here, at the point of promise, rather than in a
+            help page nobody opens. */}
+        <p className="rounded-lg border border-amber-500/30 bg-amber-500/5 px-3 py-2 text-[12px] leading-relaxed text-amber-700 dark:text-amber-400">
+          Saved locally to this browser. The query is stored and re-run live on the Alerts page &mdash; but no email is
+          sent yet: delivery needs a scheduled server job, which doesn&rsquo;t exist in this deployment.
+        </p>
+      </div>
+    </Modal>
+  )
+}
+
+function Search({ signals, onOpenSignal }) {
+  const [query, setQuery] = useState("")
+  const [group, setGroup] = useState("all")
+  const [days, setDays] = useState("180")
+  const [patch, setPatch] = useState(null)
+  const [ae, setAe] = useState(null)
+  const [type, setType] = useState(null)
+  const [modalOpen, setModalOpen] = useState(false)
+
+  const { createAlert } = useAlerts()
+
+  const matched = useMemo(() => {
+    const needle = query.trim().toLowerCase()
+    const cutoff = new Date()
+    cutoff.setHours(0, 0, 0, 0)
+    cutoff.setDate(cutoff.getDate() - Number(days))
+
+    return signals.filter((signal) => {
+      if (new Date(`${signal.date}T00:00:00`) < cutoff) return false
+      if (patch && !(signal.patches ?? []).includes(patch)) return false
+      if (ae && !(signal.owningAes ?? []).includes(ae)) return false
+      if (type === "customer" && signal.accountStatus !== "customer") return false
+      if (type === "prospect" && signal.accountStatus !== "prospect") return false
+      if (needle) {
+        const haystack =
+          `${signal.headline} ${signal.summary} ${signal.entity} ${(signal.matchedAccounts ?? []).join(" ")}`.toLowerCase()
+        if (!haystack.includes(needle)) return false
+      }
+      return true
+    })
+  }, [signals, query, days, patch, ae, type])
+
+  const counts = useMemo(() => countByGroup(matched), [matched])
+  const results = useMemo(() => filterByGroup(matched, group), [matched, group])
+
+  const tabs = useMemo(
+    () => [
+      { id: "all", label: "All", count: counts.all },
+      ...SIGNAL_GROUPS.map((g) => ({ id: g.id, label: g.label, count: counts[g.id] ?? 0 })),
+    ],
+    [counts],
+  )
+
+  const term = query.trim()
+
+  return (
+    <>
+      <PageHeader
+        title="Search"
+        actions={
+          <Button variant="primary" onClick={() => setModalOpen(true)}>
+            <AlertIcon className="h-4 w-4" />
+            Create Alert
+          </Button>
+        }
+      >
+        <div className="space-y-3">
+          <SearchInput
+            value={query}
+            onChange={setQuery}
+            placeholder="Search headlines, summaries, entities and matched accounts..."
+            className="max-w-2xl"
+          />
+          <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-5">
+            <FilterSelect
+              label="Owner"
+              value={ae}
+              onChange={setAe}
+              options={AE_NAMES.map((name) => ({ value: name, label: name }))}
+            />
+            <FilterSelect
+              label="Account type"
+              value={type}
+              onChange={setType}
+              options={[
+                { value: "customer", label: "Customer" },
+                { value: "prospect", label: "Prospect" },
+              ]}
+            />
+            <FilterSelect
+              label="Patch"
+              value={patch}
+              onChange={setPatch}
+              options={PATCHES.map((p) => ({ value: p, label: PATCH_LABELS[p] }))}
+            />
+            <FilterSelect label="Date range" value={days} onChange={(v) => setDays(v ?? "180")} options={RANGE_OPTIONS} />
+          </div>
+        </div>
+      </PageHeader>
+
+      <Card className="overflow-hidden">
+        <div className="px-4 pt-2">
+          <TabStrip tabs={tabs} active={group} onChange={setGroup} />
+        </div>
+
+        {results.length === 0 ? (
+          <EmptyState
+            title={term ? `No signals match "${term}"` : "No signals in this range"}
+            description="Try a broader date range, a different group, or clearing the owner and patch filters."
+          />
+        ) : (
+          <ul className="divide-y divide-slate-100 dark:divide-zinc-800/70">
+            {results.map((signal) => {
+              const Icon = iconForSignal(signal)
+              const account = (signal.matchedAccounts ?? [])[0] ?? signal.entity
+              return (
+                <li key={signal.id} className="transition-colors hover:bg-slate-50 dark:hover:bg-zinc-800/40">
+                  <div className="flex items-start gap-3 px-4 py-3">
+                    <AccountAvatar name={account} size="sm" />
+                    <div className="min-w-0 flex-1">
+                      <div className="flex flex-wrap items-center gap-x-2 gap-y-1">
+                        <a
+                          {...linkProps(`/accounts/${encodeURIComponent(accountKey(account))}`)}
+                          className="text-[13px] font-semibold text-slate-900 hover:text-indigo-600 dark:text-zinc-100 dark:hover:text-indigo-400"
+                        >
+                          {account}
+                        </a>
+                        <span
+                          className={`inline-flex items-center gap-1 rounded-md px-1.5 py-0.5 text-[11px] font-medium ${pillClassForSignalType(signal.signalType)}`}
+                        >
+                          <Icon className="h-3 w-3" />
+                          {signal.signalType}
+                        </span>
+                        <span className="text-[12px] tabular-nums text-slate-400 dark:text-zinc-500">
+                          {formatDate(signal.date)}
+                        </span>
+                      </div>
+                      <button
+                        type="button"
+                        onClick={() => onOpenSignal(signal.id)}
+                        className="mt-1 block w-full text-left"
+                      >
+                        <span className="block text-[13px] font-medium text-slate-800 dark:text-zinc-200">
+                          <Highlight text={signal.headline} term={term} />
+                        </span>
+                        <span className="mt-0.5 block line-clamp-2 text-[12px] leading-relaxed text-slate-500 dark:text-zinc-400">
+                          <Highlight text={signal.summary} term={term} />
+                        </span>
+                      </button>
+                    </div>
+                    {(signal.patches ?? []).length > 0 && (
+                      <Pill tone="slate">{PATCH_LABELS[signal.patches[0]] ?? signal.patches[0]}</Pill>
+                    )}
+                  </div>
+                </li>
+              )
+            })}
+          </ul>
+        )}
+      </Card>
+
+      <CreateAlertModal
+        open={modalOpen}
+        onClose={() => setModalOpen(false)}
+        onCreate={createAlert}
+        query={term}
+        days={days}
+        group={group}
+        patch={patch}
+        ae={ae}
+      />
+    </>
+  )
+}
+
+export default Search
