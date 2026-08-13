@@ -53,6 +53,8 @@ function SignalRow({ item, reviewed, onToggleReviewed, onOpen, selected, onToggl
     }
   }
 
+  const isCommunity = item.origin === "community"
+
   return (
     <article
       className={`group relative flex gap-3 overflow-hidden rounded-lg border bg-white/60 p-4 backdrop-blur-sm transition-all duration-200 ease-spring hover:-translate-y-0.5 dark:bg-zinc-900/60 ${
@@ -61,15 +63,27 @@ function SignalRow({ item, reviewed, onToggleReviewed, onOpen, selected, onToggl
           : "border-slate-200 hover:border-slate-300 hover:shadow-md dark:border-zinc-800 dark:hover:border-zinc-700"
       } ${selected ? "ring-2 ring-indigo-500/40" : ""}`}
     >
-      {/* Persistent marker so regulatory/pain-point and high-relevance
-          signals stand out while scrolling the unfiltered feed, not just
-          when a quick filter is applied. Severity (rose) takes priority
-          over general relevance (indigo) when a card is both. */}
-      {(isRegulatory || isHighRelevance) && (
+      {/* Persistent marker so regulatory/pain-point, high-relevance, and
+          community-sourced signals stand out while scrolling the
+          unfiltered feed, not just when a quick filter is applied. One
+          shared mechanism, explicit priority order — severity (rose)
+          beats general relevance (indigo) beats provenance (pink) when a
+          card qualifies for more than one, since a child span painting
+          over its parent's border silently hid whichever lost that fight
+          otherwise, with no way to tell that was intentional. */}
+      {(isRegulatory || isHighRelevance || isCommunity) && (
         <span
           aria-hidden="true"
-          title={isRegulatory ? "Regulatory / pain-point signal" : "High outreach relevance"}
-          className={`absolute inset-y-0 left-0 w-1 ${isRegulatory ? REGULATORY_ACCENT.swatch : "bg-indigo-500"}`}
+          title={
+            isRegulatory
+              ? "Regulatory / pain-point signal"
+              : isHighRelevance
+                ? "High outreach relevance"
+                : "Sourced from community research (last30days), not the news pipeline"
+          }
+          className={`absolute inset-y-0 left-0 w-1 ${
+            isRegulatory ? REGULATORY_ACCENT.swatch : isHighRelevance ? "bg-indigo-500" : "bg-pink-500"
+          }`}
         />
       )}
 
@@ -82,6 +96,14 @@ function SignalRow({ item, reviewed, onToggleReviewed, onOpen, selected, onToggl
           <time className="font-mono text-xs font-semibold tabular-nums text-slate-500 dark:text-zinc-400">
             {formatDate(item.date)}
           </time>
+          {isCommunity && (
+            <span
+              title="Sourced from community research (last30days), not the news pipeline"
+              className="rounded-full border border-pink-500/20 bg-pink-500/10 px-2 py-0.5 text-[11px] font-semibold text-pink-600 dark:text-pink-400"
+            >
+              Community
+            </span>
+          )}
           <span
             title={`Practice area: ${practiceAreaLabel}`}
             className={`rounded-full px-2 py-0.5 text-[11px] font-semibold ${pillClassForPracticeArea(item.practiceArea)}`}

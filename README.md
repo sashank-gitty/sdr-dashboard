@@ -6,9 +6,9 @@ A single-page competitor and industry news/signal intelligence dashboard, built 
 
 - KPI summary row (total signals, weekly trend, regulatory/pain-point signals, entities tracked) with sparklines
 - 30-day macro vs. micro signal volume chart
-- Filterable signal queue with quick-filter shortcuts (High Relevance, This Week, Unreviewed, Regulatory & Pain Points, Leadership Moves, Competitor Moves) that set the same facets as the sidebar
+- Main feed ranked by LLM-scored outreach relevance (not just recency), with quick-filter shortcuts (High Relevance, This Week, Unreviewed, Regulatory & Pain Points, Leadership Moves, Competitor Moves) that set the same facets as the sidebar
 - Click any headline for a detail panel with related signals from the same entity
-- Per-signal quick actions: copy to clipboard, mark reviewed
+- Per-signal quick actions: copy to clipboard, mark reviewed (durable — backed by Postgres, not localStorage)
 - Right-rail activity stream + rule-based weekly highlights (most active entity, leading signal type, regulatory pressure)
 - Sidebar filters by date range, patch, AE, practice area (CX / EX / Market Research), scope (macro/micro), entity, and signal type — filters combine
 - Per-AE patch views: filter to a territory (FSI / TMT / Goods & Services / HCLS / Locations / Public Sector) or to a single AE, and share the result as a link
@@ -134,8 +134,10 @@ Signal data lives in Postgres (Neon, connected via Vercel's native integration),
 
 - **`GET /api/signals`** — the frontend fetches this at runtime instead of importing a static file.
 - **`POST /api/ingest`** — pulls Google News RSS for a watchlist of tracked entities/topics (`api/_lib/watchlist.js`), dedupes against existing rows, normalizes new items into the schema via a Claude API call (`api/_lib/normalize.js`), attributes them to AE patches (`api/_lib/matchAccounts.js`), and inserts them. Triggered on a daily cron (`vercel.json`), protected by `CRON_SECRET`.
-- **`db/migrations/001_create_signals.sql`** — the `signals` table schema.
+- **`db/migrations/`** — schema, applied in order (001 core table through 005 patch attribution — check the directory for the current last one).
 - **`db/seed.mjs`** — one-time migration of the old static dataset into Postgres (skips the placeholder `example.com` entries).
+- **`db/backfill-relevance.mjs`** — one-time relevance scoring pass for rows that predate ingest-time scoring.
+- **`POST /api/reviews`** — durable "Mark Reviewed" state, `{ids, reviewed}` bulk update.
 
 Row shape (camelCase over the wire, snake_case in Postgres):
 
@@ -148,9 +150,11 @@ Row shape (camelCase over the wire, snake_case in Postgres):
   "date": "YYYY-MM-DD",
   "scope": "macro | micro",
   "entity": "string",
-  "signalType": "see shared/signalTypes.js for the canonical list",
+  "signalType": "see shared/signalTypes.js for the canonical list, or 'community insight' for last30days-derived rows",
   "practiceArea": "cx | ex | market_research — see shared/practiceAreas.js",
   "origin": "seed | news | community",
+  "outreachRelevance": "integer 1-5, or null if not yet scored",
+  "reviewed": "boolean",
   "patches": ["fsi", "tmt", "..."],
   "matchedAccounts": ["accounts in the AE territory book this names"],
   "owningAes": ["AEs who own those accounts"],
@@ -169,11 +173,17 @@ Row shape (camelCase over the wire, snake_case in Postgres):
 5. **Backfill patch attribution** on rows that predate migration 005: `node --env-file=.env.local db/backfill-patches.mjs`. Safe to re-run; pass `--all` to re-tag everything after changing the territory book or the patch definitions.
 6. **Verify ingestion manually before trusting the cron**: `curl -H "Authorization: Bearer $CRON_SECRET" https://<your-deploy>/api/ingest` and check the response summary (`queried`, `rawItems`, `afterDedupe`, `normalized`, `inserted`, `accountMatched`, `errors`).
 
-Not yet verified end-to-end (blocked by this dev environment's network policy, needs checking against a real deploy): the Google News RSS fetch and redirect-resolution, and actual Claude normalization output quality. Also worth knowing: Vercel Hobby plan cron jobs are capped at once/day and function execution time is capped — `vercel.json` requests `maxDuration: 60` for `/api/ingest`, but if the watchlist or `MAX_ITEMS_PER_RUN` (25) turns out too slow for your plan's actual limits, trim either in `api/_lib/watchlist.js` / `api/ingest.js`. Watch the first few post-deploy `summary` responses from `/api/ingest` closely for this.
+Verified live against a real deployment and database: RSS fetch, redirect resolution, Claude normalization, and relevance scoring all confirmed working. Worth knowing: Vercel Hobby plan cron jobs are capped at once/day and function execution time is capped — `vercel.json` requests `maxDuration: 60` for `/api/ingest`, but if the watchlist or `MAX_ITEMS_PER_RUN` (25) turns out too slow for your plan's actual limits, trim either in `api/_lib/watchlist.js` / `api/ingest.js`. Watch the first few post-deploy `summary` responses from `/api/ingest` closely for this.
+
+**Preview deployments use an isolated Neon database branch** (configured when the Postgres integration was connected). Any new migration needs running on *both* the production and preview branches, or the preview deployment will 500 on a missing column until it's caught up — this has bitten twice already. Worth turning off Preview branching to remove the recurring foot-gun if you don't specifically need isolated preview data.
 
 On watchlist size: a run queries the 72 standing thematic queries (including the market-entry set) plus a rotating slice of named territory accounts (25 customers + 10 prospects), so ~107 per run, up from ~70. `api/_lib/fetchNews.js`'s fetch concurrency is 10. The territory book has ~1,700 accounts and the cron runs daily, so they can't all be queried by name every run — customers cycle every few days, prospects far more slowly, and the thematic patch tagging is what gives prospects their real coverage. The two per-run constants at the top of `api/_lib/watchlist.js` are the dials.
 
 Also watch `accountMatched` in the ingest summary. If it sits at zero run after run, the watchlist and the territory book have drifted apart and the patch views are running on thematic tags alone. That is exactly what had happened before the territory book was wired in: the hand-written account watchlist tracked the ANZ enterprise majors (CBA, NAB, Westpac, Telstra, Qantas, Woolworths) and not one of them appears in any of the four AEs' territories, which are corporate/mid-market.
+
+## Community signals (Issue 5)
+
+A third data source beyond the news pipeline: `last30days` (a separate Claude Code skill) run locally against tracked entities, transformed into the same schema, and pushed in as `origin: 'community'` rows — visually distinct in the feed (pink left-border accent + badge). This cannot run on Vercel; it needs a real Claude Code session with genuine internet access, which a serverless function doesn't have. See `scripts/local/README.md` for the full setup (manual push via `db/push-community-signals.mjs`, or a semi-scheduled local `launchd` job) — the scheduled version is built but not yet verified end-to-end against a real macOS machine.
 
 ## Development
 
