@@ -1,21 +1,90 @@
 # SDR Dashboard
 
-A single-page competitor and industry news/signal intelligence dashboard, built with React, Vite, and Tailwind CSS v4.
+An account intelligence dashboard for ANZ SDR/AE territory work, built
+with React, Vite, and Tailwind CSS v4. Signals are ingested from news,
+scored for outreach relevance by an LLM, attributed to AE territories,
+and presented account-first.
 
-## What it does
+## Structure
 
-- KPI summary row (total signals, weekly trend, regulatory/pain-point signals, entities tracked) with sparklines
-- 30-day macro vs. micro signal volume chart
-- Main feed ranked by LLM-scored outreach relevance (not just recency), with quick-filter shortcuts (High Relevance, This Week, Unreviewed, Regulatory & Pain Points, Leadership Moves, Competitor Moves) that set the same facets as the sidebar
-- Click any headline for a detail panel with related signals from the same entity
-- Per-signal quick actions: copy to clipboard, mark reviewed (durable — backed by Postgres, not localStorage)
-- Right-rail activity stream + rule-based weekly highlights (most active entity, leading signal type, regulatory pressure)
-- Sidebar filters by date range, patch, AE, practice area (CX / EX / Market Research), scope (macro/micro), entity, and signal type — filters combine
-- Per-AE patch views: filter to a territory (FSI / TMT / Goods & Services / HCLS / Locations / Public Sector) or to a single AE, and share the result as a link
-- Account coverage switch: **Named** (only accounts someone already owns) or **Unassigned** (named companies in the news that match nothing in the territory book — whitespace nobody is covering)
-- Global search plus a `Cmd/Ctrl+K` command palette for fast lookup and quick actions
-- Full dark / light theme support (persisted to `localStorage`, defaults to system preference)
-- "Synced Xh ago" indicator in the header (desktop only — `lg` and up) showing when the ingest cron last ran, so a quiet cron and a dead cron don't look the same; turns amber past 36 hours or on the last run's failure
+Five destinations off a top nav, with signals opening in a slide-over
+drawer from anywhere.
+
+**Magic** — the landing screen. Four counters, the three agents that make
+up the pipeline (Signal and Research are live; Outreach is not built and
+says so), and "Start Here": accounts carrying at least one high-relevance
+signal, ranked by score.
+
+**Global Feed** — signals nested under the account they name, rather than
+a flat chronological list. Each account block carries a plain-English
+rollup, a score, and a signal count. Filter by owner, type, priority,
+patch and date range; tab across signal groups; export the filtered set
+as CSV.
+
+**Accounts** — the full derived account table. Sortable on every column,
+with a 0–100 score, a P1–P3 priority tier, toggleable columns, starring,
+and CSV export.
+
+**Account detail** — eight tabs:
+
+- *Fast Facts* — signal timeline bucketed by recency (7 / 30 / 180 days),
+  signal mix, and the account information panel
+- *Summary* — "What You Need to Know": Key Insights, People Updates, Top
+  News, every line carrying citation badges that open the source signal
+- *Signals* — the account's full signal list, grouped
+- *Value* — a value pyramid (Company Goals, Business Strategy, Challenges
+  and Obstacles, Value Paths) built from the account's own signals
+- *Custom* — persona-keyed discovery questions for the practice areas the
+  account's signals touch
+- *Research* — the score breakdown, shown rather than hidden, plus every
+  source
+- *Contacts* / *Tech* — deliberately empty, each naming what would fill it
+
+**Search** — full-text across headlines, summaries, entities and matched
+accounts, with signal-group tabs, term highlighting in results, and saved
+alerts.
+
+**Alerts** — saved queries that re-run live against the current signal
+set. No email is sent yet; the page says so rather than implying
+otherwise.
+
+Throughout: a `Cmd/Ctrl+K` command palette, dark/light theme persisted to
+`localStorage`, and a "synced Xh ago" indicator that turns amber past 36
+hours or on a failed run, so a quiet cron and a dead cron don't look the
+same.
+
+### Account scoring
+
+Accounts are **derived from signals**, not stored: every signal already
+carries `matchedAccounts`, `entity`, `owningAes`, `accountStatus` and
+`patches`, which is everything a rollup needs. A territory-book match
+makes an account *managed*; a micro-scope signal that names a company
+with no book match makes it *unassigned* — the whitespace view, promoted
+to a first-class row. Macro signals name no company and produce no
+account.
+
+The score weights the best outreach trigger (55%), how warm the account is
+right now (30%), and sustained activity (15%). Unscored signals count as
+the neutral mid-tier 3, matching the feed sort — scoring them 0 would
+assert "bad prospect" when the truth is "predates relevance scoring".
+
+### What is deliberately not generated
+
+The Executive Perspective, Contacts and Tech panels are empty by choice.
+Filling them would mean inventing executive quotes, contacts and tech
+stacks for real companies from news headlines, and a rep would repeat that
+on a call. Each panel names the source that would populate it instead.
+Everything else on an account page is either copied verbatim from an
+ingested signal or computed from those signals, and every synthesized line
+carries a citation badge back to its source.
+
+## Hosting
+
+Runs on Vercel today. `server/index.mjs` (zero-dependency), the
+`Dockerfile`, and `npm run ingest` are everything needed to run it
+anywhere else — see **[HOSTING.md](./HOSTING.md)** for the three routes,
+TLS and domain setup, and the authentication you need to add before
+pointing a domain at it (there is none today).
 
 ## AE patches
 

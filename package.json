@@ -7,7 +7,9 @@
     "dev": "vite",
     "build": "vite build",
     "lint": "oxlint",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "start": "node server/index.mjs",
+    "ingest": "node scripts/run-ingest.mjs"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.116.0",
