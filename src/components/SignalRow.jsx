@@ -28,9 +28,8 @@ function domainFromUrl(url) {
   }
 }
 
-function SignalRow({ item, reviewed, onToggleReviewed, selected, onToggleSelect }) {
+function SignalRow({ item, reviewed, onToggleReviewed, onOpen, selected, onToggleSelect }) {
   const [copied, setCopied] = useState(false)
-  const [expanded, setExpanded] = useState(false)
 
   const isRegulatory = REGULATORY_SIGNAL_TYPES.has(item.signalType)
   const isHighRelevance = (item.outreachRelevance ?? 0) >= HIGH_RELEVANCE_THRESHOLD
@@ -110,25 +109,15 @@ function SignalRow({ item, reviewed, onToggleReviewed, selected, onToggleSelect 
           </a>
         </div>
 
-        <h3 className="mb-1.5 text-[15px] font-semibold leading-snug text-slate-900 dark:text-zinc-50">
-          {item.headline}
-        </h3>
-
         <button
           type="button"
-          onClick={() => setExpanded((v) => !v)}
-          className="mb-3 block w-full text-left"
-          aria-expanded={expanded}
+          onClick={() => onOpen(item.id)}
+          className="mb-1.5 block text-left text-[15px] font-semibold leading-snug text-slate-900 transition-colors hover:text-indigo-600 dark:text-zinc-50 dark:hover:text-indigo-400"
         >
-          <p
-            className={`text-sm leading-relaxed text-slate-600 dark:text-zinc-400 ${expanded ? "" : "line-clamp-1"}`}
-          >
-            {item.summary}
-          </p>
-          <span className="text-xs font-medium text-indigo-600 hover:underline dark:text-indigo-400">
-            {expanded ? "Show less" : "Show more"}
-          </span>
+          {item.headline}
         </button>
+
+        <p className="mb-3 line-clamp-2 text-sm leading-relaxed text-slate-600 dark:text-zinc-400">{item.summary}</p>
 
         <div className="flex flex-wrap items-center gap-2">
           <span className="rounded-full border border-violet-500/20 bg-violet-500/10 px-2 py-0.5 text-[11px] font-semibold text-violet-600 dark:text-violet-400">

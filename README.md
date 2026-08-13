@@ -6,7 +6,8 @@ A single-page competitor and industry news/signal intelligence dashboard, built 
 
 - KPI summary row (total signals, weekly trend, regulatory/pain-point signals, entities tracked) with sparklines
 - 30-day macro vs. micro signal volume chart
-- Tabbed, filterable signal queue (All / Macro / Micro) with quick filter pills (This Week, Regulatory & Pain Points, Leadership Moves, Competitor Moves)
+- Filterable signal queue with quick-filter shortcuts (High Relevance, This Week, Unreviewed, Regulatory & Pain Points, Leadership Moves, Competitor Moves) that set the same facets as the sidebar
+- Click any headline for a detail panel with related signals from the same entity
 - Per-signal quick actions: copy to clipboard, mark reviewed
 - Right-rail activity stream + rule-based weekly highlights (most active entity, leading signal type, regulatory pressure)
 - Sidebar filters by date range, patch, AE, practice area (CX / EX / Market Research), scope (macro/micro), entity, and signal type — filters combine
@@ -100,8 +101,9 @@ Two things feed this view specifically:
 
 ### Sharing a patch view
 
-The patch, AE and account-coverage filters are mirrored into the query
-string, so any view can be handed to the rep who owns it as a link:
+Patch, AE and account coverage are facets in the shared URL state
+(`src/lib/useUrlState.js`), like practice area and scope, so any view is
+already a link that can be handed to the rep who owns it:
 
 ```
 /?patch=fsi                        FSI signals
@@ -110,19 +112,21 @@ string, so any view can be handed to the rep who owns it as a link:
 /?patch=fsi&accounts=unassigned    FSI whitespace — companies nobody covers
 ```
 
-(`accounts=1` from before the Unassigned view existed still resolves to
-`named`, so links already handed out keep working.)
+They compose with every other facet, so
+`?patch=fsi&practice=ex&relevance=high&signal=<id>` is a valid, shareable
+state.
 
-"Copy link to this view" in the sidebar copies the current one. A link
-overrides whatever that browser last had selected, so it works for
-someone who has used the dashboard before. Unrecognized patch values are
-ignored rather than filtering the feed down to nothing.
+"Copy link to this view" in the sidebar copies the current URL.
+Unrecognized patch values are ignored rather than filtering the feed
+down to nothing.
 
-These filters rescope the whole page — KPI tiles, volume chart and
-highlights rail, not just the feed — so a shared link reads as that
+The territory facets rescope the whole page — KPI tiles, volume chart
+and highlights rail, not just the feed — so a shared link reads as that
 rep's dashboard rather than the team's numbers with a filtered list
-underneath. The remaining filters (date range, practice area, signal
-type, search) stay feed-only and personal to each viewer.
+underneath. That's what separates them from the other facets: practice
+area, scope, signal type and the date range narrow what you're looking
+at within a dashboard, while patch, AE and account coverage decide whose
+dashboard it is.
 
 ## Data pipeline
 

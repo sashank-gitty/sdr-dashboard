@@ -5,59 +5,61 @@ import Header from "./components/Header.jsx"
 import KpiGrid from "./components/KpiGrid.jsx"
 import VolumeChart from "./components/VolumeChart.jsx"
 import SignalQueue from "./components/SignalQueue.jsx"
+import SignalDetailPanel from "./components/SignalDetailPanel.jsx"
 import ActivityPanel from "./components/ActivityPanel.jsx"
 import CommandPalette from "./components/CommandPalette.jsx"
 import ErrorState from "./components/ErrorState.jsx"
 import { useTheme } from "./lib/useTheme.js"
 import { useLocalStorageState } from "./lib/useLocalStorageState.js"
+import { useUrlState } from "./lib/useUrlState.js"
 import { computeMetrics } from "./lib/metrics.js"
-import { readViewFromUrl, writeViewToUrl } from "./lib/patchViewUrl.js"
+import { HIGH_RELEVANCE_THRESHOLD } from "./lib/relevance.js"
+import { isQuickFilterActive, clearPatchFor } from "./lib/quickFilters.js"
 import { PATCHES, PATCH_LABELS } from "../shared/patches.js"
 import { matchesAccountCoverage, ACCOUNT_COVERAGE_LABELS } from "./lib/accountCoverage.js"
 
 const DATE_RANGE_DAYS = { "7": 7, "30": 30, "90": 90 }
+const EMPTY_ARRAY = []
 
 function toggleValue(list, value) {
   return list.includes(value) ? list.filter((v) => v !== value) : [...list, value]
 }
 
-// A view arriving by URL is an explicit instruction ("show me the FSI
-// feed") and outranks whatever this browser last had selected. Read
-// once at module scope so the initial render already has it and the
-// feed never flashes the wrong contents first.
-const urlView = readViewFromUrl()
-
 function App() {
   const { theme, toggleTheme } = useTheme()
   const searchInputRef = useRef(null)
 
-  const [search, setSearch] = useState("")
-  const [dateRange, setDateRange] = useLocalStorageState("sdr-dashboard-date-range", "all")
-  const [practiceAreaFilter, setPracticeAreaFilter] = useLocalStorageState("sdr-dashboard-practice-area-filter", [])
-  const [scopeFilter, setScopeFilter] = useLocalStorageState("sdr-dashboard-scope-filter", [])
-  const [entityFilter, setEntityFilter] = useLocalStorageState("sdr-dashboard-entity-filter", [])
-  const [signalTypeFilter, setSignalTypeFilter] = useLocalStorageState("sdr-dashboard-signal-type-filter", [])
-  const [patchFilter, setPatchFilter] = useLocalStorageState(
-    "sdr-dashboard-patch-filter",
-    [],
-    urlView?.patchFilter,
+  // Filters, search, tab-equivalents, and the open signal all live in the
+  // URL now (Issue: none of this was bookmarkable or shareable before —
+  // it lived only in component state or localStorage). Display prefs that
+  // aren't "state someone else should be able to open via a link" —
+  // sidebar collapsed, theme — stay in localStorage below.
+  const [urlState, updateUrl] = useUrlState()
+
+  const search = urlState.q ?? ""
+  const dateRange = urlState.range ?? "all"
+  const practiceAreaFilter = urlState.practice ?? EMPTY_ARRAY
+  const scopeFilter = urlState.scope ?? EMPTY_ARRAY
+  const entityFilter = urlState.entity ?? EMPTY_ARRAY
+  const signalTypeFilter = urlState.type ?? EMPTY_ARRAY
+  const relevanceOnly = urlState.relevance === "high"
+  const unreviewedOnly = urlState.reviewed === "false"
+  const openSignalId = urlState.signal ?? null
+
+  // Territory facets. Unrecognized patch identifiers are dropped rather
+  // than trusted — these come off a URL someone could have hand-edited,
+  // and an unknown one would empty the feed with no visible cause.
+  const patchFilter = useMemo(
+    () => (urlState.patch ?? EMPTY_ARRAY).filter((p) => PATCHES.includes(p)),
+    [urlState.patch],
   )
-  const [aeFilter, setAeFilter] = useLocalStorageState(
-    "sdr-dashboard-ae-filter",
-    [],
-    urlView?.aeFilter,
-  )
-  const [accountCoverage, setAccountCoverage] = useLocalStorageState(
-    "sdr-dashboard-account-coverage",
-    "all",
-    urlView?.accountCoverage,
-  )
-  const [viewLinkCopied, setViewLinkCopied] = useState(false)
-  const [activeTab, setActiveTab] = useLocalStorageState("sdr-dashboard-active-tab", "all")
-  const [activePill, setActivePill] = useLocalStorageState("sdr-dashboard-active-pill", "all")
+  const aeFilter = urlState.ae ?? EMPTY_ARRAY
+  const accountCoverage = urlState.accounts ?? "all"
+
   const [sidebarOpen, setSidebarOpen] = useLocalStorageState("sdr-dashboard-sidebar-open", true)
   const [paletteOpen, setPaletteOpen] = useState(false)
   const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false)
+  const [viewLinkCopied, setViewLinkCopied] = useState(false)
 
   const [signals, setSignals] = useState([])
   const [loading, setLoading] = useState(true)
@@ -110,10 +112,6 @@ function App() {
     () => [...new Set(signals.map((item) => item.practiceArea))].sort(),
     [signals],
   )
-  const scopeOptions = useMemo(
-    () => [...new Set(signals.map((item) => item.scope))].sort(),
-    [signals],
-  )
   const entityOptions = useMemo(
     () => [...new Set(signals.map((item) => item.entity))].sort(),
     [signals],
@@ -122,24 +120,27 @@ function App() {
     () => [...new Set(signals.map((item) => item.signalType))].sort(),
     [signals],
   )
-  // Patches list every canonical patch rather than only those present in
-  // the feed, so an empty patch reads as "nothing landed in your
-  // territory this week" instead of vanishing from the sidebar.
+  // Every canonical patch, not just those present in the feed, so an
+  // empty patch reads as "nothing landed in your territory this week"
+  // rather than vanishing from the sidebar.
   const patchOptions = PATCHES
   const aeOptions = useMemo(
     () => [...new Set(signals.flatMap((item) => item.owningAes ?? []))].sort(),
     [signals],
   )
 
-  // The territory filters are a different kind of filter from the rest.
+  // Territory filters are a different kind of filter from the rest.
   // Practice area, signal type and the date range narrow what you're
-  // looking at within your own dashboard; patch and AE decide whose
-  // dashboard it is. So these apply above the feed, to the KPI tiles,
-  // volume chart and highlights rail as well — otherwise a rep opening
-  // their own patch link would read the whole team's numbers.
+  // looking at within your own dashboard; patch, AE and account coverage
+  // decide whose dashboard it is. So they apply above the feed, to the
+  // KPI tiles, volume chart and highlights rail as well — otherwise a
+  // rep opening their own patch link would read the whole team's numbers.
   const territoryItems = useMemo(() => {
     if (!patchFilter.length && !aeFilter.length && accountCoverage === "all") return signals
     return signals.filter((item) => {
+      // Patch and AE are set-valued on a signal, so these are "overlaps"
+      // tests, not equality: a Fair Work ruling tagged for three patches
+      // belongs in all three reps' views.
       if (patchFilter.length && !(item.patches ?? []).some((p) => patchFilter.includes(p))) {
         return false
       }
@@ -177,7 +178,10 @@ function App() {
 
   const metrics = useMemo(() => computeMetrics(chronologicalItems), [chronologicalItems])
 
-  const filteredItems = useMemo(() => {
+  // Filtered on everything except scope, so the scope control's own
+  // counts (Macro/Micro/All) reflect every other active filter without
+  // being circular about scope itself.
+  const filteredItemsExceptScope = useMemo(() => {
     const query = search.trim().toLowerCase()
     const rangeDays = DATE_RANGE_DAYS[dateRange]
     const cutoff = rangeDays
@@ -191,10 +195,11 @@ function App() {
 
     return sortedItems.filter((item) => {
       if (practiceAreaFilter.length && !practiceAreaFilter.includes(item.practiceArea)) return false
-      if (scopeFilter.length && !scopeFilter.includes(item.scope)) return false
       if (entityFilter.length && !entityFilter.includes(item.entity)) return false
       if (signalTypeFilter.length && !signalTypeFilter.includes(item.signalType)) return false
       if (cutoff && new Date(`${item.date}T00:00:00`) < cutoff) return false
+      if (relevanceOnly && (item.outreachRelevance ?? 0) < HIGH_RELEVANCE_THRESHOLD) return false
+      if (unreviewedOnly && item.reviewed) return false
 
       if (query) {
         const haystack =
@@ -204,14 +209,53 @@ function App() {
 
       return true
     })
-  }, [sortedItems, search, dateRange, practiceAreaFilter, scopeFilter, entityFilter, signalTypeFilter])
+  }, [sortedItems, search, dateRange, practiceAreaFilter, entityFilter, signalTypeFilter, relevanceOnly, unreviewedOnly])
 
-  // Keep the address bar in step with the territory filters so the
-  // current view is always shareable, not just after pressing a button.
-  useEffect(() => {
-    writeViewToUrl({ patchFilter, aeFilter, accountCoverage })
-  }, [patchFilter, aeFilter, accountCoverage])
+  const scopeCounts = useMemo(
+    () => ({
+      all: filteredItemsExceptScope.length,
+      macro: filteredItemsExceptScope.filter((i) => i.scope === "macro").length,
+      micro: filteredItemsExceptScope.filter((i) => i.scope === "micro").length,
+    }),
+    [filteredItemsExceptScope],
+  )
 
+  const filteredItems = useMemo(
+    () =>
+      scopeFilter.length
+        ? filteredItemsExceptScope.filter((item) => scopeFilter.includes(item.scope))
+        : filteredItemsExceptScope,
+    [filteredItemsExceptScope, scopeFilter],
+  )
+
+  const activeFilterCount =
+    practiceAreaFilter.length +
+    scopeFilter.length +
+    entityFilter.length +
+    signalTypeFilter.length +
+    (relevanceOnly ? 1 : 0) +
+    (unreviewedOnly ? 1 : 0) +
+    patchFilter.length +
+    aeFilter.length +
+    (accountCoverage === "all" ? 0 : 1)
+
+  const openItem = useMemo(() => signals.find((s) => s.id === openSignalId) ?? null, [signals, openSignalId])
+  const relatedItems = useMemo(() => {
+    if (!openItem) return []
+    return signals
+      .filter((s) => s.id !== openItem.id && s.entity === openItem.entity)
+      .sort((a, b) => (a.date < b.date ? 1 : -1))
+      .slice(0, 5)
+  }, [signals, openItem])
+
+  const setSearch = (value) => updateUrl({ q: value || undefined })
+  const setDateRange = (value) => updateUrl({ range: value === "all" ? undefined : value })
+  const setScopeFilter = (values) => updateUrl({ scope: values.length ? values : undefined })
+  const toggleFacet = (key, currentList, value) => updateUrl({ [key]: toggleValue(currentList, value) })
+  const toggleQuickFilter = (quickFilter) => {
+    updateUrl(isQuickFilterActive(quickFilter, urlState) ? clearPatchFor(quickFilter) : quickFilter.patch)
+  }
+  const setAccountCoverage = (mode) => updateUrl({ accounts: mode === "all" ? undefined : mode })
   const handleCopyViewLink = async () => {
     try {
       await navigator.clipboard.writeText(window.location.href)
@@ -222,31 +266,28 @@ function App() {
       // the URL is in the address bar to copy by hand either way.
     }
   }
-
-  const activeFilterCount =
-    practiceAreaFilter.length +
-    scopeFilter.length +
-    entityFilter.length +
-    signalTypeFilter.length +
-    patchFilter.length +
-    aeFilter.length +
-    (accountCoverage === "all" ? 0 : 1)
+  const clearTerritory = () => updateUrl({ patch: undefined, ae: undefined, accounts: undefined })
+  const openSignal = (id) => updateUrl({ signal: id }, { push: true })
+  const closeSignal = () => updateUrl({ signal: undefined })
 
   const handleClearAll = () => {
-    setPracticeAreaFilter([])
-    setScopeFilter([])
-    setEntityFilter([])
-    setSignalTypeFilter([])
-    setPatchFilter([])
-    setAeFilter([])
-    setAccountCoverage("all")
+    updateUrl({
+      practice: undefined,
+      scope: undefined,
+      entity: undefined,
+      type: undefined,
+      relevance: undefined,
+      reviewed: undefined,
+      range: undefined,
+      patch: undefined,
+      ae: undefined,
+      accounts: undefined,
+    })
   }
 
   const handleClearEverything = () => {
     handleClearAll()
-    setSearch("")
-    setActiveTab("all")
-    setActivePill("all")
+    updateUrl({ q: undefined })
   }
 
   // "Mark Reviewed" is durable server state (Issue 4), not localStorage —
@@ -292,6 +333,37 @@ function App() {
     return <ErrorState message={fetchError} onRetry={() => setReloadToken((t) => t + 1)} />
   }
 
+  const sidebarProps = {
+    dateRange,
+    onDateRangeChange: setDateRange,
+    scopeFilter,
+    scopeCounts,
+    onScopeChange: setScopeFilter,
+    practiceAreaOptions,
+    entityOptions,
+    signalTypeOptions,
+    practiceAreaFilter,
+    entityFilter,
+    signalTypeFilter,
+    onTogglePracticeArea: (v) => toggleFacet("practice", practiceAreaFilter, v),
+    onToggleEntity: (v) => toggleFacet("entity", entityFilter, v),
+    onToggleSignalType: (v) => toggleFacet("type", signalTypeFilter, v),
+    urlState,
+    onToggleQuickFilter: toggleQuickFilter,
+    patchOptions,
+    aeOptions,
+    patchFilter,
+    aeFilter,
+    accountCoverage,
+    onTogglePatch: (v) => toggleFacet("patch", patchFilter, v),
+    onToggleAe: (v) => toggleFacet("ae", aeFilter, v),
+    onAccountCoverageChange: setAccountCoverage,
+    activeFilterCount,
+    onClearAll: handleClearAll,
+    onCopyViewLink: handleCopyViewLink,
+    viewLinkCopied,
+  }
+
   return (
     <div className="min-h-screen bg-slate-50 dark:bg-zinc-950">
       <h1 className="sr-only">SDR Command Center &mdash; Signal Intelligence Dashboard</h1>
@@ -308,35 +380,7 @@ function App() {
         onOpenMobileFilters={() => setMobileFiltersOpen(true)}
       />
 
-      <FilterDrawer
-        open={mobileFiltersOpen}
-        onClose={() => setMobileFiltersOpen(false)}
-        dateRange={dateRange}
-        onDateRangeChange={setDateRange}
-        practiceAreaOptions={practiceAreaOptions}
-        scopeOptions={scopeOptions}
-        entityOptions={entityOptions}
-        signalTypeOptions={signalTypeOptions}
-        patchOptions={patchOptions}
-        aeOptions={aeOptions}
-        practiceAreaFilter={practiceAreaFilter}
-        scopeFilter={scopeFilter}
-        entityFilter={entityFilter}
-        signalTypeFilter={signalTypeFilter}
-        patchFilter={patchFilter}
-        aeFilter={aeFilter}
-        accountCoverage={accountCoverage}
-        onTogglePracticeArea={(v) => setPracticeAreaFilter((list) => toggleValue(list, v))}
-        onToggleScope={(v) => setScopeFilter((list) => toggleValue(list, v))}
-        onToggleEntity={(v) => setEntityFilter((list) => toggleValue(list, v))}
-        onToggleSignalType={(v) => setSignalTypeFilter((list) => toggleValue(list, v))}
-        onTogglePatch={(v) => setPatchFilter((list) => toggleValue(list, v))}
-        onToggleAe={(v) => setAeFilter((list) => toggleValue(list, v))}
-        onAccountCoverageChange={setAccountCoverage}
-        onClearAll={handleClearAll}
-        onCopyViewLink={handleCopyViewLink}
-        viewLinkCopied={viewLinkCopied}
-      />
+      <FilterDrawer open={mobileFiltersOpen} onClose={() => setMobileFiltersOpen(false)} {...sidebarProps} />
 
       <div className="flex flex-col lg:flex-row">
         <div
@@ -345,72 +389,44 @@ function App() {
           }`}
         >
           <div className="lg:w-60">
-            <Sidebar
-              dateRange={dateRange}
-              onDateRangeChange={setDateRange}
-              practiceAreaOptions={practiceAreaOptions}
-              scopeOptions={scopeOptions}
-              entityOptions={entityOptions}
-              signalTypeOptions={signalTypeOptions}
-              patchOptions={patchOptions}
-              aeOptions={aeOptions}
-              practiceAreaFilter={practiceAreaFilter}
-              scopeFilter={scopeFilter}
-              entityFilter={entityFilter}
-              signalTypeFilter={signalTypeFilter}
-              patchFilter={patchFilter}
-              aeFilter={aeFilter}
-              accountCoverage={accountCoverage}
-              onTogglePracticeArea={(v) => setPracticeAreaFilter((list) => toggleValue(list, v))}
-              onToggleScope={(v) => setScopeFilter((list) => toggleValue(list, v))}
-              onToggleEntity={(v) => setEntityFilter((list) => toggleValue(list, v))}
-              onToggleSignalType={(v) => setSignalTypeFilter((list) => toggleValue(list, v))}
-              onTogglePatch={(v) => setPatchFilter((list) => toggleValue(list, v))}
-              onToggleAe={(v) => setAeFilter((list) => toggleValue(list, v))}
-              onAccountCoverageChange={setAccountCoverage}
-              onClearAll={handleClearAll}
-              onCopyViewLink={handleCopyViewLink}
-              viewLinkCopied={viewLinkCopied}
-            />
+            <Sidebar {...sidebarProps} />
           </div>
         </div>
 
         <main className="min-w-0 flex-1 px-4 py-5 sm:px-6">
-          {/* The territory filters rescope every number on the page, not
-              just the feed, so say so plainly — otherwise a smaller KPI
-              count reads as signals having gone missing. */}
-          {(patchFilter.length > 0 || aeFilter.length > 0 || accountCoverage !== "all") && (
-            <div className="mb-4 flex flex-wrap items-center gap-x-2 gap-y-1 rounded-lg border border-indigo-500/20 bg-indigo-500/5 px-3 py-2 text-xs text-slate-600 dark:text-zinc-300">
-              <span className="font-semibold uppercase tracking-wider text-indigo-600 dark:text-indigo-400">
-                Patch view
-              </span>
-              <span>
-                {[
-                  patchFilter.map((p) => PATCH_LABELS[p] ?? p).join(", "),
-                  aeFilter.join(", "),
-                  accountCoverage === "all" ? "" : ACCOUNT_COVERAGE_LABELS[accountCoverage].toLowerCase(),
-                ]
-                  .filter(Boolean)
-                  .join(" · ")}
-              </span>
-              <span className="text-slate-400 dark:text-zinc-500">
-                &mdash; every figure below is scoped to this view
-              </span>
-              <button
-                type="button"
-                onClick={() => {
-                  setPatchFilter([])
-                  setAeFilter([])
-                  setAccountCoverage("all")
-                }}
-                className="ml-auto rounded-md border border-slate-200 px-2 py-0.5 font-medium text-slate-500 transition-colors hover:border-slate-300 hover:text-slate-900 dark:border-zinc-700 dark:text-zinc-400 dark:hover:border-zinc-600 dark:hover:text-zinc-100"
-              >
-                Show all patches
-              </button>
-            </div>
-          )}
-
           <div className="mb-5">
+            {/* The territory filters rescope every number on the page,
+                not just the feed, so say so plainly — otherwise a
+                smaller KPI count reads as signals having gone missing. */}
+            {(patchFilter.length > 0 || aeFilter.length > 0 || accountCoverage !== "all") && (
+              <div className="mb-4 flex flex-wrap items-center gap-x-2 gap-y-1 rounded-lg border border-indigo-500/20 bg-indigo-500/5 px-3 py-2 text-xs text-slate-600 dark:text-zinc-300">
+                <span className="font-semibold uppercase tracking-wider text-indigo-600 dark:text-indigo-400">
+                  Patch view
+                </span>
+                <span>
+                  {[
+                    patchFilter.map((p) => PATCH_LABELS[p] ?? p).join(", "),
+                    aeFilter.join(", "),
+                    accountCoverage === "all"
+                      ? ""
+                      : ACCOUNT_COVERAGE_LABELS[accountCoverage].toLowerCase(),
+                  ]
+                    .filter(Boolean)
+                    .join(" · ")}
+                </span>
+                <span className="text-slate-400 dark:text-zinc-500">
+                  &mdash; every figure below is scoped to this view
+                </span>
+                <button
+                  type="button"
+                  onClick={clearTerritory}
+                  className="ml-auto rounded-md border border-slate-200 px-2 py-0.5 font-medium text-slate-500 transition-colors hover:border-slate-300 hover:text-slate-900 dark:border-zinc-700 dark:text-zinc-400 dark:hover:border-zinc-600 dark:hover:text-zinc-100"
+                >
+                  Show all patches
+                </button>
+              </div>
+            )}
+
             <KpiGrid metrics={metrics} />
           </div>
 
@@ -424,14 +440,10 @@ function App() {
           <div className="grid grid-cols-1 gap-6 xl:grid-cols-[minmax(0,1fr)_320px]">
             <SignalQueue
               items={filteredItems}
-              today={metrics.today}
               onToggleReviewed={handleToggleReviewed}
               onMarkManyReviewed={handleMarkManyReviewed}
+              onOpenSignal={openSignal}
               loading={loading}
-              activeTab={activeTab}
-              onTabChange={setActiveTab}
-              activePill={activePill}
-              onPillChange={setActivePill}
               onClearEverything={handleClearEverything}
             />
             <div className="xl:sticky xl:top-[73px] xl:self-start">
@@ -445,9 +457,18 @@ function App() {
         open={paletteOpen}
         onClose={() => setPaletteOpen(false)}
         items={sortedItems}
-        onSelectItem={(item) => setSearch(item.headline)}
+        onSelectItem={(item) => openSignal(item.id)}
         onClearFilters={handleClearEverything}
         onToggleTheme={toggleTheme}
+      />
+
+      <SignalDetailPanel
+        item={openItem}
+        open={Boolean(openItem)}
+        onClose={closeSignal}
+        onToggleReviewed={handleToggleReviewed}
+        relatedItems={relatedItems}
+        onSelectRelated={(id) => openSignal(id)}
       />
     </div>
   )
