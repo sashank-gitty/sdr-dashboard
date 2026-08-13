@@ -15,6 +15,7 @@ A single-page competitor and industry news/signal intelligence dashboard, built 
 - Account coverage switch: **Named** (only accounts someone already owns) or **Unassigned** (named companies in the news that match nothing in the territory book — whitespace nobody is covering)
 - Global search plus a `Cmd/Ctrl+K` command palette for fast lookup and quick actions
 - Full dark / light theme support (persisted to `localStorage`, defaults to system preference)
+- "Synced Xh ago" indicator in the header (desktop only — `lg` and up) showing when the ingest cron last ran, so a quiet cron and a dead cron don't look the same; turns amber past 36 hours or on the last run's failure
 
 ## AE patches
 
@@ -134,10 +135,11 @@ Signal data lives in Postgres (Neon, connected via Vercel's native integration),
 
 - **`GET /api/signals`** — the frontend fetches this at runtime instead of importing a static file.
 - **`POST /api/ingest`** — pulls Google News RSS for a watchlist of tracked entities/topics (`api/_lib/watchlist.js`), dedupes against existing rows, normalizes new items into the schema via a Claude API call (`api/_lib/normalize.js`), attributes them to AE patches (`api/_lib/matchAccounts.js`), and inserts them. Triggered on a daily cron (`vercel.json`), protected by `CRON_SECRET`.
-- **`db/migrations/`** — schema, applied in order (001 core table through 005 patch attribution — check the directory for the current last one).
+- **`db/migrations/`** — schema, applied in order (001 core table through 006 ingest run log — check the directory for the current last one).
 - **`db/seed.mjs`** — one-time migration of the old static dataset into Postgres (skips the placeholder `example.com` entries).
 - **`db/backfill-relevance.mjs`** — one-time relevance scoring pass for rows that predate ingest-time scoring.
 - **`POST /api/reviews`** — durable "Mark Reviewed" state, `{ids, reviewed}` bulk update.
+- **`GET /api/ingest-status`** — the most recent `ingest_runs` row (success/error, counts, timestamp), so the frontend can show "last synced" without inferring it from `signals.created_at`, which doesn't move on a run that found nothing new. Every `/api/ingest` invocation logs one row here regardless of outcome.
 
 Row shape (camelCase over the wire, snake_case in Postgres):
 
@@ -168,7 +170,7 @@ Row shape (camelCase over the wire, snake_case in Postgres):
 2. **Set env vars** (Vercel dashboard → Project → Settings → Environment Variables):
    - `ANTHROPIC_API_KEY` — used by the ingest pipeline's normalization step.
    - `CRON_SECRET` — any random string you generate; Vercel automatically sends it as `Authorization: Bearer $CRON_SECRET` when invoking the cron job, and `/api/ingest` checks it matches.
-3. **Run the migrations**: open the Neon/Postgres query editor in the Vercel dashboard and run each file in `db/migrations/` in order (`001_...` through `005_...` as of this writing — check the directory for the current last one).
+3. **Run the migrations**: open the Neon/Postgres query editor in the Vercel dashboard and run each file in `db/migrations/` in order (`001_...` through `006_...` as of this writing — check the directory for the current last one).
 4. **Seed existing data**: locally, `vercel env pull .env.local`, then `node --env-file=.env.local db/seed.mjs`.
 5. **Backfill patch attribution** on rows that predate migration 005: `node --env-file=.env.local db/backfill-patches.mjs`. Safe to re-run; pass `--all` to re-tag everything after changing the territory book or the patch definitions.
 6. **Verify ingestion manually before trusting the cron**: `curl -H "Authorization: Bearer $CRON_SECRET" https://<your-deploy>/api/ingest` and check the response summary (`queried`, `rawItems`, `afterDedupe`, `normalized`, `inserted`, `accountMatched`, `errors`).
