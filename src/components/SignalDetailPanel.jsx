@@ -1,13 +1,22 @@
-import { useEffect, useState } from "react"
-import { pillClassForScope, pillClassForSignalType, pillClassForPracticeArea, PRACTICE_AREA_LABELS } from "../lib/colors.js"
+import { useEffect, useMemo, useRef, useState } from "react"
+import {
+  pillClassForScope,
+  pillClassForSignalType,
+  pillClassForPracticeArea,
+  PRACTICE_AREA_LABELS,
+  PATCH_LABELS,
+} from "../lib/colors.js"
 import { relevanceTierText } from "../lib/relevanceTiers.js"
 import { buildSignalReason, REASON_TONE_STYLES } from "../lib/signalReason.js"
+import { iconForSignal, groupLabel, groupForSignal } from "../lib/signalGroups.js"
+import { AccountAvatar, Pill, Collapsible } from "./ui.jsx"
+import { XIcon, CopyIcon, ExternalLinkIcon, ChevronLeftIcon, ChevronRightIcon, ArrowUpIcon, SearchIcon } from "./icons.jsx"
 
 const MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
 
 function formatDate(dateString) {
   const [year, month, day] = dateString.split("-").map(Number)
-  return `${day} ${MONTHS[month - 1]} ${year}`
+  return `${String(day).padStart(2, "0")} ${MONTHS[month - 1]} ${year}`
 }
 
 function domainFromUrl(url) {
@@ -18,20 +27,83 @@ function domainFromUrl(url) {
   }
 }
 
+// Splits text on a term and tags each match with a global index, so the
+// find bar can scroll between them. A running counter is threaded through
+// rather than restarted per-block, because the drawer highlights across
+// several separate blocks (headline, summary, rubric text) and the match
+// numbering has to be continuous across all of them.
+function markMatches(text, term, counter) {
+  if (!term || !text) return text ?? null
+  const escaped = term.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")
+  const parts = String(text).split(new RegExp(`(${escaped})`, "gi"))
+  return parts.map((part, i) => {
+    if (part.toLowerCase() !== term.toLowerCase()) return part
+    const index = counter.next++
+    return (
+      <mark
+        key={i}
+        data-find-index={index}
+        className="rounded-sm bg-indigo-500/25 px-0.5 font-medium text-indigo-800 dark:bg-indigo-500/35 dark:text-indigo-100"
+      >
+        {part}
+      </mark>
+    )
+  })
+}
+
+function CopyButton({ value, label = "Copy" }) {
+  const [copied, setCopied] = useState(false)
+  return (
+    <button
+      type="button"
+      aria-label={label}
+      onClick={async () => {
+        try {
+          await navigator.clipboard.writeText(value)
+          setCopied(true)
+          setTimeout(() => setCopied(false), 1500)
+        } catch {
+          // Clipboard access can be denied by the browser; fail silently.
+        }
+      }}
+      className="inline-flex h-7 w-7 flex-shrink-0 items-center justify-center rounded-md text-slate-400 transition-colors hover:bg-slate-100 hover:text-slate-900 dark:text-zinc-500 dark:hover:bg-zinc-800 dark:hover:text-zinc-100"
+    >
+      {copied ? <span className="text-[10px] font-semibold text-emerald-600">✓</span> : <CopyIcon className="h-4 w-4" />}
+    </button>
+  )
+}
+
 // Right-side slide-over rather than a routed page — the list stays
 // mounted and scrolled to where it was underneath, so opening a signal to
 // read the full summary doesn't cost the "at a glance, scan many" value
 // the rest of the dashboard is built around. Deep-linkable via ?signal=.
 function SignalDetailPanel({ item, open, onClose, onToggleReviewed, relatedItems, onSelectRelated }) {
-  const [copied, setCopied] = useState(false)
+  const [find, setFind] = useState("")
+  const [findOpen, setFindOpen] = useState(false)
+  const [activeMatch, setActiveMatch] = useState(0)
+  const bodyRef = useRef(null)
 
   useEffect(() => {
     function onKey(e) {
-      if (open && e.key === "Escape") onClose()
+      if (!open) return
+      if (e.key === "Escape") {
+        if (findOpen) {
+          setFindOpen(false)
+          setFind("")
+          return
+        }
+        onClose()
+      }
+      // ⌘F inside the drawer opens the in-document find rather than the
+      // browser's, which can't see past the overlay usefully.
+      if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === "f") {
+        e.preventDefault()
+        setFindOpen(true)
+      }
     }
     window.addEventListener("keydown", onKey)
     return () => window.removeEventListener("keydown", onKey)
-  }, [open, onClose])
+  }, [open, onClose, findOpen])
 
   useEffect(() => {
     if (!open) return
@@ -42,22 +114,51 @@ function SignalDetailPanel({ item, open, onClose, onToggleReviewed, relatedItems
     }
   }, [open])
 
+  // Reset the find state when the drawer switches to a different signal,
+  // otherwise a stale match index points into the previous document.
+  useEffect(() => {
+    setActiveMatch(0)
+  }, [item?.id, find])
+
+  const matchCount = useMemo(() => {
+    if (!find.trim() || !item) return 0
+    const haystack = `${item.headline} ${item.summary} ${relevanceTierText(item.outreachRelevance ?? null) ?? ""}`
+    const escaped = find.trim().replace(/[.*+?^${}()|[\]\\]/g, "\\$&")
+    return (haystack.match(new RegExp(escaped, "gi")) ?? []).length
+  }, [find, item])
+
+  const scrollToMatch = (index) => {
+    const node = bodyRef.current?.querySelector(`[data-find-index="${index}"]`)
+    if (node) node.scrollIntoView({ block: "center", behavior: "smooth" })
+  }
+
+  const step = (delta) => {
+    if (matchCount === 0) return
+    const next = (activeMatch + delta + matchCount) % matchCount
+    setActiveMatch(next)
+    scrollToMatch(next)
+  }
+
   if (!item) return null
+
+  const term = find.trim()
+  const counter = { next: 0 }
 
   const practiceAreaLabel = PRACTICE_AREA_LABELS[item.practiceArea] ?? PRACTICE_AREA_LABELS.cx
   const tierText = relevanceTierText(item.outreachRelevance ?? null)
   const reason = buildSignalReason(item)
   const reasonTone = REASON_TONE_STYLES[reason.tone] ?? REASON_TONE_STYLES.neutral
+  const Icon = iconForSignal(item)
+  const account = (item.matchedAccounts ?? [])[0] ?? item.entity
 
-  const handleCopy = async () => {
-    try {
-      await navigator.clipboard.writeText(`${item.headline}\n\n${item.summary}\n${item.sourceUrl}`)
-      setCopied(true)
-      setTimeout(() => setCopied(false), 1500)
-    } catch {
-      // Clipboard access can be denied by the browser; fail silently.
-    }
-  }
+  const topics = [
+    ...(item.patches ?? []).map((p) => PATCH_LABELS[p] ?? p),
+    practiceAreaLabel,
+    item.scope,
+    groupLabel(groupForSignal(item)),
+  ]
+
+  const fullText = `${item.headline}\n\n${item.summary}\n\n${item.sourceUrl}`
 
   return (
     <div className="fixed inset-0 z-50" aria-hidden={!open} style={{ pointerEvents: open ? "auto" : "none" }}>
@@ -69,129 +170,237 @@ function SignalDetailPanel({ item, open, onClose, onToggleReviewed, relatedItems
         role="dialog"
         aria-modal="true"
         aria-label={item.headline}
-        className={`absolute inset-y-0 right-0 flex w-full max-w-[480px] flex-col overflow-y-auto border-l border-slate-200 bg-white shadow-2xl transition-transform duration-300 ease-spring dark:border-zinc-800 dark:bg-zinc-950 ${
+        className={`absolute inset-y-0 right-0 flex w-full max-w-[520px] flex-col border-l border-slate-200 bg-white shadow-2xl transition-transform duration-300 ease-spring dark:border-zinc-800 dark:bg-zinc-950 ${
           open ? "translate-x-0" : "translate-x-full"
         }`}
       >
-        <div className="flex flex-shrink-0 items-center justify-between border-b border-slate-200 px-4 py-3 dark:border-zinc-800">
-          <time className="font-mono text-xs font-semibold tabular-nums text-slate-500 dark:text-zinc-400">
-            {formatDate(item.date)}
-          </time>
+        {/* Header carries the account, not just the date: a signal opened
+            from the global feed needs to say which company it belongs to
+            without the reader scrolling back to the row they clicked. */}
+        <div className="flex flex-shrink-0 items-start gap-3 border-b border-slate-200 px-4 py-3 dark:border-zinc-800">
+          <AccountAvatar name={account} size="sm" />
+          <div className="min-w-0 flex-1">
+            <p className="truncate text-[13px] font-semibold text-slate-900 dark:text-zinc-50">{account}</p>
+            <time className="text-[12px] tabular-nums text-slate-400 dark:text-zinc-500">{formatDate(item.date)}</time>
+          </div>
+          <button
+            type="button"
+            onClick={() => setFindOpen((v) => !v)}
+            aria-label="Find in this signal"
+            aria-pressed={findOpen}
+            className={`inline-flex h-8 w-8 items-center justify-center rounded-md transition-colors ${
+              findOpen
+                ? "bg-indigo-500/10 text-indigo-600 dark:text-indigo-400"
+                : "text-slate-400 hover:bg-slate-100 hover:text-slate-900 dark:text-zinc-500 dark:hover:bg-zinc-800 dark:hover:text-zinc-100"
+            }`}
+          >
+            <SearchIcon className="h-4 w-4" />
+          </button>
           <button
             type="button"
             onClick={onClose}
             aria-label="Close"
-            className="inline-flex h-8 w-8 items-center justify-center rounded-md border border-slate-200 text-slate-500 transition-colors hover:border-slate-300 hover:text-slate-900 dark:border-zinc-800 dark:text-zinc-400 dark:hover:border-zinc-700 dark:hover:text-zinc-100"
+            className="inline-flex h-8 w-8 items-center justify-center rounded-md text-slate-400 transition-colors hover:bg-slate-100 hover:text-slate-900 dark:text-zinc-500 dark:hover:bg-zinc-800 dark:hover:text-zinc-100"
           >
-            &#10005;
+            <XIcon className="h-4 w-4" />
           </button>
         </div>
 
-        <div className="flex flex-1 flex-col gap-5 p-5">
-          <div className="flex flex-wrap gap-1.5">
-            <span
-              title={`Practice area: ${practiceAreaLabel}`}
-              className={`rounded-full px-2 py-0.5 text-[11px] font-semibold ${pillClassForPracticeArea(item.practiceArea)}`}
-            >
-              {practiceAreaLabel}
-            </span>
-            <span
-              className={`rounded-full px-2 py-0.5 text-[11px] font-semibold capitalize ${pillClassForScope(item.scope)}`}
-            >
-              {item.scope}
-            </span>
-            <span
-              className={`rounded-full px-2 py-0.5 text-[11px] font-semibold capitalize ${pillClassForSignalType(item.signalType)}`}
-            >
-              {item.signalType}
-            </span>
-          </div>
+        <div ref={bodyRef} className="flex-1 overflow-y-auto px-5 py-4">
+          <h2 className="text-[17px] font-semibold leading-snug text-slate-900 dark:text-zinc-50">
+            {markMatches(item.headline, term, counter)}
+          </h2>
 
-          <h2 className="text-lg font-semibold leading-snug text-slate-900 dark:text-zinc-50">{item.headline}</h2>
-
-          <p className={`-mt-2 flex items-center gap-1.5 text-xs font-medium ${reasonTone.text}`}>
+          <p className={`mt-2 flex items-center gap-1.5 text-xs font-medium ${reasonTone.text}`}>
             <span className={`h-1.5 w-1.5 flex-shrink-0 rounded-full ${reasonTone.dot}`} aria-hidden="true" />
             {reason.label}
           </p>
 
-          <div className="flex items-center justify-between gap-3">
-            <span className="rounded-full border border-violet-500/20 bg-violet-500/10 px-2 py-0.5 text-[11px] font-semibold text-violet-600 dark:text-violet-400">
-              {item.entity}
-            </span>
-            <a
-              href={item.sourceUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-xs font-medium text-slate-400 hover:text-indigo-600 dark:text-zinc-500 dark:hover:text-indigo-400"
-            >
-              {domainFromUrl(item.sourceUrl)} &#8599;
-            </a>
-          </div>
+          {/* Metadata grid — label/value rows rather than a pill soup, so
+              Type, Topics, Date and Source are each findable by position. */}
+          <dl className="mt-4 space-y-2.5 border-y border-slate-200 py-4 dark:border-zinc-800">
+            <div className="flex gap-4">
+              <dt className="w-16 flex-shrink-0 text-[12px] text-slate-500 dark:text-zinc-400">Type</dt>
+              <dd>
+                <span
+                  className={`inline-flex items-center gap-1 rounded-md px-1.5 py-0.5 text-[11px] font-medium capitalize ${pillClassForSignalType(item.signalType)}`}
+                >
+                  <Icon className="h-3 w-3" />
+                  {item.signalType}
+                </span>
+              </dd>
+            </div>
+            <div className="flex gap-4">
+              <dt className="w-16 flex-shrink-0 text-[12px] text-slate-500 dark:text-zinc-400">Topics</dt>
+              <dd className="flex flex-wrap gap-1">
+                {topics.map((topic, i) => (
+                  <Pill key={`${topic}-${i}`} tone="slate">
+                    <span className="capitalize">{topic}</span>
+                  </Pill>
+                ))}
+              </dd>
+            </div>
+            <div className="flex gap-4">
+              <dt className="w-16 flex-shrink-0 text-[12px] text-slate-500 dark:text-zinc-400">Date</dt>
+              <dd className="text-[12px] tabular-nums text-slate-900 dark:text-zinc-100">{formatDate(item.date)}</dd>
+            </div>
+            <div className="flex gap-4">
+              <dt className="w-16 flex-shrink-0 text-[12px] text-slate-500 dark:text-zinc-400">Source</dt>
+              <dd>
+                <a
+                  href={item.sourceUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-1 text-[12px] text-indigo-600 hover:underline dark:text-indigo-400"
+                >
+                  {domainFromUrl(item.sourceUrl)}
+                  <ExternalLinkIcon className="h-3 w-3" />
+                </a>
+              </dd>
+            </div>
+            <div className="flex gap-4">
+              <dt className="w-16 flex-shrink-0 text-[12px] text-slate-500 dark:text-zinc-400">Scope</dt>
+              <dd className="flex flex-wrap gap-1">
+                <span
+                  className={`rounded-md px-1.5 py-0.5 text-[11px] font-medium capitalize ${pillClassForScope(item.scope)}`}
+                >
+                  {item.scope}
+                </span>
+                <span
+                  className={`rounded-md px-1.5 py-0.5 text-[11px] font-medium ${pillClassForPracticeArea(item.practiceArea)}`}
+                >
+                  {practiceAreaLabel}
+                </span>
+              </dd>
+            </div>
+          </dl>
 
-          <p className="text-sm leading-relaxed text-slate-600 dark:text-zinc-400">{item.summary}</p>
+          <Collapsible title="Smart Summary" action={<CopyButton value={item.summary} label="Copy summary" />}>
+            <p className="text-[13px] leading-relaxed text-slate-600 dark:text-zinc-300">
+              {markMatches(item.summary, term, counter)}
+            </p>
+          </Collapsible>
 
           {tierText && (
-            <div className="rounded-lg border border-slate-200 bg-slate-50 p-3 dark:border-zinc-800 dark:bg-zinc-900/60">
-              <p className="mb-1 text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-zinc-400">
-                Why this scored a {item.outreachRelevance}
+            <Collapsible title={`Why this scored ${item.outreachRelevance}`} defaultOpen={false}>
+              <p className="text-[13px] leading-relaxed text-slate-600 dark:text-zinc-300">
+                {markMatches(tierText, term, counter)}
               </p>
-              <p className="text-sm leading-relaxed text-slate-600 dark:text-zinc-400">{tierText}</p>
-            </div>
+            </Collapsible>
           )}
 
-          <div className="rounded-lg border border-dashed border-slate-300 p-3 dark:border-zinc-700">
-            <p className="mb-1 text-xs font-semibold uppercase tracking-wider text-slate-400 dark:text-zinc-500">
-              What this means
-            </p>
-            <p className="text-sm text-slate-400 dark:text-zinc-500">
-              Downstream impact for consumers, employees, and leadership isn&rsquo;t generated yet &mdash; reserved
-              for a later pass.
-            </p>
-          </div>
+          {(item.matchedAccounts ?? []).length > 0 && (
+            <Collapsible title="Territory" defaultOpen={false}>
+              <dl className="space-y-2 text-[13px]">
+                <div className="flex gap-3">
+                  <dt className="w-20 flex-shrink-0 text-slate-500 dark:text-zinc-400">Accounts</dt>
+                  <dd className="text-slate-900 dark:text-zinc-100">{item.matchedAccounts.join(", ")}</dd>
+                </div>
+                {(item.owningAes ?? []).length > 0 && (
+                  <div className="flex gap-3">
+                    <dt className="w-20 flex-shrink-0 text-slate-500 dark:text-zinc-400">Owner</dt>
+                    <dd className="text-slate-900 dark:text-zinc-100">{item.owningAes.join(", ")}</dd>
+                  </div>
+                )}
+                {item.accountStatus && (
+                  <div className="flex gap-3">
+                    <dt className="w-20 flex-shrink-0 text-slate-500 dark:text-zinc-400">Status</dt>
+                    <dd className="capitalize text-slate-900 dark:text-zinc-100">{item.accountStatus}</dd>
+                  </div>
+                )}
+              </dl>
+            </Collapsible>
+          )}
 
           {relatedItems.length > 0 && (
-            <div>
-              <p className="mb-2 text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-zinc-400">
-                Other signals &mdash; {item.entity}
-              </p>
+            <Collapsible title={`Other signals — ${item.entity}`} defaultOpen={false}>
               <div className="flex flex-col gap-1">
                 {relatedItems.map((related) => (
                   <button
                     key={related.id}
                     type="button"
                     onClick={() => onSelectRelated(related.id)}
-                    className="flex items-center gap-2 rounded-md px-2 py-1.5 text-left text-sm text-slate-600 transition-colors hover:bg-slate-100 dark:text-zinc-400 dark:hover:bg-zinc-800/80"
+                    className="flex items-start gap-2 rounded-md px-2 py-1.5 text-left text-[13px] text-slate-600 transition-colors hover:bg-slate-100 dark:text-zinc-400 dark:hover:bg-zinc-800/80"
                   >
-                    <time className="flex-shrink-0 font-mono text-xs tabular-nums text-slate-400 dark:text-zinc-500">
+                    <time className="flex-shrink-0 text-[11px] tabular-nums text-slate-400 dark:text-zinc-500">
                       {formatDate(related.date)}
                     </time>
-                    <span className="truncate">{related.headline}</span>
+                    <span className="min-w-0 flex-1">{related.headline}</span>
                   </button>
                 ))}
               </div>
-            </div>
+            </Collapsible>
           )}
+        </div>
 
-          <div className="mt-auto flex items-center gap-2 border-t border-slate-200 pt-4 dark:border-zinc-800">
+        {findOpen && (
+          <div className="flex flex-shrink-0 items-center gap-2 border-t border-slate-200 bg-slate-50 px-3 py-2 dark:border-zinc-800 dark:bg-zinc-900">
+            <SearchIcon className="h-4 w-4 flex-shrink-0 text-slate-400 dark:text-zinc-500" />
+            <input
+              type="text"
+              autoFocus
+              value={find}
+              onChange={(e) => setFind(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === "Enter") step(e.shiftKey ? -1 : 1)
+              }}
+              placeholder="Find in this signal"
+              className="min-w-0 flex-1 bg-transparent text-[13px] text-slate-900 outline-none placeholder:text-slate-400 dark:text-zinc-100 dark:placeholder:text-zinc-500"
+            />
+            <span className="flex-shrink-0 text-[12px] tabular-nums text-slate-500 dark:text-zinc-400">
+              {matchCount === 0 ? (term ? "0/0" : "") : `${activeMatch + 1}/${matchCount}`}
+            </span>
             <button
               type="button"
-              onClick={handleCopy}
-              className="rounded-md border border-slate-200 px-3 py-1.5 text-xs font-medium text-slate-500 transition-colors hover:border-slate-300 hover:text-slate-900 dark:border-zinc-800 dark:text-zinc-400 dark:hover:border-zinc-700 dark:hover:text-zinc-100"
+              onClick={() => step(-1)}
+              disabled={matchCount === 0}
+              aria-label="Previous match"
+              className="inline-flex h-6 w-6 items-center justify-center rounded text-slate-500 hover:bg-slate-200 disabled:opacity-30 dark:text-zinc-400 dark:hover:bg-zinc-800"
             >
-              {copied ? "Copied" : "Copy"}
+              <ChevronLeftIcon className="h-3.5 w-3.5" />
             </button>
             <button
               type="button"
-              onClick={() => onToggleReviewed(item.id)}
-              className={`rounded-md border px-3 py-1.5 text-xs font-medium transition-colors ${
-                item.reviewed
-                  ? "border-emerald-500/30 text-emerald-600 dark:text-emerald-400"
-                  : "border-slate-200 text-slate-500 hover:border-slate-300 hover:text-slate-900 dark:border-zinc-800 dark:text-zinc-400 dark:hover:border-zinc-700 dark:hover:text-zinc-100"
-              }`}
+              onClick={() => step(1)}
+              disabled={matchCount === 0}
+              aria-label="Next match"
+              className="inline-flex h-6 w-6 items-center justify-center rounded text-slate-500 hover:bg-slate-200 disabled:opacity-30 dark:text-zinc-400 dark:hover:bg-zinc-800"
             >
-              {item.reviewed ? "Reviewed" : "Mark Reviewed"}
+              <ChevronRightIcon className="h-3.5 w-3.5" />
+            </button>
+            <button
+              type="button"
+              onClick={() => bodyRef.current?.scrollTo({ top: 0, behavior: "smooth" })}
+              aria-label="Back to top"
+              className="inline-flex h-6 w-6 items-center justify-center rounded text-slate-500 hover:bg-slate-200 dark:text-zinc-400 dark:hover:bg-zinc-800"
+            >
+              <ArrowUpIcon className="h-3.5 w-3.5" />
             </button>
           </div>
+        )}
+
+        <div className="flex flex-shrink-0 items-center gap-2 border-t border-slate-200 px-4 py-3 dark:border-zinc-800">
+          <CopyButton value={fullText} label="Copy signal" />
+          <button
+            type="button"
+            onClick={() => onToggleReviewed(item.id)}
+            className={`rounded-lg border px-3 py-1.5 text-[13px] font-medium transition-colors ${
+              item.reviewed
+                ? "border-emerald-500/30 text-emerald-600 dark:text-emerald-400"
+                : "border-slate-200 text-slate-600 hover:border-slate-300 hover:text-slate-900 dark:border-zinc-700 dark:text-zinc-300 dark:hover:border-zinc-600 dark:hover:text-zinc-100"
+            }`}
+          >
+            {item.reviewed ? "Reviewed" : "Mark Reviewed"}
+          </button>
+          <a
+            href={item.sourceUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="ml-auto inline-flex items-center gap-1.5 rounded-lg bg-indigo-600 px-3 py-1.5 text-[13px] font-medium text-white transition-colors hover:bg-indigo-700"
+          >
+            Open source
+            <ExternalLinkIcon className="h-3.5 w-3.5" />
+          </a>
         </div>
       </div>
     </div>
