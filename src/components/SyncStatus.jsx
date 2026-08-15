@@ -30,6 +30,7 @@ function SyncStatus({ status }) {
       : summary
         ? `${summary.inserted} inserted, ${summary.accountMatched} account-matched, ${summary.errors?.length ?? 0} errors`
         : null,
+    summary?.budgetExceeded ? "Monthly Claude API budget reached — rest of this run skipped." : null,
     !isHealthy && status.status === "success" ? "No run in over 36 hours — check the cron." : null,
   ]
     .filter(Boolean)

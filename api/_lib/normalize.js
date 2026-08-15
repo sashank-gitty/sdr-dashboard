@@ -3,8 +3,19 @@ import { SIGNAL_TYPES, SCOPES } from "../../shared/signalTypes.js"
 import { PRACTICE_AREAS } from "../../shared/practiceAreas.js"
 import { PATCHES, PATCH_DESCRIPTIONS } from "../../shared/patches.js"
 import { RELEVANCE_RUBRIC } from "../../shared/relevanceRubric.js"
+import { MONTHLY_BUDGET_USD, monthToDateSpend, recordSpend } from "./budget.js"
 
 const anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY })
+
+// Thrown instead of calling the API once month-to-date spend has reached
+// the cap. Distinct from a normal "skip" (off-topic item) so ingest.js can
+// stop the run instead of just moving on to the next item.
+export class BudgetExceededError extends Error {
+  constructor(spend) {
+    super(`Monthly Claude API budget of $${MONTHLY_BUDGET_USD} reached ($${spend.toFixed(2)} spent this month) — skipping further normalization until next month.`)
+    this.name = "BudgetExceededError"
+  }
+}
 
 const SYSTEM_PROMPT = `You extract structured competitive/market intelligence signals for an SDR (Sales Development Rep) selling Qualtrics experience-management software into ANZ (Australia/New Zealand) accounts, across all three of Qualtrics' practice areas: Customer Experience, Employee Experience, and Strategy & Research (market research). This spans every industry, not just financial services — telco, retail, government, agribusiness, healthcare, education, and more all buy into one or more of these areas.
 
@@ -31,12 +42,22 @@ export async function normalizeItem({ title, snippet, matchedQuery }) {
   // is a signal that silently never reaches the feed.
   let parsed = null
   for (let attempt = 0; attempt < 2 && parsed === null; attempt += 1) {
+    // Checked before every call (including the retry attempt) rather than
+    // once per item, so a run that crosses the cap mid-item still stops.
+    const spend = await monthToDateSpend()
+    if (spend >= MONTHLY_BUDGET_USD) {
+      throw new BudgetExceededError(spend)
+    }
+
     const response = await anthropic.messages.create({
       model: "claude-sonnet-5",
       max_tokens: 500,
       system: SYSTEM_PROMPT,
       messages: [{ role: "user", content: userContent }],
     })
+    // Record real usage regardless of what comes next — the call is
+    // billed whether or not the completion turns out to be parseable.
+    await recordSpend(response.usage.input_tokens, response.usage.output_tokens)
 
     const text = response.content.find((block) => block.type === "text")?.text?.trim() ?? ""
     if (!text) continue
