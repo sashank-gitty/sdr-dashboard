@@ -15,6 +15,7 @@ import {
   BellIcon,
   MenuIcon,
   XIcon,
+  PinIcon,
 } from "./icons.jsx"
 
 const NAV_ITEMS = [
@@ -22,6 +23,7 @@ const NAV_ITEMS = [
   { page: "magic", href: "/magic", label: "Magic", Icon: SparklesIcon },
   { page: "feed", href: "/feed", label: "Global Feed", Icon: FeedIcon },
   { page: "accounts", href: "/accounts", label: "Accounts", Icon: BriefcaseIcon },
+  { page: "my-accounts", href: "/my-accounts", label: "My Accounts", Icon: PinIcon },
   { page: "territory", href: "/territory", label: "Territory", Icon: ScaleIcon },
   { page: "alerts", href: "/alerts", label: "Alerts", Icon: AlertIcon },
   { page: "settings", href: "/settings", label: "Settings", Icon: SlidersIcon },

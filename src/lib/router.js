@@ -29,7 +29,7 @@ function parsePath(pathname) {
 
   const [first, second] = segments
   if (first === "accounts") return { page: "accounts", accountId: second ?? null }
-  if (["feed", "magic", "briefing", "territory", "alerts", "settings", "search"].includes(first)) {
+  if (["feed", "magic", "briefing", "territory", "alerts", "settings", "search", "my-accounts"].includes(first)) {
     return { page: first, accountId: null }
   }
   return { page: "not-found", accountId: null }

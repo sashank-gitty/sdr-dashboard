@@ -6,6 +6,7 @@ import ErrorState from "./components/ErrorState.jsx"
 import Briefing from "./pages/Briefing.jsx"
 import GlobalFeed from "./pages/GlobalFeed.jsx"
 import Accounts from "./pages/Accounts.jsx"
+import MyAccounts from "./pages/MyAccounts.jsx"
 import Territory from "./pages/Territory.jsx"
 import AccountDetail from "./pages/AccountDetail.jsx"
 import SearchPage from "./pages/Search.jsx"
@@ -17,6 +18,7 @@ import { useRoute, navigate } from "./lib/router.js"
 import { useUrlState } from "./lib/useUrlState.js"
 import { deriveAccounts, findAccount } from "./lib/accountModel.js"
 import { useAlerts, matchAlert } from "./lib/useAlerts.js"
+import { useClaims } from "./lib/useClaims.js"
 import { Button } from "./components/ui.jsx"
 
 function App() {
@@ -147,6 +149,7 @@ function App() {
   // have caught that haven't been reviewed yet. A number that means
   // something, rather than a decorative badge.
   const { alerts } = useAlerts()
+  const { claims, isClaimed, claimedAt, setClaim } = useClaims()
   const unreadCount = useMemo(() => {
     if (!alerts.length || !signals.length) return 0
     const ids = new Set()
@@ -227,10 +230,23 @@ function App() {
 
         {route.page === "territory" && <Territory />}
 
-        {route.page === "accounts" && !route.accountId && <Accounts signals={signals} loading={loading} />}
+        {route.page === "accounts" && !route.accountId && (
+          <Accounts signals={signals} loading={loading} isClaimed={isClaimed} onToggleClaim={setClaim} />
+        )}
 
         {route.page === "accounts" && route.accountId && (
-          <AccountDetail account={activeAccount} onOpenSignal={openSignal} loading={loading} />
+          <AccountDetail
+            account={activeAccount}
+            onOpenSignal={openSignal}
+            loading={loading}
+            isClaimed={isClaimed}
+            claimedAt={claimedAt}
+            onToggleClaim={setClaim}
+          />
+        )}
+
+        {route.page === "my-accounts" && (
+          <MyAccounts accounts={accounts} claims={claims} loading={loading} isClaimed={isClaimed} onToggleClaim={setClaim} />
         )}
 
         {route.page === "search" && <SearchPage signals={signals} onOpenSignal={openSignal} />}

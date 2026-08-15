@@ -13,6 +13,7 @@ import {
   discoveryQuestionsFor,
   groupDistribution,
 } from "../lib/accountBrief.js"
+import { accountImpact, outreachAngles } from "../lib/signalInsights.js"
 import { Citations } from "../components/Citation.jsx"
 import {
   Card,
@@ -36,6 +37,7 @@ import {
   ExternalLinkIcon,
   MapPinIcon,
   BuildingIcon,
+  PinIcon,
 } from "../components/icons.jsx"
 
 const MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
@@ -67,7 +69,7 @@ function InfoRow({ icon: Icon, label, value }) {
   )
 }
 
-function AccountDetail({ account, onOpenSignal, loading }) {
+function AccountDetail({ account, onOpenSignal, loading, isClaimed, claimedAt, onToggleClaim }) {
   const [tab, setTab] = useState("summary")
   const [group, setGroup] = useState("all")
 
@@ -149,6 +151,7 @@ function AccountDetail({ account, onOpenSignal, loading }) {
                   <Pill tone="slate">Unassigned</Pill>
                 )}
                 <PriorityPill priority={account.priority} />
+                {isClaimed?.(account.key) && <Pill tone="indigo">Mine</Pill>}
               </div>
             </div>
           </div>
@@ -159,6 +162,15 @@ function AccountDetail({ account, onOpenSignal, loading }) {
 
           <div className="ml-auto flex items-center gap-2">
             <ScoreBadge score={account.score} size="lg" />
+            {onToggleClaim && (
+              <Button
+                variant={isClaimed?.(account.key) ? "primary" : "outline"}
+                onClick={() => onToggleClaim(account.key, account.name, !isClaimed?.(account.key))}
+              >
+                <PinIcon filled={isClaimed?.(account.key)} className="h-4 w-4" />
+                {isClaimed?.(account.key) ? "In My Accounts" : "Add to My Accounts"}
+              </Button>
+            )}
             <Button variant="outline" onClick={() => window.location.reload()}>
               <RefreshIcon className="h-4 w-4" />
               Refresh
@@ -245,6 +257,9 @@ function AccountDetail({ account, onOpenSignal, loading }) {
               <InfoRow label="Unreviewed" value={account.unreviewedCount} />
               <InfoRow label="First seen" value={formatDate(account.firstSeen)} />
               <InfoRow label="Last signal" value={formatDate(account.lastSignalDate)} />
+              {isClaimed?.(account.key) && (
+                <InfoRow icon={PinIcon} label="Claimed on" value={formatDate(claimedAt?.(account.key)?.slice(0, 10))} />
+              )}
             </div>
           </Card>
         </div>
@@ -262,24 +277,38 @@ function AccountDetail({ account, onOpenSignal, loading }) {
               {insights.length === 0 ? (
                 <p className="text-[13px] text-slate-500 dark:text-zinc-400">No signals yet for this account.</p>
               ) : (
-                <ul className="space-y-3">
-                  {insights.map((insight) => (
-                    <li key={insight.id} className="flex gap-2.5">
-                      <LightbulbIcon className="mt-0.5 h-4 w-4 flex-shrink-0 text-amber-500" />
-                      <p className="text-[13px] leading-relaxed text-slate-700 dark:text-zinc-300">
-                        <span className="font-semibold text-slate-900 dark:text-zinc-100">{insight.label}:</span>{" "}
-                        {insight.count} {insight.count === 1 ? "signal" : "signals"}
-                        {insight.highCount > 0 && (
-                          <span className="font-medium text-indigo-600 dark:text-indigo-400">
-                            {" "}
-                            ({insight.highCount} high-relevance)
-                          </span>
-                        )}
-                        , most recent {formatDate(insight.newest)}. Lead: &ldquo;{insight.lead}&rdquo;
-                        <Citations signals={insight.signals} indexOf={indexOf} onOpen={onOpenSignal} />
-                      </p>
-                    </li>
-                  ))}
+                <ul className="space-y-4">
+                  {insights.map((insight) => {
+                    const angle = outreachAngles(insight.signals[0])[0]
+                    return (
+                      <li key={insight.id} className="flex gap-2.5">
+                        <LightbulbIcon className="mt-0.5 h-4 w-4 flex-shrink-0 text-amber-500" />
+                        <div className="min-w-0">
+                          <p className="text-[13px] leading-relaxed text-slate-700 dark:text-zinc-300">
+                            <span className="font-semibold text-slate-900 dark:text-zinc-100">{insight.label}:</span>{" "}
+                            {insight.count} {insight.count === 1 ? "signal" : "signals"}
+                            {insight.highCount > 0 && (
+                              <span className="font-medium text-indigo-600 dark:text-indigo-400">
+                                {" "}
+                                ({insight.highCount} high-relevance)
+                              </span>
+                            )}
+                            , most recent {formatDate(insight.newest)}. Lead: &ldquo;{insight.lead}&rdquo;
+                            <Citations signals={insight.signals} indexOf={indexOf} onOpen={onOpenSignal} />
+                          </p>
+                          <p className="mt-1.5 text-[12px] leading-relaxed text-slate-500 dark:text-zinc-400">
+                            {accountImpact(insight.signals[0])}
+                          </p>
+                          {angle && (
+                            <p className="mt-1.5 text-[12px] leading-relaxed text-slate-500 dark:text-zinc-400">
+                              <span className="font-medium text-slate-700 dark:text-zinc-300">Angle — {angle.label}:</span>{" "}
+                              {angle.angle}
+                            </p>
+                          )}
+                        </div>
+                      </li>
+                    )
+                  })}
                 </ul>
               )}
             </Card>

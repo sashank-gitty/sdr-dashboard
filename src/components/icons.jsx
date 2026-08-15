@@ -325,6 +325,24 @@ export function SunriseIcon(props) {
   )
 }
 
+export function PinIcon({ filled = false, ...props }) {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      fill={filled ? "currentColor" : "none"}
+      stroke="currentColor"
+      strokeWidth="1.75"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden="true"
+      {...props}
+    >
+      <path d="M12 3a5.5 5.5 0 0 0-5.5 5.5c0 4.2 5.5 12.5 5.5 12.5s5.5-8.3 5.5-12.5A5.5 5.5 0 0 0 12 3z" />
+      <circle cx="12" cy="8.5" r="2" />
+    </svg>
+  )
+}
+
 export function MenuIcon(props) {
   return (
     <Icon {...props}>
