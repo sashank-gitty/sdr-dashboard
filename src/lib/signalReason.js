@@ -48,6 +48,30 @@ export function buildSignalReason(item) {
   return { label: "Background market intelligence", tone: "neutral" }
 }
 
+// The natural next step for each reason tone — same priority order as
+// buildSignalReason, so "why this is here" and "what to do about it"
+// never disagree. Deterministic, built only from fields already on the
+// row: no extra AI call, no invented advice.
+export function actionForReason(reason, item) {
+  const aes = item.owningAes ?? []
+  const owner = aes.length ? aes.join(" / ") : "whoever picks up this account"
+
+  switch (reason.tone) {
+    case "customer":
+      return `Bring this into your next check-in or QBR with ${owner} — a live reason to talk expansion, not a cold open.`
+    case "prospect":
+      return `Use this as the outreach pretext — ${owner} owns this account, and it's fresh enough to reference directly.`
+    case "urgent":
+      return "Lead with the compliance/pain-point angle — this is a timely, specific reason to reach out, matched account or not."
+    case "whitespace":
+      return "Nobody owns this account yet — claim it before someone else does."
+    case "relevant":
+      return "Strong enough to open with even without a named account match — worth a standalone outreach touch."
+    default:
+      return "Background context — use it to sharpen a talk track, not as a standalone reason to reach out."
+  }
+}
+
 // Leading-dot / text colour per tone. Kept here rather than in the row so
 // the reason line and any other consumer stay in lockstep.
 export const REASON_TONE_STYLES = {

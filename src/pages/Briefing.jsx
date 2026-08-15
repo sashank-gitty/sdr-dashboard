@@ -103,9 +103,16 @@ function SyncBanner({ status }) {
   )
 }
 
-function StatTile({ label, value, sub, accent = false }) {
+// A stat that isn't clickable is dead space. Every tile here jumps into
+// the Global Feed pre-filtered to exactly what it's counting, via the
+// quick-filter query params GlobalFeed.jsx reads on mount.
+function StatTile({ label, value, sub, accent = false, onClick }) {
   return (
-    <Card className="p-4">
+    <button
+      type="button"
+      onClick={onClick}
+      className="group rounded-xl border border-slate-200 bg-white p-4 text-left transition-colors hover:border-indigo-500/40 hover:bg-indigo-500/5 dark:border-zinc-800 dark:bg-zinc-900/60 dark:hover:bg-indigo-500/10"
+    >
       <p className="text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-zinc-400">{label}</p>
       <p
         className={`mt-2 font-mono text-3xl font-semibold tabular-nums ${
@@ -114,8 +121,12 @@ function StatTile({ label, value, sub, accent = false }) {
       >
         {value}
       </p>
-      {sub && <p className="mt-1 text-[12px] text-slate-400 dark:text-zinc-500">{sub}</p>}
-    </Card>
+      {sub && (
+        <p className="mt-1 text-[12px] text-slate-400 group-hover:text-indigo-500 dark:text-zinc-500 dark:group-hover:text-indigo-400">
+          {sub} &rarr;
+        </p>
+      )}
+    </button>
   )
 }
 
@@ -199,22 +210,26 @@ function Briefing({ signals, loading, onOpenSignal, onToggleReviewed }) {
               label="New since yesterday"
               value={briefing.newSinceYesterday.length}
               sub="signals in the last 24h"
+              onClick={() => navigate("/feed?range=1")}
             />
             <StatTile
               label="High relevance"
               value={briefing.highRelevance.length}
               sub="rated 4–5 of 5"
               accent
+              onClick={() => navigate("/feed?relevance=high")}
             />
             <StatTile
               label="Account-matched"
               value={briefing.accountMatched.length}
               sub="named a tracked account"
+              onClick={() => navigate("/feed?matched=1")}
             />
             <StatTile
               label="Unreviewed"
               value={briefing.unreviewed.length}
               sub={`${briefing.total ? Math.round((briefing.unreviewed.length / briefing.total) * 100) : 0}% of the feed`}
+              onClick={() => navigate("/feed?reviewed=unreviewed")}
             />
           </div>
 
@@ -244,6 +259,7 @@ function Briefing({ signals, loading, onOpenSignal, onToggleReviewed }) {
                   onOpen={onOpenSignal}
                   selected={false}
                   onToggleSelect={() => {}}
+                  showCheckbox={false}
                   compact
                 />
               ))}

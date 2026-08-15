@@ -33,17 +33,26 @@ function domainFromUrl(url) {
 }
 
 // The accent that runs down the left edge of every card, and the tone dot on
-// the reason line, are one decision (severity → relevance → provenance),
-// resolved here once so the two can't disagree.
-function accentFor({ isRegulatory, isHighRelevance, isCommunity }) {
+// the reason line, are one decision (severity → relevance), resolved here
+// once so the two can't disagree. Community origin is shown as a plain
+// label elsewhere on the card instead of its own accent color — it's
+// provenance, not a priority signal, and doesn't earn a third color.
+function accentFor({ isRegulatory, isHighRelevance }) {
   if (isRegulatory) return { swatch: REGULATORY_ACCENT.swatch, title: "Regulatory / pain-point signal" }
   if (isHighRelevance) return { swatch: "bg-indigo-500", title: "High outreach relevance" }
-  if (isCommunity)
-    return { swatch: "bg-pink-500", title: "Sourced from community research (last30days), not the news pipeline" }
   return null
 }
 
-function SignalRow({ item, reviewed, onToggleReviewed, onOpen, selected, onToggleSelect, compact = false }) {
+function SignalRow({
+  item,
+  reviewed,
+  onToggleReviewed,
+  onOpen,
+  selected,
+  onToggleSelect,
+  compact = false,
+  showCheckbox = true,
+}) {
   const [copied, setCopied] = useState(false)
 
   const isRegulatory = REGULATORY_SIGNAL_TYPES.has(item.signalType)
@@ -57,7 +66,7 @@ function SignalRow({ item, reviewed, onToggleReviewed, onOpen, selected, onToggl
 
   const reason = buildSignalReason(item)
   const toneStyles = REASON_TONE_STYLES[reason.tone] ?? REASON_TONE_STYLES.neutral
-  const accent = accentFor({ isRegulatory, isHighRelevance, isCommunity })
+  const accent = accentFor({ isRegulatory, isHighRelevance })
 
   const handleCopy = async () => {
     try {
@@ -82,7 +91,9 @@ function SignalRow({ item, reviewed, onToggleReviewed, onOpen, selected, onToggl
             : "border-slate-200 hover:border-slate-300 dark:border-zinc-800 dark:hover:border-zinc-700"
         } ${selected ? "ring-2 ring-indigo-500/40" : ""}`}
       >
-        <Checkbox checked={selected} onChange={() => onToggleSelect(item.id)} label={`Select ${item.headline}`} />
+        {showCheckbox && (
+          <Checkbox checked={selected} onChange={() => onToggleSelect(item.id)} label={`Select ${item.headline}`} />
+        )}
         <span
           className={`h-2 w-2 flex-shrink-0 rounded-full ${accent ? accent.swatch : toneStyles.dot}`}
           title={reason.label}
@@ -158,9 +169,11 @@ function SignalRow({ item, reviewed, onToggleReviewed, onOpen, selected, onToggl
         />
       )}
 
-      <div className="pt-1">
-        <Checkbox checked={selected} onChange={() => onToggleSelect(item.id)} label={`Select ${item.headline}`} />
-      </div>
+      {showCheckbox && (
+        <div className="pt-1">
+          <Checkbox checked={selected} onChange={() => onToggleSelect(item.id)} label={`Select ${item.headline}`} />
+        </div>
+      )}
 
       <div className="min-w-0 flex-1">
         <div className="mb-2 flex flex-wrap items-center gap-x-3 gap-y-1">
@@ -170,7 +183,7 @@ function SignalRow({ item, reviewed, onToggleReviewed, onOpen, selected, onToggl
           {isCommunity && (
             <span
               title="Sourced from community research (last30days), not the news pipeline"
-              className="rounded-full border border-pink-500/20 bg-pink-500/10 px-2 py-0.5 text-[11px] font-semibold text-pink-600 dark:text-pink-400"
+              className="rounded-full border border-slate-200 px-2 py-0.5 text-[11px] font-semibold text-slate-500 dark:border-zinc-700 dark:text-zinc-400"
             >
               Community
             </span>

@@ -365,6 +365,27 @@ function PagerButton({ onClick, disabled, label, children }) {
   )
 }
 
+// Shown wherever a panel exists in the reference layout but this
+// pipeline ingests nothing that could fill it. Naming the missing source
+// explicitly is the point: an empty panel that explains itself is a
+// roadmap item, while a silently blank one reads as a bug — and a
+// plausibly-populated one would be a fabrication.
+export function NotIngested({ title, sources, note }) {
+  return (
+    <Card className="p-6">
+      <p className="text-sm font-semibold text-slate-900 dark:text-zinc-100">{title}</p>
+      <p className="mt-1.5 max-w-xl text-[13px] leading-relaxed text-slate-500 dark:text-zinc-400">{note}</p>
+      <div className="mt-3 flex flex-wrap gap-1.5">
+        {sources.map((source) => (
+          <Pill key={source} tone="slate">
+            {source}
+          </Pill>
+        ))}
+      </div>
+    </Card>
+  )
+}
+
 export function EmptyState({ title, description, action }) {
   return (
     <div className="flex flex-col items-center justify-center px-6 py-16 text-center">

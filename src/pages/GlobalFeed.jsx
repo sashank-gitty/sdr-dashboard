@@ -1,9 +1,8 @@
 import { useMemo, useState } from "react"
 import { linkProps } from "../lib/router.js"
 import { deriveAccounts } from "../lib/accountModel.js"
-import { SIGNAL_GROUPS, countByGroup, filterByGroup, iconForSignal, groupForSignal } from "../lib/signalGroups.js"
+import { SIGNAL_GROUPS, countByGroup, filterByGroup, groupForSignal } from "../lib/signalGroups.js"
 import { PATCH_LABELS, PATCHES, AE_NAMES } from "../../shared/patches.js"
-import { pillClassForSignalType } from "../lib/colors.js"
 import { HIGH_RELEVANCE_THRESHOLD } from "../lib/relevance.js"
 import {
   PageHeader,
@@ -21,15 +20,10 @@ import {
 } from "../components/ui.jsx"
 import { DownloadIcon, ChevronDownIcon } from "../components/icons.jsx"
 import SkeletonRow from "../components/SkeletonRow.jsx"
-
-const MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
-
-function formatDate(dateString) {
-  const [year, month, day] = dateString.split("-").map(Number)
-  return `${String(day).padStart(2, "0")} ${MONTHS[month - 1]} ${year}`
-}
+import SignalRow from "../components/SignalRow.jsx"
 
 const RANGE_OPTIONS = [
+  { value: "1", label: "Last 24 hours" },
   { value: "7", label: "Last 7 days" },
   { value: "30", label: "Last 30 days" },
   { value: "90", label: "Last 90 days" },
@@ -43,23 +37,52 @@ function withinRange(signal, days) {
   return new Date(`${signal.date}T00:00:00`) >= cutoff
 }
 
+// The three quick filters the Briefing page's stat tiles deep-link into
+// (?reviewed=unreviewed, ?relevance=high, ?matched=1), also exposed here
+// as toggle chips so they're adjustable on this page too, not just a
+// hidden side-effect of arriving from a link.
+function matchesQuickFilters(signal, { unreviewedOnly, highRelevanceOnly, matchedOnly }) {
+  if (unreviewedOnly && signal.reviewed) return false
+  if (highRelevanceOnly && (signal.outreachRelevance ?? 0) < HIGH_RELEVANCE_THRESHOLD) return false
+  if (matchedOnly && (signal.matchedAccounts ?? []).length === 0) return false
+  return true
+}
+
+function QuickFilterChip({ active, onClick, children }) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      aria-pressed={active}
+      className={`rounded-lg border px-3 py-1.5 text-[13px] font-medium transition-colors ${
+        active
+          ? "border-indigo-500/40 bg-indigo-500/10 text-indigo-600 dark:text-indigo-400"
+          : "border-slate-200 text-slate-600 hover:border-slate-300 hover:text-slate-900 dark:border-zinc-700 dark:text-zinc-300 dark:hover:border-zinc-600 dark:hover:text-zinc-100"
+      }`}
+    >
+      {children}
+    </button>
+  )
+}
+
 // One account block: a header row carrying the account's identity and
-// rollup, then its individual signals nested beneath. The nesting is what
-// makes this different from a flat feed — it answers "what is happening
-// at each account" rather than "what happened most recently".
-function AccountBlock({ account, signals, onOpenSignal }) {
+// rollup, then its individual signals nested beneath as dense compact
+// rows. The nesting is what makes this different from a flat feed — it
+// answers "what is happening at each account" rather than "what happened
+// most recently".
+function AccountBlock({ account, signals, onOpenSignal, onToggleReviewed }) {
   const [expanded, setExpanded] = useState(true)
   const visible = expanded ? signals : signals.slice(0, 3)
 
   return (
     <div className="border-b border-slate-200 last:border-b-0 dark:border-zinc-800">
-      <div className="flex items-start gap-3 bg-slate-50/70 px-4 py-3 dark:bg-zinc-900/40">
-        <AccountAvatar name={account.name} />
+      <div className="flex items-start gap-3 bg-slate-50/70 px-4 py-2.5 dark:bg-zinc-900/40">
+        <AccountAvatar name={account.name} size="sm" />
         <div className="min-w-0 flex-1">
           <div className="flex flex-wrap items-center gap-x-2 gap-y-1">
             <a
               {...linkProps(`/accounts/${encodeURIComponent(account.key)}`)}
-              className="truncate text-[14px] font-semibold text-slate-900 hover:text-indigo-600 dark:text-zinc-50 dark:hover:text-indigo-400"
+              className="truncate text-[13.5px] font-semibold text-slate-900 hover:text-indigo-600 dark:text-zinc-50 dark:hover:text-indigo-400"
             >
               {account.name}
             </a>
@@ -69,7 +92,7 @@ function AccountBlock({ account, signals, onOpenSignal }) {
               </Pill>
             )}
             {!account.managed && <Pill tone="slate">Unassigned</Pill>}
-            <span className="text-[12px] text-slate-400 dark:text-zinc-500">
+            <span className="text-[11.5px] text-slate-400 dark:text-zinc-500">
               {[
                 account.patches.map((p) => PATCH_LABELS[p] ?? p).join(", "),
                 account.aes.join(", "),
@@ -78,7 +101,6 @@ function AccountBlock({ account, signals, onOpenSignal }) {
                 .join(" · ")}
             </span>
           </div>
-          <p className="mt-0.5 truncate text-[12px] text-slate-500 dark:text-zinc-400">{account.rollup}</p>
         </div>
         <div className="flex flex-shrink-0 items-center gap-2">
           <ScoreBadge score={account.score} size="sm" />
@@ -88,37 +110,21 @@ function AccountBlock({ account, signals, onOpenSignal }) {
         </div>
       </div>
 
-      <ul>
-        {visible.map((signal) => {
-          const Icon = iconForSignal(signal)
-          const isHigh = (signal.outreachRelevance ?? 0) >= HIGH_RELEVANCE_THRESHOLD
-          return (
-            <li key={signal.id}>
-              <button
-                type="button"
-                onClick={() => onOpenSignal(signal.id)}
-                className="flex w-full items-start gap-3 px-4 py-2.5 text-left transition-colors hover:bg-slate-50 dark:hover:bg-zinc-800/40"
-              >
-                <span
-                  className={`mt-0.5 inline-flex flex-shrink-0 items-center gap-1 rounded-md px-1.5 py-0.5 text-[11px] font-medium ${pillClassForSignalType(signal.signalType)}`}
-                >
-                  <Icon className="h-3 w-3" />
-                  {signal.signalType}
-                </span>
-                <span className="min-w-0 flex-1">
-                  <span className="block truncate text-[13px] text-slate-700 dark:text-zinc-200">
-                    {signal.headline}
-                  </span>
-                </span>
-                {isHigh && <Pill tone="indigo">High</Pill>}
-                <span className="flex-shrink-0 text-[12px] tabular-nums text-slate-400 dark:text-zinc-500">
-                  {formatDate(signal.date)}
-                </span>
-              </button>
-            </li>
-          )
-        })}
-      </ul>
+      <div className="flex flex-col gap-1 p-1.5">
+        {visible.map((signal) => (
+          <SignalRow
+            key={signal.id}
+            item={signal}
+            reviewed={signal.reviewed}
+            onToggleReviewed={onToggleReviewed}
+            onOpen={onOpenSignal}
+            selected={false}
+            onToggleSelect={() => {}}
+            showCheckbox={false}
+            compact
+          />
+        ))}
+      </div>
 
       {signals.length > 3 && (
         <button
@@ -134,16 +140,31 @@ function AccountBlock({ account, signals, onOpenSignal }) {
   )
 }
 
-function GlobalFeed({ signals, loading, onOpenSignal }) {
+function GlobalFeed({ signals, loading, onOpenSignal, onToggleReviewed }) {
   const [search, setSearch] = useState("")
   const [owner, setOwner] = useState(null)
   const [type, setType] = useState(null)
   const [priority, setPriority] = useState(null)
   const [patch, setPatch] = useState(null)
-  const [range, setRange] = useState("30")
+  // Seeded once from the URL so a deep link (e.g. from a Briefing stat
+  // tile) lands pre-filtered; freely adjustable afterward like every
+  // other filter on this page.
+  const [range, setRange] = useState(() => new URLSearchParams(window.location.search).get("range") ?? "30")
+  const [unreviewedOnly, setUnreviewedOnly] = useState(
+    () => new URLSearchParams(window.location.search).get("reviewed") === "unreviewed",
+  )
+  const [highRelevanceOnly, setHighRelevanceOnly] = useState(
+    () => new URLSearchParams(window.location.search).get("relevance") === "high",
+  )
+  const [matchedOnly, setMatchedOnly] = useState(
+    () => new URLSearchParams(window.location.search).get("matched") === "1",
+  )
   const [group, setGroup] = useState("all")
   const [page, setPage] = useState(0)
   const [pageSize, setPageSize] = useState(10)
+
+  const quickFilters = { unreviewedOnly, highRelevanceOnly, matchedOnly }
+  const anyQuickFilterActive = unreviewedOnly || highRelevanceOnly || matchedOnly
 
   const scoped = useMemo(() => signals.filter((s) => withinRange(s, range)), [signals, range])
 
@@ -164,11 +185,13 @@ function GlobalFeed({ signals, loading, onOpenSignal }) {
       }
       // A group filter narrows to accounts that have at least one signal
       // in that group — an account whose every signal is filtered out
-      // shouldn't render as an empty block.
+      // shouldn't render as an empty block. Quick filters work the same way.
       if (group !== "all" && !account.signals.some((s) => groupForSignal(s) === group)) return false
+      if (anyQuickFilterActive && !account.signals.some((s) => matchesQuickFilters(s, quickFilters))) return false
       return true
     })
-  }, [accounts, owner, patch, priority, type, search, group])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [accounts, owner, patch, priority, type, search, group, unreviewedOnly, highRelevanceOnly, matchedOnly])
 
   const groupCounts = useMemo(() => countByGroup(scoped), [scoped])
 
@@ -254,6 +277,31 @@ function GlobalFeed({ signals, loading, onOpenSignal }) {
           />
           <FilterSelect label="Date range" value={range} onChange={(v) => setRange(v ?? "30")} options={RANGE_OPTIONS} />
         </div>
+
+        <div className="mt-2.5 flex flex-wrap items-center gap-2">
+          <QuickFilterChip active={unreviewedOnly} onClick={() => setUnreviewedOnly((v) => !v)}>
+            Unreviewed only
+          </QuickFilterChip>
+          <QuickFilterChip active={highRelevanceOnly} onClick={() => setHighRelevanceOnly((v) => !v)}>
+            High relevance only
+          </QuickFilterChip>
+          <QuickFilterChip active={matchedOnly} onClick={() => setMatchedOnly((v) => !v)}>
+            Account-matched only
+          </QuickFilterChip>
+          {anyQuickFilterActive && (
+            <button
+              type="button"
+              onClick={() => {
+                setUnreviewedOnly(false)
+                setHighRelevanceOnly(false)
+                setMatchedOnly(false)
+              }}
+              className="text-[12px] font-medium text-slate-400 hover:text-slate-700 dark:text-zinc-500 dark:hover:text-zinc-200"
+            >
+              Clear quick filters
+            </button>
+          )}
+        </div>
       </PageHeader>
 
       <SectionTitle hint="Signals grouped by the account they name. Accounts with no territory-book match appear as Unassigned — companies in the news that nobody is covering.">
@@ -289,8 +337,9 @@ function GlobalFeed({ signals, loading, onOpenSignal }) {
               <AccountBlock
                 key={account.key}
                 account={account}
-                signals={filterByGroup(account.signals, group)}
+                signals={filterByGroup(account.signals, group).filter((s) => matchesQuickFilters(s, quickFilters))}
                 onOpenSignal={onOpenSignal}
+                onToggleReviewed={onToggleReviewed}
               />
             ))}
           </div>
