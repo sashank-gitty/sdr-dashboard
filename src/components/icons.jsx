@@ -343,6 +343,14 @@ export function PinIcon({ filled = false, ...props }) {
   )
 }
 
+export function PlusIcon(props) {
+  return (
+    <Icon {...props}>
+      <path d="M12 5v14M5 12h14" />
+    </Icon>
+  )
+}
+
 export function MenuIcon(props) {
   return (
     <Icon {...props}>

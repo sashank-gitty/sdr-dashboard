@@ -261,15 +261,19 @@ function SignalDetailPanel({ item, open, onClose, onToggleReviewed, relatedItems
             <div className="flex gap-4">
               <dt className="w-16 flex-shrink-0 text-[12px] text-slate-500 dark:text-zinc-400">Source</dt>
               <dd>
-                <a
-                  href={item.sourceUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-flex items-center gap-1 text-[12px] text-indigo-600 hover:underline dark:text-indigo-400"
-                >
-                  {domainFromUrl(item.sourceUrl)}
-                  <ExternalLinkIcon className="h-3 w-3" />
-                </a>
+                {item.sourceUrl ? (
+                  <a
+                    href={item.sourceUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-1 text-[12px] text-indigo-600 hover:underline dark:text-indigo-400"
+                  >
+                    {domainFromUrl(item.sourceUrl)}
+                    <ExternalLinkIcon className="h-3 w-3" />
+                  </a>
+                ) : (
+                  <span className="text-[12px] text-slate-400 dark:text-zinc-500">No link — entered manually</span>
+                )}
               </dd>
             </div>
             <div className="flex gap-4">
@@ -281,7 +285,9 @@ function SignalDetailPanel({ item, open, onClose, onToggleReviewed, relatedItems
                       ? "Added via community research (last30days), not the standing news pipeline"
                       : item.origin === "seed"
                         ? "Loaded from the initial seed set, not a live ingest run"
-                        : "Found by the standing daily news pipeline"
+                        : item.origin === "manual"
+                          ? "Entered by hand from something found outside the pipeline (LinkedIn, a job ad, a conversation)"
+                          : "Found by the standing daily news pipeline"
                   }
                   className="rounded-md border border-slate-200 px-1.5 py-0.5 text-[11px] font-medium capitalize text-slate-600 dark:border-zinc-700 dark:text-zinc-300"
                 >
@@ -485,15 +491,24 @@ function SignalDetailPanel({ item, open, onClose, onToggleReviewed, relatedItems
           >
             {item.reviewed ? "Reviewed" : "Mark Reviewed"}
           </button>
-          <a
-            href={item.sourceUrl}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="ml-auto inline-flex items-center gap-1.5 rounded-lg bg-indigo-600 px-3 py-1.5 text-[13px] font-medium text-white transition-colors hover:bg-indigo-700"
-          >
-            Open source
-            <ExternalLinkIcon className="h-3.5 w-3.5" />
-          </a>
+          {item.sourceUrl ? (
+            <a
+              href={item.sourceUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="ml-auto inline-flex items-center gap-1.5 rounded-lg bg-indigo-600 px-3 py-1.5 text-[13px] font-medium text-white transition-colors hover:bg-indigo-700"
+            >
+              Open source
+              <ExternalLinkIcon className="h-3.5 w-3.5" />
+            </a>
+          ) : (
+            <span
+              className="ml-auto inline-flex items-center gap-1.5 rounded-lg bg-slate-100 px-3 py-1.5 text-[13px] font-medium text-slate-400 dark:bg-zinc-800/60 dark:text-zinc-600"
+              title="Entered manually — no source link was given"
+            >
+              No source link
+            </span>
+          )}
         </div>
       </div>
     </div>

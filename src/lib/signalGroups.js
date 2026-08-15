@@ -7,6 +7,7 @@ import {
   MicIcon,
   SparklesIcon,
   BriefcaseIcon,
+  UsersIcon,
 } from "../components/icons.jsx"
 
 // Signal-type groups, the taxonomy behind the tab strip that sits above
@@ -39,6 +40,15 @@ export const SIGNAL_GROUPS = [
     label: "Leadership",
     Icon: PersonPlusIcon,
     types: ["leadership change"],
+  },
+  {
+    id: "hiring",
+    label: "Hiring",
+    Icon: UsersIcon,
+    // Distinct from "leadership": leadership change is someone already
+    // appointed; a hiring signal is a role currently open, most useful as
+    // an early-warning trigger before the appointment itself is news.
+    types: ["hiring signal"],
   },
   {
     id: "earnings",

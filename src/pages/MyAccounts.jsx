@@ -3,7 +3,7 @@ import { PATCH_LABELS, PATCHES } from "../../shared/patches.js"
 import { useLocalStorageState } from "../lib/useLocalStorageState.js"
 import AccountsTable from "../components/AccountsTable.jsx"
 import { PageHeader, FilterSelect, SearchInput, EmptyState, Card, Button } from "../components/ui.jsx"
-import { PinIcon, DownloadIcon } from "../components/icons.jsx"
+import { PinIcon, DownloadIcon, PlusIcon } from "../components/icons.jsx"
 
 // The account list for whatever the SDR manually marked as theirs — found
 // in the feed, on someone else's patch, or in the unassigned whitespace,
@@ -11,7 +11,7 @@ import { PinIcon, DownloadIcon } from "../components/icons.jsx"
 // Accounts table every time. Same columns and behaviour as Accounts, just
 // pre-filtered to `claims` and sorted by claim date instead of score by
 // default.
-function MyAccounts({ accounts, claims, loading, isClaimed, onToggleClaim }) {
+function MyAccounts({ accounts, claims, loading, isClaimed, onToggleClaim, onOpenAddAccount }) {
   const [search, setSearch] = useState("")
   const [patch, setPatch] = useState(null)
   const [starred, setStarred] = useLocalStorageState("sdr-dashboard-starred-accounts", [])
@@ -75,10 +75,18 @@ function MyAccounts({ accounts, claims, loading, isClaimed, onToggleClaim }) {
       <PageHeader
         title="My Accounts"
         actions={
-          <Button variant="outline" onClick={handleExport} disabled={!filtered.length}>
-            <DownloadIcon className="h-4 w-4" />
-            Export
-          </Button>
+          <>
+            {onOpenAddAccount && (
+              <Button variant="primary" onClick={onOpenAddAccount}>
+                <PlusIcon className="h-4 w-4" />
+                Add Account
+              </Button>
+            )}
+            <Button variant="outline" onClick={handleExport} disabled={!filtered.length}>
+              <DownloadIcon className="h-4 w-4" />
+              Export
+            </Button>
+          </>
         }
       >
         <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-6">
@@ -97,7 +105,15 @@ function MyAccounts({ accounts, claims, loading, isClaimed, onToggleClaim }) {
           <EmptyState
             title="No accounts claimed yet"
             description={
-              'Found a good account — unassigned, or on someone else’s patch — that you want to track as your own? Open it and click the pin icon (or "Add to My Accounts") on its page, or on any row in the Accounts table, to add it here.'
+              'Found a good account that\'s already in the dashboard — unassigned, or on someone else\'s patch — and want to track it as your own? Open it and click the pin icon (or "Add to My Accounts") on its page, or on any row in the Accounts table. Found one that isn\'t in the dashboard at all yet? Use "Add Account" above to create it.'
+            }
+            action={
+              onOpenAddAccount && (
+                <Button variant="primary" onClick={onOpenAddAccount}>
+                  <PlusIcon className="h-4 w-4" />
+                  Add Account
+                </Button>
+              )
             }
           />
         </Card>

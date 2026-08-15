@@ -4,9 +4,9 @@ import { PATCH_LABELS, PATCHES, AE_NAMES } from "../../shared/patches.js"
 import { useLocalStorageState } from "../lib/useLocalStorageState.js"
 import AccountsTable from "../components/AccountsTable.jsx"
 import { PageHeader, Button, FilterSelect, SearchInput } from "../components/ui.jsx"
-import { DownloadIcon } from "../components/icons.jsx"
+import { DownloadIcon, PlusIcon } from "../components/icons.jsx"
 
-function Accounts({ signals, loading, isClaimed, onToggleClaim }) {
+function Accounts({ signals, loading, isClaimed, onToggleClaim, onOpenAddAccount }) {
   const [search, setSearch] = useState("")
   const [owner, setOwner] = useState(null)
   const [type, setType] = useState(null)
@@ -69,10 +69,18 @@ function Accounts({ signals, loading, isClaimed, onToggleClaim }) {
       <PageHeader
         title="Accounts"
         actions={
-          <Button variant="outline" onClick={handleExport} disabled={!filtered.length}>
-            <DownloadIcon className="h-4 w-4" />
-            Export
-          </Button>
+          <>
+            {onOpenAddAccount && (
+              <Button variant="primary" onClick={onOpenAddAccount}>
+                <PlusIcon className="h-4 w-4" />
+                Add Account
+              </Button>
+            )}
+            <Button variant="outline" onClick={handleExport} disabled={!filtered.length}>
+              <DownloadIcon className="h-4 w-4" />
+              Export
+            </Button>
+          </>
         }
       >
         <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-6">

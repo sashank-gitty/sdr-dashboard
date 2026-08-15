@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from "react"
 import TopNav from "./components/TopNav.jsx"
 import SignalDetailPanel from "./components/SignalDetailPanel.jsx"
 import CommandPalette from "./components/CommandPalette.jsx"
+import AddAccountModal from "./components/AddAccountModal.jsx"
 import ErrorState from "./components/ErrorState.jsx"
 import Briefing from "./pages/Briefing.jsx"
 import GlobalFeed from "./pages/GlobalFeed.jsx"
@@ -16,7 +17,7 @@ import Settings from "./pages/Settings.jsx"
 import { useTheme } from "./lib/useTheme.js"
 import { useRoute, navigate } from "./lib/router.js"
 import { useUrlState } from "./lib/useUrlState.js"
-import { deriveAccounts, findAccount } from "./lib/accountModel.js"
+import { deriveAccounts, findAccount, accountKey } from "./lib/accountModel.js"
 import { useAlerts, matchAlert } from "./lib/useAlerts.js"
 import { useClaims } from "./lib/useClaims.js"
 import { Button } from "./components/ui.jsx"
@@ -27,6 +28,7 @@ function App() {
   const [urlState, updateUrl] = useUrlState()
 
   const [paletteOpen, setPaletteOpen] = useState(false)
+  const [addAccountOpen, setAddAccountOpen] = useState(false)
   const [signals, setSignals] = useState([])
   const [loading, setLoading] = useState(true)
   const [fetchError, setFetchError] = useState(null)
@@ -186,6 +188,34 @@ function App() {
     })
   }
 
+  // Adds a brand-new account from something the SDR found themselves
+  // rather than the news pipeline (see AddAccountModal / api/manual-signal.js).
+  // The response is the fully-attributed signal row — pushed straight into
+  // local state so the new account is derivable and visible immediately,
+  // no refetch needed. "Track as mine" reuses the exact same claim path
+  // as the pin icon elsewhere, keyed off whichever name the server
+  // resolved (the territory book's canonical name on a match, otherwise
+  // whatever was typed) so the claim always matches how deriveAccounts()
+  // will key that account.
+  const handleAddAccount = async ({ trackAsMine, ...payload }) => {
+    const res = await fetch("/api/manual-signal", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload),
+    })
+    if (!res.ok) {
+      const body = await res.json().catch(() => null)
+      throw new Error(body?.error || `Server responded ${res.status}`)
+    }
+    const created = await res.json()
+    setSignals((prev) => [created, ...prev])
+
+    if (trackAsMine) {
+      const name = created.matchedAccounts[0] ?? created.entity
+      setClaim(accountKey(name), name, true)
+    }
+  }
+
   if (fetchError) {
     return <ErrorState message={fetchError} onRetry={() => setReloadToken((t) => t + 1)} />
   }
@@ -231,7 +261,13 @@ function App() {
         {route.page === "territory" && <Territory />}
 
         {route.page === "accounts" && !route.accountId && (
-          <Accounts signals={signals} loading={loading} isClaimed={isClaimed} onToggleClaim={setClaim} />
+          <Accounts
+            signals={signals}
+            loading={loading}
+            isClaimed={isClaimed}
+            onToggleClaim={setClaim}
+            onOpenAddAccount={() => setAddAccountOpen(true)}
+          />
         )}
 
         {route.page === "accounts" && route.accountId && (
@@ -246,7 +282,14 @@ function App() {
         )}
 
         {route.page === "my-accounts" && (
-          <MyAccounts accounts={accounts} claims={claims} loading={loading} isClaimed={isClaimed} onToggleClaim={setClaim} />
+          <MyAccounts
+            accounts={accounts}
+            claims={claims}
+            loading={loading}
+            isClaimed={isClaimed}
+            onToggleClaim={setClaim}
+            onOpenAddAccount={() => setAddAccountOpen(true)}
+          />
         )}
 
         {route.page === "search" && <SearchPage signals={signals} onOpenSignal={openSignal} />}
@@ -287,6 +330,8 @@ function App() {
         relatedItems={relatedItems}
         onSelectRelated={(id) => openSignal(id)}
       />
+
+      <AddAccountModal open={addAccountOpen} onClose={() => setAddAccountOpen(false)} onSubmit={handleAddAccount} />
     </div>
   )
 }

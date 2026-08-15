@@ -30,7 +30,9 @@ as CSV.
 
 **Accounts** — the full derived account table. Sortable on every column,
 with a 0–100 score, a P1–P3 priority tier, toggleable columns, starring,
-claiming (see below), and CSV export.
+claiming (see below), CSV export, and an **Add Account** button for a
+company that isn't in the dashboard at all yet — see
+[Adding a brand-new account](#adding-a-brand-new-account) below.
 
 **My Accounts** — the same table, pre-filtered to whatever's been
 manually claimed. An account is *derived* from the territory book and
@@ -249,6 +251,64 @@ without pretending the territory book says it's yours.
   Accounts and account-detail pages so the pin icon reads the same state
   everywhere.
 
+### Adding a brand-new account
+
+Claiming (above) tracks an account that's already in the dashboard
+because a signal already named it. **Add Account** — the button on the
+Accounts and My Accounts pages — is for the account that *isn't* in the
+dashboard at all yet: something an SDR found themselves (a LinkedIn post,
+a job ad, a conversation) rather than something the news pipeline turned
+up. The form takes an account name, what was found, a signal type
+(including a new **hiring signal** type — see below), practice area, and
+optionally a patch, source link, date and outreach-relevance score.
+
+Submitting it does three things at once, no page reload needed:
+
+1. **Inserts one real signal row** (`POST /api/manual-signal` →
+   `api/manual-signal.js`) with `origin: 'manual'`, entity set to the
+   typed account name, and scope always `'micro'` — the same
+   deterministic `attributeEntity()` lookup the real ingest pipeline uses
+   (`api/_lib/matchAccounts.js`) runs against the account name, so if it
+   *is* a territory-book account, the signal gets filed under the book's
+   canonical name and real owner automatically. No LLM call: unlike
+   `api/ingest.js`'s normalizer, which is inferring structure from raw
+   RSS text it didn't write, the person filling out this form is already
+   the source of truth for what they typed.
+2. **Shows up immediately** — the response is pushed straight into the
+   frontend's signal list, so the new account is live on Accounts, My
+   Accounts and its own account page the moment the modal closes.
+3. **Optionally claims it** — "Add to My Accounts" is checked by default,
+   since you're the one adding it; unchecking it just adds the account
+   without also claiming it.
+
+**Ongoing coverage**, not just the one signal: `api/ingest.js` now also
+reads every claimed account's name from `account_claims` and folds it
+into that day's watchlist alongside the standing territory-book queries
+(`api/_lib/watchlist.js`), so a manually-added or claimed account keeps
+turning up in the daily Google News search going forward — same bounded
+cost as everything else the pipeline queries, capped by
+`MAX_ITEMS_PER_RUN` and the monthly Claude API budget guardrail
+(`api/_lib/budget.js`); nothing about adding an account raises those
+caps. A deployment that hasn't yet run migration 009 degrades gracefully
+here — the claimed-accounts query is wrapped in its own try/catch, so a
+missing `account_claims` table just means the ingest run falls back to
+the standing watchlist rather than failing outright.
+
+**Hiring signal** (`shared/signalTypes.js`, `"hiring"` group in
+`src/lib/signalGroups.js`) is a new signal type that only this manual
+path produces — the automated pipeline ingests news, not job postings, so
+it has no way to detect one on its own. An open req, especially at
+leadership level, is exactly the kind of thing an SDR notices before it
+ever becomes news, and now has a real category and its own "What This
+Means" content (`src/lib/signalInsights.js`) instead of getting force-fit
+into "leadership change," which means someone's already been appointed.
+
+A manual signal without a source link (nothing typed into "Source link")
+stores an empty string rather than `NULL` — `source_url` is `NOT NULL` in
+the schema — and the UI treats that as "no link" everywhere a signal's
+source would normally show (the drawer, the feed row, the account page's
+source list), rather than rendering a broken link.
+
 ### Sharing a patch view
 
 Patch, AE and account coverage are facets in the shared URL state
@@ -290,6 +350,7 @@ Signal data lives in Postgres (Neon, connected via Vercel's native integration),
 - **`POST /api/reviews`** — durable "Mark Reviewed" state, `{ids, reviewed}` bulk update.
 - **`GET /api/ingest-status`** — the most recent `ingest_runs` row (success/error, counts, timestamp), so the frontend can show "last synced" without inferring it from `signals.created_at`, which doesn't move on a run that found nothing new. Every `/api/ingest` invocation logs one row here regardless of outcome.
 - **`GET/POST /api/claims`** — durable "manually claimed account" state (see [Manually claimed accounts](#manually-claimed-accounts)), independent of the derived `matchedAccounts`/`owningAes` fields above.
+- **`POST /api/manual-signal`** — adds a brand-new account and its first signal from something an SDR found outside the pipeline (see [Adding a brand-new account](#adding-a-brand-new-account)). No LLM call; runs the same deterministic territory match `api/ingest.js` uses.
 
 Row shape (camelCase over the wire, snake_case in Postgres):
 

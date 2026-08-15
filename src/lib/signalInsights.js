@@ -26,6 +26,11 @@ const GROUP_IMPACT = {
       "A new leader in this seat typically opens a 60–90 day window where vendor relationships, budgets and existing tooling get reviewed fresh. Priorities the previous leader had settled are back up for debate — that window closes once they've made their first calls, so it's worth more now than it will be in six months.",
     who: "Whoever reports into this seat is watching for early signs of what the new leader changes first. Frontline teams usually find out about a re-platforming decision only after it's made, not before — which is exactly the gap an outside conversation can fill.",
   },
+  hiring: {
+    impact:
+      "An open req for this role — especially at leadership level — is one of the earliest advance signals available: a company rarely hires into a function without also planning to review how that function operates. It's worth more right now than the eventual appointment announcement, because there's no incumbent relationship for the new hire to defend yet.",
+    who: "Whoever's covering this function without a dedicated leader today is absorbing the gap. The person who eventually fills the role is the one who'll actually make the buying call once they land — getting in front of the requirement itself, before that person is named, is the advantage.",
+  },
   regulatory: {
     impact:
       "Regulatory or compliance pressure like this usually forces a named internal owner and a budget line even when the account hasn't gone to market for a vendor yet — it's a mandate, not a discretionary spend, which changes how fast a deal can move once it starts.",
@@ -86,6 +91,11 @@ const GROUP_ANGLES = {
     { label: "Congratulate, then ask about the mandate", angle: "Open on the appointment itself, then ask what they were brought in to change — that answer is usually the actual sales conversation." },
     { label: "Reference the review window", angle: "New leaders reassess vendor relationships in their first quarter by default — worth raising while that window is still open, not after it closes." },
     { label: "Offer an outside read", angle: "A new leader has no institutional history with your category yet — position this as a fast way to get context, not a pitch." },
+  ],
+  hiring: [
+    { label: "Reach out to the hiring manager now", angle: "The team is already signaling investment in this function — a conversation before the role is filled can shape what the new hire inherits, rather than reacting to their choices after the fact." },
+    { label: "Ask what's driving the hire", angle: "A newly created or reopened role usually means the company decided the current setup can't support it alone — worth asking directly what problem the hire is meant to solve." },
+    { label: "Time a second touch to the start date", angle: "If a start date is findable or estimable, that's often the stronger trigger — new hires review vendor relationships and tooling in their first 90 days, same as an internal promotion would." },
   ],
   regulatory: [
     { label: "Lead with the compliance angle directly", angle: "Skip the warm-up — reference the specific pressure and ask who inside the account owns the response to it." },

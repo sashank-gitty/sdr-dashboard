@@ -125,14 +125,16 @@ function SignalRow({
         >
           R{item.outreachRelevance ?? "—"}
         </span>
-        <a
-          href={item.sourceUrl}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="hidden flex-shrink-0 text-xs font-medium text-slate-400 hover:text-indigo-600 dark:text-zinc-500 dark:hover:text-indigo-400 lg:block"
-        >
-          {domainFromUrl(item.sourceUrl)} &#8599;
-        </a>
+        {item.sourceUrl && (
+          <a
+            href={item.sourceUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="hidden flex-shrink-0 text-xs font-medium text-slate-400 hover:text-indigo-600 dark:text-zinc-500 dark:hover:text-indigo-400 lg:block"
+          >
+            {domainFromUrl(item.sourceUrl)} &#8599;
+          </a>
+        )}
         <button
           type="button"
           onClick={() => onToggleReviewed(item.id)}
@@ -194,14 +196,16 @@ function SignalRow({
           >
             {item.signalType}
           </span>
-          <a
-            href={item.sourceUrl}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="ml-auto text-xs font-medium text-slate-400 hover:text-indigo-600 dark:text-zinc-500 dark:hover:text-indigo-400"
-          >
-            {domainFromUrl(item.sourceUrl)} &#8599;
-          </a>
+          {item.sourceUrl && (
+            <a
+              href={item.sourceUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="ml-auto text-xs font-medium text-slate-400 hover:text-indigo-600 dark:text-zinc-500 dark:hover:text-indigo-400"
+            >
+              {domainFromUrl(item.sourceUrl)} &#8599;
+            </a>
+          )}
         </div>
 
         <button

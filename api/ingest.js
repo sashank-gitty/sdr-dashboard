@@ -53,6 +53,9 @@ export default async function handler(req, res) {
     // run, the watchlist and the territory book have drifted apart
     // again and the patch views will be running on thematic tags alone.
     accountMatched: 0,
+    // Manually claimed accounts (My Accounts tab / Add Account) folded
+    // into this run's queries, on top of the standing watchlist above.
+    claimedAccountsQueried: 0,
     errors: [],
     // Set true if the monthly Claude API budget (api/_lib/budget.js) was
     // hit mid-run — the remaining candidates were left un-normalized on
@@ -64,7 +67,25 @@ export default async function handler(req, res) {
     const existing = await sql`SELECT dedupe_key FROM signals`
     const existingKeys = new Set(existing.map((r) => r.dedupe_key))
 
-    const rawItems = await fetchWatchlist(watchlist)
+    // Claimed accounts (see account_claims / api/claims.js) are what
+    // makes "Add Account" and the My Accounts pin actually keep
+    // searching for news afterwards, not just show the one signal
+    // entered by hand. Best-effort: a deployment that hasn't run
+    // migration 009 yet shouldn't fail the whole ingest run over a
+    // missing table, it just runs the standing watchlist as before.
+    let claimedQueries = []
+    try {
+      const claimedRows = await sql`SELECT DISTINCT account_name FROM account_claims`
+      claimedQueries = claimedRows.map((r) => r.account_name).filter(Boolean)
+    } catch (err) {
+      console.warn("ingest: could not read account_claims (migration 009 not run yet?):", err.message)
+    }
+    summary.claimedAccountsQueried = claimedQueries.length
+
+    const fullWatchlist = [...new Set([...watchlist, ...claimedQueries])]
+    summary.queried = fullWatchlist.length
+
+    const rawItems = await fetchWatchlist(fullWatchlist)
     summary.rawItems = rawItems.length
 
     const seenInBatch = new Set()

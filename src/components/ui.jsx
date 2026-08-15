@@ -494,6 +494,15 @@ export function TextInput({ className = "", ...props }) {
   )
 }
 
+export function TextArea({ className = "", ...props }) {
+  return (
+    <textarea
+      className={`w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-[13px] text-slate-900 outline-none transition-colors placeholder:text-slate-400 focus:border-indigo-400 focus:ring-2 focus:ring-indigo-500/20 dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-100 dark:placeholder:text-zinc-500 ${className}`}
+      {...props}
+    />
+  )
+}
+
 export function Radio({ name, value, checked, onChange, label }) {
   return (
     <label className="flex cursor-pointer items-center gap-2.5">

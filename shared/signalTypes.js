@@ -19,6 +19,12 @@ export const SIGNAL_TYPES = [
   "restructure",
   "regulation",
   "pain point",
+  // Not produced by the automated pipeline — it ingests news, not job
+  // postings — but a real category once a signal can be entered manually
+  // (api/manual-signal.js): an open req, especially at leadership level,
+  // is exactly the kind of thing an SDR finds on LinkedIn before it ever
+  // becomes news.
+  "hiring signal",
 ]
 
 export const SCOPES = ["macro", "micro"]

@@ -535,15 +535,21 @@ function AccountDetail({ account, onOpenSignal, loading, isClaimed, claimedAt, o
                   <span className="w-6 flex-shrink-0 text-right text-[11px] font-semibold tabular-nums text-slate-400 dark:text-zinc-500">
                     {indexOf(signal)}
                   </span>
-                  <a
-                    href={signal.sourceUrl}
-                    target="_blank"
-                    rel="noreferrer noopener"
-                    className="group inline-flex min-w-0 items-baseline gap-1 text-slate-700 hover:text-indigo-600 dark:text-zinc-300 dark:hover:text-indigo-400"
-                  >
-                    <span className="truncate">{signal.headline}</span>
-                    <ExternalLinkIcon className="h-3 w-3 flex-shrink-0 opacity-0 transition-opacity group-hover:opacity-100" />
-                  </a>
+                  {signal.sourceUrl ? (
+                    <a
+                      href={signal.sourceUrl}
+                      target="_blank"
+                      rel="noreferrer noopener"
+                      className="group inline-flex min-w-0 items-baseline gap-1 text-slate-700 hover:text-indigo-600 dark:text-zinc-300 dark:hover:text-indigo-400"
+                    >
+                      <span className="truncate">{signal.headline}</span>
+                      <ExternalLinkIcon className="h-3 w-3 flex-shrink-0 opacity-0 transition-opacity group-hover:opacity-100" />
+                    </a>
+                  ) : (
+                    <span className="min-w-0 truncate text-slate-700 dark:text-zinc-300" title="Entered manually — no source link">
+                      {signal.headline}
+                    </span>
+                  )}
                   <span className="ml-auto flex-shrink-0 text-[11px] tabular-nums text-slate-400 dark:text-zinc-500">
                     {formatDate(signal.date)}
                   </span>
