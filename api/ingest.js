@@ -1,7 +1,7 @@
 import { createHash } from "node:crypto"
 import { sql } from "./_lib/db.js"
 import { fetchWatchlist } from "./_lib/fetchNews.js"
-import { normalizeItem } from "./_lib/normalize.js"
+import { normalizeItem, BudgetExceededError } from "./_lib/normalize.js"
 import { attributeEntity } from "./_lib/matchAccounts.js"
 import { watchlistForRun } from "./_lib/watchlist.js"
 
@@ -54,6 +54,10 @@ export default async function handler(req, res) {
     // again and the patch views will be running on thematic tags alone.
     accountMatched: 0,
     errors: [],
+    // Set true if the monthly Claude API budget (api/_lib/budget.js) was
+    // hit mid-run — the remaining candidates were left un-normalized on
+    // purpose, not dropped by a bug.
+    budgetExceeded: false,
   }
 
   try {
@@ -86,6 +90,7 @@ export default async function handler(req, res) {
       while (queue.length) {
         const raw = queue.shift()
         try {
+          if (summary.budgetExceeded) return
           const normalized = await normalizeItem(raw)
           if (!normalized) continue
           summary.normalized += 1
@@ -126,6 +131,11 @@ export default async function handler(req, res) {
           `
           summary.inserted += 1
         } catch (err) {
+          if (err instanceof BudgetExceededError) {
+            console.warn("ingest:", err.message)
+            summary.budgetExceeded = true
+            return
+          }
           console.error("ingest: failed on item", raw.sourceUrl, err)
           summary.errors.push({ url: raw.sourceUrl, message: err.message })
         }

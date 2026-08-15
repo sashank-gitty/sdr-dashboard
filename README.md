@@ -204,7 +204,7 @@ Signal data lives in Postgres (Neon, connected via Vercel's native integration),
 
 - **`GET /api/signals`** — the frontend fetches this at runtime instead of importing a static file.
 - **`POST /api/ingest`** — pulls Google News RSS for a watchlist of tracked entities/topics (`api/_lib/watchlist.js`), dedupes against existing rows, normalizes new items into the schema via a Claude API call (`api/_lib/normalize.js`), attributes them to AE patches (`api/_lib/matchAccounts.js`), and inserts them. Triggered on a daily cron (`vercel.json`), protected by `CRON_SECRET`.
-- **`db/migrations/`** — schema, applied in order (001 core table through 006 ingest run log — check the directory for the current last one).
+- **`db/migrations/`** — schema, applied in order (001 core table through 007 llm spend ledger — check the directory for the current last one).
 - **`db/seed.mjs`** — one-time migration of the old static dataset into Postgres (skips the placeholder `example.com` entries).
 - **`db/backfill-relevance.mjs`** — one-time relevance scoring pass for rows that predate ingest-time scoring.
 - **`POST /api/reviews`** — durable "Mark Reviewed" state, `{ids, reviewed}` bulk update.
@@ -239,7 +239,7 @@ Row shape (camelCase over the wire, snake_case in Postgres):
 2. **Set env vars** (Vercel dashboard → Project → Settings → Environment Variables):
    - `ANTHROPIC_API_KEY` — used by the ingest pipeline's normalization step.
    - `CRON_SECRET` — any random string you generate; Vercel automatically sends it as `Authorization: Bearer $CRON_SECRET` when invoking the cron job, and `/api/ingest` checks it matches.
-3. **Run the migrations**: open the Neon/Postgres query editor in the Vercel dashboard and run each file in `db/migrations/` in order (`001_...` through `006_...` as of this writing — check the directory for the current last one).
+3. **Run the migrations**: open the Neon/Postgres query editor in the Vercel dashboard and run each file in `db/migrations/` in order (`001_...` through `007_...` as of this writing — check the directory for the current last one).
 4. **Seed existing data**: locally, `vercel env pull .env.local`, then `node --env-file=.env.local db/seed.mjs`.
 5. **Backfill patch attribution** on rows that predate migration 005: `node --env-file=.env.local db/backfill-patches.mjs`. Safe to re-run; pass `--all` to re-tag everything after changing the territory book or the patch definitions.
 6. **Verify ingestion manually before trusting the cron**: `curl -H "Authorization: Bearer $CRON_SECRET" https://<your-deploy>/api/ingest` and check the response summary (`queried`, `rawItems`, `afterDedupe`, `normalized`, `inserted`, `accountMatched`, `errors`).
@@ -251,6 +251,10 @@ Verified live against a real deployment and database: RSS fetch, redirect resolu
 On watchlist size: a run queries the 72 standing thematic queries (including the market-entry set) plus a rotating slice of named territory accounts (25 customers + 10 prospects), so ~107 per run, up from ~70. `api/_lib/fetchNews.js`'s fetch concurrency is 10. The territory book has ~1,700 accounts and the cron runs daily, so they can't all be queried by name every run — customers cycle every few days, prospects far more slowly, and the thematic patch tagging is what gives prospects their real coverage. The two per-run constants at the top of `api/_lib/watchlist.js` are the dials.
 
 Also watch `accountMatched` in the ingest summary. If it sits at zero run after run, the watchlist and the territory book have drifted apart and the patch views are running on thematic tags alone. That is exactly what had happened before the territory book was wired in: the hand-written account watchlist tracked the ANZ enterprise majors (CBA, NAB, Westpac, Telstra, Qantas, Woolworths) and not one of them appears in any of the four AEs' territories, which are corporate/mid-market.
+
+### Monthly Claude API budget guardrail
+
+`api/_lib/budget.js` enforces a hard **$10/calendar-month** ceiling on Claude API spend from the ingest normalizer, independent of how often `/api/ingest` runs. Every normalization call's real token usage (`response.usage`) is logged to the `llm_spend` table immediately after the call, priced at Sonnet's standing list rate ($3/$15 per MTok — priced above the introductory rate on purpose, so the cap still holds once that expires on 2026-08-31). Before each call, `normalizeItem` sums this month's spend and throws `BudgetExceededError` once it's at or above `MONTHLY_BUDGET_USD`; `api/ingest.js` catches that, stops pulling further candidates for the rest of the run, and reports `summary.budgetExceeded: true` (visible in `/api/ingest-status`) instead of silently truncating the feed. To change the cap, edit `MONTHLY_BUDGET_USD` in `api/_lib/budget.js`. This is what makes it safe to run ingest more often than daily (see `HOSTING.md` for the self-hosted hourly-cron path) without an open-ended cost tail — `MAX_ITEMS_PER_RUN` bounds worst-case spend per run, and this guardrail bounds it for the month regardless of how many runs happen.
 
 ## Community signals (Issue 5)
 
