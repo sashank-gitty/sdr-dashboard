@@ -172,13 +172,34 @@ reaches a build.
 
 ## Security: read this before pointing a domain at it
 
-**The app has no authentication.** That was defensible on an obscure
-Vercel URL. It is not defensible on a domain someone might find. Both write
-endpoints are unauthenticated:
+**The whole deployment is behind HTTP Basic auth**, and it **fails closed** —
+with `DASHBOARD_PASSWORD` unset every request gets a 503 rather than being
+served. Two env vars control it:
 
-- `POST /api/reviews` — anyone can mark anything reviewed.
-- `POST /api/ingest` — protected by `CRON_SECRET`, and that check is the
-  only auth in the codebase. Set it to a real random value.
+| Var | Required | Default |
+|---|---|---|
+| `DASHBOARD_PASSWORD` | **yes** — nothing serves without it | — |
+| `DASHBOARD_USER` | no | `sdr` |
+
+On Vercel this is `middleware.js`, which runs at the edge before any static
+asset or `/api/*` function. Self-hosted it is `checkAuth()` in
+`server/index.mjs`. Both exempt exactly one path: `/api/ingest`, which
+authenticates with `CRON_SECRET` instead (Vercel Cron sends it as a Bearer
+token, and Basic auth in front would reject that header before the route saw
+it). Set `CRON_SECRET` to a real random value.
+
+Basic auth is deliberate rather than a placeholder: this is a four-person
+internal tool, the browser remembers the credential, and it needs no session
+store, no user table and no login UI. If it ever goes wider than the team,
+replace it with a real identity provider — but do not remove it and leave
+nothing.
+
+**Why it matters more than it used to.** `/api/territory` serves named-customer
+commercial data: what identified companies pay, split by product line, plus
+renewal exposure and lost deal values. The signals themselves carry AE names
+and territory attribution. This repository is public; that data is not in it,
+and lives only in Postgres behind this auth. Keep it that way — see the note
+in `db/migrations/008_add_territory_accounts.sql`.
 
 The data itself is not public: signals carry AE names, territory patches
 and account attribution derived from the territory spreadsheets. Treat the

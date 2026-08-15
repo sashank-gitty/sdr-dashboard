@@ -7,6 +7,7 @@ import {
   SunriseIcon,
   FeedIcon,
   BriefcaseIcon,
+  ScaleIcon,
   AlertIcon,
   SlidersIcon,
   SearchIcon,
@@ -21,6 +22,7 @@ const NAV_ITEMS = [
   { page: "magic", href: "/magic", label: "Magic", Icon: SparklesIcon },
   { page: "feed", href: "/feed", label: "Global Feed", Icon: FeedIcon },
   { page: "accounts", href: "/accounts", label: "Accounts", Icon: BriefcaseIcon },
+  { page: "territory", href: "/territory", label: "Territory", Icon: ScaleIcon },
   { page: "alerts", href: "/alerts", label: "Alerts", Icon: AlertIcon },
   { page: "settings", href: "/settings", label: "Settings", Icon: SlidersIcon },
 ]

@@ -386,6 +386,16 @@ export function NotIngested({ title, sources, note }) {
   )
 }
 
+// A footnote under a chart or table: the caveat or the "so what", set
+// quieter than body text and separated by a hairline.
+export function SectionNote({ children }) {
+  return (
+    <p className="mt-3 border-t border-slate-200 pt-3 text-[12px] leading-relaxed text-slate-500 dark:border-zinc-800 dark:text-zinc-400">
+      {children}
+    </p>
+  )
+}
+
 export function EmptyState({ title, description, action }) {
   return (
     <div className="flex flex-col items-center justify-center px-6 py-16 text-center">
