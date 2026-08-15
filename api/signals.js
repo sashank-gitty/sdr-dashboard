@@ -28,7 +28,8 @@ export default async function handler(req, res) {
         matched_accounts AS "matchedAccounts",
         owning_aes AS "owningAes",
         account_status AS "accountStatus",
-        (reviewed_at IS NOT NULL) AS reviewed
+        (reviewed_at IS NOT NULL) AS reviewed,
+        created_at AS "createdAt"
       FROM signals
       ORDER BY date DESC, created_at DESC
     `
