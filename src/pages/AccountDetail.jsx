@@ -25,6 +25,7 @@ import {
   TabStrip,
   SectionTitle,
   EmptyState,
+  NotIngested,
 } from "../components/ui.jsx"
 import {
   RefreshIcon,
@@ -55,27 +56,6 @@ const TABS = [
   { id: "contacts", label: "Contacts" },
   { id: "tech", label: "Tech" },
 ]
-
-// Shown wherever a panel exists in the reference layout but this
-// pipeline ingests nothing that could fill it. Naming the missing source
-// explicitly is the point: an empty panel that explains itself is a
-// roadmap item, while a silently blank one reads as a bug — and a
-// plausibly-populated one would be a fabrication.
-function NotIngested({ title, sources, note }) {
-  return (
-    <Card className="p-6">
-      <p className="text-sm font-semibold text-slate-900 dark:text-zinc-100">{title}</p>
-      <p className="mt-1.5 max-w-xl text-[13px] leading-relaxed text-slate-500 dark:text-zinc-400">{note}</p>
-      <div className="mt-3 flex flex-wrap gap-1.5">
-        {sources.map((source) => (
-          <Pill key={source} tone="slate">
-            {source}
-          </Pill>
-        ))}
-      </div>
-    </Card>
-  )
-}
 
 function InfoRow({ icon: Icon, label, value }) {
   return (

@@ -7,9 +7,9 @@ import {
   PATCH_LABELS,
 } from "../lib/colors.js"
 import { relevanceTierText } from "../lib/relevanceTiers.js"
-import { buildSignalReason, REASON_TONE_STYLES } from "../lib/signalReason.js"
+import { buildSignalReason, actionForReason, REASON_TONE_STYLES } from "../lib/signalReason.js"
 import { iconForSignal, groupLabel, groupForSignal } from "../lib/signalGroups.js"
-import { AccountAvatar, Pill, Collapsible } from "./ui.jsx"
+import { AccountAvatar, Pill, Collapsible, NotIngested } from "./ui.jsx"
 import { XIcon, CopyIcon, ExternalLinkIcon, ChevronLeftIcon, ChevronRightIcon, ArrowUpIcon, SearchIcon } from "./icons.jsx"
 
 const MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
@@ -215,6 +215,9 @@ function SignalDetailPanel({ item, open, onClose, onToggleReviewed, relatedItems
             <span className={`h-1.5 w-1.5 flex-shrink-0 rounded-full ${reasonTone.dot}`} aria-hidden="true" />
             {reason.label}
           </p>
+          <p className="mt-1.5 text-[13px] leading-relaxed text-slate-600 dark:text-zinc-300">
+            <span className="font-semibold text-slate-900 dark:text-zinc-100">Do this:</span> {actionForReason(reason, item)}
+          </p>
 
           {/* Metadata grid — label/value rows rather than a pill soup, so
               Type, Topics, Date and Source are each findable by position. */}
@@ -259,6 +262,23 @@ function SignalDetailPanel({ item, open, onClose, onToggleReviewed, relatedItems
               </dd>
             </div>
             <div className="flex gap-4">
+              <dt className="w-16 flex-shrink-0 text-[12px] text-slate-500 dark:text-zinc-400">Origin</dt>
+              <dd>
+                <span
+                  title={
+                    item.origin === "community"
+                      ? "Added via community research (last30days), not the standing news pipeline"
+                      : item.origin === "seed"
+                        ? "Loaded from the initial seed set, not a live ingest run"
+                        : "Found by the standing daily news pipeline"
+                  }
+                  className="rounded-md border border-slate-200 px-1.5 py-0.5 text-[11px] font-medium capitalize text-slate-600 dark:border-zinc-700 dark:text-zinc-300"
+                >
+                  {item.origin ?? "news"}
+                </span>
+              </dd>
+            </div>
+            <div className="flex gap-4">
               <dt className="w-16 flex-shrink-0 text-[12px] text-slate-500 dark:text-zinc-400">Scope</dt>
               <dd className="flex flex-wrap gap-1">
                 <span
@@ -282,7 +302,7 @@ function SignalDetailPanel({ item, open, onClose, onToggleReviewed, relatedItems
           </Collapsible>
 
           {tierText && (
-            <Collapsible title={`Why this scored ${item.outreachRelevance}`} defaultOpen={false}>
+            <Collapsible title={`Why this scored ${item.outreachRelevance}`} defaultOpen={(item.outreachRelevance ?? 0) >= 4}>
               <p className="text-[13px] leading-relaxed text-slate-600 dark:text-zinc-300">
                 {markMatches(tierText, term, counter)}
               </p>
@@ -290,7 +310,7 @@ function SignalDetailPanel({ item, open, onClose, onToggleReviewed, relatedItems
           )}
 
           {(item.matchedAccounts ?? []).length > 0 && (
-            <Collapsible title="Territory" defaultOpen={false}>
+            <Collapsible title="Territory" defaultOpen>
               <dl className="space-y-2 text-[13px]">
                 <div className="flex gap-3">
                   <dt className="w-20 flex-shrink-0 text-slate-500 dark:text-zinc-400">Accounts</dt>
@@ -313,7 +333,7 @@ function SignalDetailPanel({ item, open, onClose, onToggleReviewed, relatedItems
           )}
 
           {relatedItems.length > 0 && (
-            <Collapsible title={`Other signals — ${item.entity}`} defaultOpen={false}>
+            <Collapsible title="Related Signals" defaultOpen={false}>
               <div className="flex flex-col gap-1">
                 {relatedItems.map((related) => (
                   <button
@@ -325,12 +345,33 @@ function SignalDetailPanel({ item, open, onClose, onToggleReviewed, relatedItems
                     <time className="flex-shrink-0 text-[11px] tabular-nums text-slate-400 dark:text-zinc-500">
                       {formatDate(related.date)}
                     </time>
-                    <span className="min-w-0 flex-1">{related.headline}</span>
+                    <span className="min-w-0 flex-1">
+                      {related.entity !== item.entity && (
+                        <span className="font-semibold text-slate-800 dark:text-zinc-200">{related.entity} — </span>
+                      )}
+                      {related.headline}
+                    </span>
                   </button>
                 ))}
               </div>
             </Collapsible>
           )}
+
+          <Collapsible title="Hiring & Intent" defaultOpen={false}>
+            <NotIngested
+              title="Not connected yet"
+              note="Job postings, headcount surges, and buyer-intent signals for this account aren't in this pipeline today — it ingests Google News RSS only. Lusha and ZoomInfo both expose exactly this (new job posts, hiring surges, LinkedIn buying-intent) and are the obvious next connector to wire in, pending an API key configured for this deployment."
+              sources={["Lusha hiring & intent signals", "ZoomInfo intent / scoops", "LinkedIn job postings"]}
+            />
+          </Collapsible>
+
+          <Collapsible title="Market Data" defaultOpen={false}>
+            <NotIngested
+              title="Not connected yet"
+              note="Stock price, market cap, and earnings context for this account aren't in this pipeline today. A free-tier market-data API (e.g. Finnhub or Alpha Vantage) is the planned source, pending an API key — it would only ever cover accounts with a public ticker."
+              sources={["Finnhub / Alpha Vantage", "Earnings calendar"]}
+            />
+          </Collapsible>
         </div>
 
         {findOpen && (

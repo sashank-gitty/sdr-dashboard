@@ -113,12 +113,30 @@ function App() {
   const accounts = useMemo(() => deriveAccounts(signals), [signals])
 
   const openItem = useMemo(() => signals.find((s) => s.id === openSignalId) ?? null, [signals, openSignalId])
+  // Same-entity signals are the strongest "related" match — same company,
+  // unambiguous. When there aren't enough of those to be useful, widen to
+  // signals sharing a territory patch or a signal type, so a thin-history
+  // entity still surfaces something rather than an empty panel. Each tier
+  // is still recency-sorted and the total stays capped at 5.
   const relatedItems = useMemo(() => {
     if (!openItem) return []
-    return signals
-      .filter((s) => s.id !== openItem.id && s.entity === openItem.entity)
-      .sort((a, b) => (a.date < b.date ? 1 : -1))
-      .slice(0, 5)
+    const others = signals.filter((s) => s.id !== openItem.id)
+    const byDateDesc = (a, b) => (a.date < b.date ? 1 : -1)
+
+    const sameEntity = others.filter((s) => s.entity === openItem.entity).sort(byDateDesc)
+    if (sameEntity.length >= 3) return sameEntity.slice(0, 5)
+
+    const patches = new Set(openItem.patches ?? [])
+    const seen = new Set(sameEntity.map((s) => s.id))
+    const widened = others
+      .filter(
+        (s) =>
+          !seen.has(s.id) &&
+          ((patches.size > 0 && (s.patches ?? []).some((p) => patches.has(p))) || s.signalType === openItem.signalType),
+      )
+      .sort(byDateDesc)
+
+    return [...sameEntity, ...widened].slice(0, 5)
   }, [signals, openItem])
 
   const openSignal = (id) => updateUrl({ signal: id }, { push: true })
@@ -198,7 +216,12 @@ function App() {
         )}
 
         {route.page === "feed" && (
-          <GlobalFeed signals={signals} loading={loading} onOpenSignal={openSignal} />
+          <GlobalFeed
+            signals={signals}
+            loading={loading}
+            onOpenSignal={openSignal}
+            onToggleReviewed={handleToggleReviewed}
+          />
         )}
 
         {route.page === "accounts" && !route.accountId && <Accounts signals={signals} loading={loading} />}
