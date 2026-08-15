@@ -315,6 +315,16 @@ export function ArrowDownIcon(props) {
   )
 }
 
+export function SunriseIcon(props) {
+  return (
+    <Icon {...props}>
+      <path d="M12 4v3M4.2 11H2M22 11h-2.2M5.6 7.6l1.6 1.6M18.4 7.6l-1.6 1.6" />
+      <path d="M6 14a6 6 0 0 1 12 0" />
+      <path d="M2 18h20" />
+    </Icon>
+  )
+}
+
 export function MenuIcon(props) {
   return (
     <Icon {...props}>
