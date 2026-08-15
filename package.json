@@ -9,7 +9,8 @@
     "lint": "oxlint",
     "preview": "vite preview",
     "start": "node server/index.mjs",
-    "ingest": "node scripts/run-ingest.mjs"
+    "ingest": "node scripts/run-ingest.mjs",
+    "load-territory": "node db/load-territory.mjs"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.116.0",
@@ -19,6 +20,7 @@
     "rss-parser": "^3.13.0"
   },
   "devDependencies": {
+    "exceljs": "^4.4.0",
     "@tailwindcss/vite": "^4.3.3",
     "@types/react": "^19.2.17",
     "@types/react-dom": "^19.2.3",

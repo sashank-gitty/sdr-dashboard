@@ -6,6 +6,7 @@ import ErrorState from "./components/ErrorState.jsx"
 import Briefing from "./pages/Briefing.jsx"
 import GlobalFeed from "./pages/GlobalFeed.jsx"
 import Accounts from "./pages/Accounts.jsx"
+import Territory from "./pages/Territory.jsx"
 import AccountDetail from "./pages/AccountDetail.jsx"
 import SearchPage from "./pages/Search.jsx"
 import Alerts from "./pages/Alerts.jsx"
@@ -223,6 +224,8 @@ function App() {
             onToggleReviewed={handleToggleReviewed}
           />
         )}
+
+        {route.page === "territory" && <Territory />}
 
         {route.page === "accounts" && !route.accountId && <Accounts signals={signals} loading={loading} />}
 
