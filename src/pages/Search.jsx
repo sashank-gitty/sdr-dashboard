@@ -2,9 +2,10 @@ import { useMemo, useState } from "react"
 import { linkProps } from "../lib/router.js"
 import { SIGNAL_GROUPS, countByGroup, filterByGroup, iconForSignal } from "../lib/signalGroups.js"
 import { PATCH_LABELS, PATCHES, AE_NAMES } from "../../shared/patches.js"
-import { pillClassForSignalType } from "../lib/colors.js"
+import { pillClassForSignalType, PRACTICE_AREA_LABELS } from "../lib/colors.js"
 import { accountKey } from "../lib/accountModel.js"
 import { useAlerts } from "../lib/useAlerts.js"
+import { matchesQuery } from "../lib/textMatch.js"
 import {
   PageHeader,
   Card,
@@ -121,24 +122,48 @@ function Search({ signals, onOpenSignal }) {
   const { createAlert } = useAlerts()
 
   const matched = useMemo(() => {
-    const needle = query.trim().toLowerCase()
+    const needle = query.trim()
     const cutoff = new Date()
     cutoff.setHours(0, 0, 0, 0)
     cutoff.setDate(cutoff.getDate() - Number(days))
 
-    return signals.filter((signal) => {
+    const results = signals.filter((signal) => {
       if (new Date(`${signal.date}T00:00:00`) < cutoff) return false
       if (patch && !(signal.patches ?? []).includes(patch)) return false
       if (ae && !(signal.owningAes ?? []).includes(ae)) return false
       if (type === "customer" && signal.accountStatus !== "customer") return false
       if (type === "prospect" && signal.accountStatus !== "prospect") return false
       if (needle) {
-        const haystack =
-          `${signal.headline} ${signal.summary} ${signal.entity} ${(signal.matchedAccounts ?? []).join(" ")}`.toLowerCase()
-        if (!haystack.includes(needle)) return false
+        // Wider than just headline/summary: signal type, patch and
+        // practice area labels are also fair game — searching "regulation
+        // fsi" should find every FSI regulatory signal even when neither
+        // word is in the headline itself.
+        const haystack = [
+          signal.headline,
+          signal.summary,
+          signal.entity,
+          ...(signal.matchedAccounts ?? []),
+          signal.signalType,
+          PRACTICE_AREA_LABELS[signal.practiceArea] ?? signal.practiceArea,
+          ...(signal.patches ?? []).map((p) => PATCH_LABELS[p] ?? p),
+        ].join(" ")
+        if (!matchesQuery(haystack, needle)) return false
       }
       return true
     })
+
+    // Without a query the feed's own date-desc order (from /api/signals)
+    // is the right read. With one, the strongest, freshest matches
+    // belong at the top rather than wherever they happened to sort by
+    // date — a 5-year-old signal that happens to be newer than nothing
+    // shouldn't outrank a highly relevant one from last week.
+    if (needle) {
+      results.sort(
+        (a, b) => (b.outreachRelevance ?? 0) - (a.outreachRelevance ?? 0) || (a.date < b.date ? 1 : -1),
+      )
+    }
+
+    return results
   }, [signals, query, days, patch, ae, type])
 
   const counts = useMemo(() => countByGroup(matched), [matched])

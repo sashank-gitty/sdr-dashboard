@@ -8,9 +8,20 @@ import {
 } from "../lib/colors.js"
 import { relevanceTierText } from "../lib/relevanceTiers.js"
 import { buildSignalReason, actionForReason, REASON_TONE_STYLES } from "../lib/signalReason.js"
+import { accountImpact, whoThisAffects, outreachAngles, scoreMeaning } from "../lib/signalInsights.js"
 import { iconForSignal, groupLabel, groupForSignal } from "../lib/signalGroups.js"
 import { AccountAvatar, Pill, Collapsible, NotIngested } from "./ui.jsx"
-import { XIcon, CopyIcon, ExternalLinkIcon, ChevronLeftIcon, ChevronRightIcon, ArrowUpIcon, SearchIcon } from "./icons.jsx"
+import {
+  XIcon,
+  CopyIcon,
+  ExternalLinkIcon,
+  ChevronLeftIcon,
+  ChevronRightIcon,
+  ArrowUpIcon,
+  SearchIcon,
+  LightbulbIcon,
+  UsersIcon,
+} from "./icons.jsx"
 
 const MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
 
@@ -301,11 +312,52 @@ function SignalDetailPanel({ item, open, onClose, onToggleReviewed, relatedItems
             </p>
           </Collapsible>
 
+          {/* The deeper read: what this class of signal usually means for
+              the account, who inside or around it actually feels it, and
+              several concrete openers rather than one generic action
+              line. Open by default — this is the depth the drawer was
+              missing, not an optional extra. */}
+          <Collapsible title="What This Means" defaultOpen>
+            <div className="space-y-4">
+              <div>
+                <p className="mb-1 text-[11px] font-semibold uppercase tracking-wider text-slate-400 dark:text-zinc-500">
+                  For the account
+                </p>
+                <p className="text-[13px] leading-relaxed text-slate-700 dark:text-zinc-300">{accountImpact(item)}</p>
+              </div>
+              <div>
+                <p className="mb-1 flex items-center gap-1.5 text-[11px] font-semibold uppercase tracking-wider text-slate-400 dark:text-zinc-500">
+                  <UsersIcon className="h-3.5 w-3.5" />
+                  Who this affects
+                </p>
+                <p className="text-[13px] leading-relaxed text-slate-700 dark:text-zinc-300">{whoThisAffects(item)}</p>
+              </div>
+              <div>
+                <p className="mb-1.5 flex items-center gap-1.5 text-[11px] font-semibold uppercase tracking-wider text-slate-400 dark:text-zinc-500">
+                  <LightbulbIcon className="h-3.5 w-3.5" />
+                  Angles to approach with
+                </p>
+                <ul className="space-y-2.5">
+                  {outreachAngles(item).map((a, i) => (
+                    <li key={i} className="text-[13px] leading-relaxed text-slate-700 dark:text-zinc-300">
+                      <span className="font-semibold text-slate-900 dark:text-zinc-100">{a.label}.</span> {a.angle}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            </div>
+          </Collapsible>
+
           {tierText && (
             <Collapsible title={`Why this scored ${item.outreachRelevance}`} defaultOpen={(item.outreachRelevance ?? 0) >= 4}>
-              <p className="text-[13px] leading-relaxed text-slate-600 dark:text-zinc-300">
-                {markMatches(tierText, term, counter)}
-              </p>
+              <div className="space-y-2.5">
+                <p className="text-[13px] leading-relaxed text-slate-700 dark:text-zinc-300">
+                  {scoreMeaning(item.outreachRelevance ?? null)}
+                </p>
+                <p className="text-[13px] leading-relaxed text-slate-500 dark:text-zinc-400">
+                  {markMatches(tierText, term, counter)}
+                </p>
+              </div>
             </Collapsible>
           )}
 

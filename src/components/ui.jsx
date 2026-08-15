@@ -410,12 +410,19 @@ export function EmptyState({ title, description, action }) {
 // and the detail drawer can show *why* a row matched. Returns an array of
 // nodes rather than HTML — no dangerouslySetInnerHTML, so a headline
 // containing markup can't inject anything.
+// `term` can be a multi-word query — search matching is now tokenized
+// (see lib/textMatch.js: every word has to appear, not the exact phrase),
+// so highlighting has to mark each matched word individually rather than
+// only the full phrase, or a match on "nab leadership" against a headline
+// with those two words apart would highlight nothing at all.
 export function Highlight({ text, term }) {
   if (!term || !text) return text ?? null
-  const escaped = term.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")
-  const parts = String(text).split(new RegExp(`(${escaped})`, "gi"))
+  const tokens = [...new Set(String(term).toLowerCase().split(/\s+/).filter(Boolean))]
+  if (!tokens.length) return text
+  const escaped = tokens.map((t) => t.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"))
+  const parts = String(text).split(new RegExp(`(${escaped.join("|")})`, "gi"))
   return parts.map((part, index) =>
-    part.toLowerCase() === term.toLowerCase() ? (
+    tokens.includes(part.toLowerCase()) ? (
       <mark
         key={index}
         className="rounded-sm bg-indigo-500/20 px-0.5 font-medium text-indigo-700 dark:bg-indigo-500/30 dark:text-indigo-200"

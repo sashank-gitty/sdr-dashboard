@@ -1,5 +1,6 @@
 import { useLocalStorageState } from "./useLocalStorageState.js"
 import { groupForSignal } from "./signalGroups.js"
+import { matchesQuery } from "./textMatch.js"
 
 // Saved search alerts.
 //
@@ -45,7 +46,7 @@ export function useAlerts() {
 // alerts page can show "what would this have caught" instead of a static
 // row.
 export function matchAlert(alert, signals) {
-  const query = (alert.query ?? "").trim().toLowerCase()
+  const query = alert.query ?? ""
   return signals.filter((signal) => {
     if (alert.group && alert.group !== "all" && groupForSignal(signal) !== alert.group) return false
     if (alert.patch && !(signal.patches ?? []).includes(alert.patch)) return false
@@ -57,9 +58,8 @@ export function matchAlert(alert, signals) {
       if (new Date(`${signal.date}T00:00:00`) < cutoff) return false
     }
     if (query) {
-      const haystack =
-        `${signal.headline} ${signal.summary} ${signal.entity} ${(signal.matchedAccounts ?? []).join(" ")}`.toLowerCase()
-      if (!haystack.includes(query)) return false
+      const haystack = `${signal.headline} ${signal.summary} ${signal.entity} ${(signal.matchedAccounts ?? []).join(" ")}`
+      if (!matchesQuery(haystack, query)) return false
     }
     return true
   })

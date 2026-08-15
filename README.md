@@ -7,8 +7,15 @@ and presented account-first.
 
 ## Structure
 
-Five destinations off a top nav, with signals opening in a slide-over
-drawer from anywhere.
+A top nav of destinations, with signals opening in a slide-over drawer
+from anywhere. The drawer's "What This Means" section goes past the
+one-line reason/action pair to a fuller read: what this class of trigger
+usually means for the account, who inside or around it actually feels it
+(customers, employees, the market), and several concrete outreach angles
+rather than one generic action line — see
+[Signal and account insight depth](#signal-and-account-insight-depth)
+below. "Open source" always stays one click away for verifying the
+underlying article.
 
 **Magic** — the landing screen. Four counters, the three agents that make
 up the pipeline (Signal and Research are live; Outreach is not built and
@@ -23,13 +30,28 @@ as CSV.
 
 **Accounts** — the full derived account table. Sortable on every column,
 with a 0–100 score, a P1–P3 priority tier, toggleable columns, starring,
-and CSV export.
+claiming (see below), and CSV export.
+
+**My Accounts** — the same table, pre-filtered to whatever's been
+manually claimed. An account is *derived* from the territory book and
+signals — nobody "owns" it in this app unless a book match says so — but
+an SDR working the unassigned whitespace, or a good account sitting on
+someone else's patch, still wants a personal list of "the ones I'm
+tracking." Claiming an account (the pin icon on any Accounts row, or "Add
+to My Accounts" on the account page) adds it here without touching
+territory ownership at all. Persisted server-side (`account_claims`
+table, `api/claims.js`) rather than to `localStorage` the way starring
+is, so the list is the same wherever the dashboard is opened — see
+[Manually claimed accounts](#manually-claimed-accounts) below.
 
 **Account detail** — eight tabs:
 
 - *Fast Facts* — signal timeline bucketed by recency (7 / 30 / 180 days),
-  signal mix, and the account information panel
-- *Summary* — "What You Need to Know": Key Insights, People Updates, Top
+  signal mix, and the account information panel (shows "Claimed on" once
+  an account's been added to My Accounts)
+- *Summary* — "What You Need to Know": Key Insights (now paired with a
+  plain-English read on what the trigger means for the account and a
+  suggested outreach angle, not just a signal count), People Updates, Top
   News, every line carrying citation badges that open the source signal
 - *Signals* — the account's full signal list, grouped
 - *Value* — a value pyramid (Company Goals, Business Strategy, Challenges
@@ -40,9 +62,16 @@ and CSV export.
   source
 - *Contacts* / *Tech* — deliberately empty, each naming what would fill it
 
-**Search** — full-text across headlines, summaries, entities and matched
-accounts, with signal-group tabs, term highlighting in results, and saved
-alerts.
+**Search** — full-text across headlines, summaries, entities, matched
+accounts, signal type, patch and practice area, with signal-group tabs,
+saved alerts, and multi-word queries: every word has to appear somewhere
+in a result (not as one exact phrase), so "leadership survey" finds a
+headline where those two words are apart, and every matched word is
+highlighted individually in the results. Matched results with a query
+sort by relevance then recency, so the strongest trigger leads rather
+than whatever's merely newest. Saved alerts (`src/lib/useAlerts.js`)
+re-run the same matching logic (`src/lib/textMatch.js`) live against the
+current signal set.
 
 **Alerts** — saved queries that re-run live against the current signal
 set. No email is sent yet; the page says so rather than implying
@@ -77,6 +106,31 @@ on a call. Each panel names the source that would populate it instead.
 Everything else on an account page is either copied verbatim from an
 ingested signal or computed from those signals, and every synthesized line
 carries a citation badge back to its source.
+
+### Signal and account insight depth
+
+`src/lib/signalInsights.js` is what powers the signal drawer's "What This
+Means" section and the extra lines under each account's Key Insights: an
+account-impact read, who inside or around the account actually feels it,
+and several concrete outreach angles instead of the single generic action
+line the drawer used to show.
+
+It follows the same hard rule as `accountBrief.js` above: nothing in it
+invents a fact about a real company. Every sentence is keyed off fields
+already on the signal — its signal-type group (`signalGroups.js`),
+practice area, account status, score — the same inputs `signalReason.js`
+already uses for the one-line reason/action pair. It's a template
+lookup, not a model call: a "leadership change" signal gets the same
+impact/angle text whether it's about Bank A or Company B, because what's
+generically true of *a new leader reviewing vendor relationships* is the
+part this module can say with confidence — the specific fact stays
+entirely in the headline and summary above it, and citing/opening the
+original article is always one click away ("Open source").
+
+`scoreMeaning()` adds a plain-language line to "Why this scored N" —
+what a 4 or 5 versus a 3 versus lower actually means for whether to open
+with this signal standalone or use it as supporting context — on top of
+the existing rubric-tier text pulled from `shared/relevanceRubric.js`.
 
 ## Hosting
 
@@ -169,6 +223,32 @@ Two things feed this view specifically:
   with `db/backfill-relevance.mjs --all` after editing it — without
   `--all` the script skips rows that already have a (stale) score.
 
+### Manually claimed accounts
+
+Claiming is deliberately separate from territory ownership. `account.aes`
+/ `owningAes` come from the territory book (`api/_lib/accountRegistry.js`)
+and mean "whose patch is this" — that's derived from signals and never
+written to directly. Claiming means "I'm personally tracking this one,"
+independent of whether the book has an owner for it at all: the classic
+case is finding a good account in the Unassigned whitespace view above,
+or in a signal from a colleague's patch, and wanting to keep an eye on it
+without pretending the territory book says it's yours.
+
+- **`db/migrations/009_add_account_claims.sql`** — `account_claims`
+  table: `account_key` (matches `accountKey()` in
+  `src/lib/accountModel.js`, so a claim survives an account's display
+  name changing between a book match and a bare entity string),
+  `account_name`, `note`, `claimed_at`.
+- **`api/claims.js`** — `GET` lists every claimed account; `POST
+  {accountKey, accountName, claimed}` claims or unclaims one. No auth,
+  same as `api/reviews.js` and the rest of this app: single-user, no
+  login system, one shared claims list rather than one per AE.
+- **`src/lib/useClaims.js`** — fetches the list once in `App.jsx` and
+  exposes an optimistic claim/unclaim toggle (same rollback-on-failure
+  shape as the reviewed-state toggle), passed down to the Accounts, My
+  Accounts and account-detail pages so the pin icon reads the same state
+  everywhere.
+
 ### Sharing a patch view
 
 Patch, AE and account coverage are facets in the shared URL state
@@ -209,6 +289,7 @@ Signal data lives in Postgres (Neon, connected via Vercel's native integration),
 - **`db/backfill-relevance.mjs`** — one-time relevance scoring pass for rows that predate ingest-time scoring.
 - **`POST /api/reviews`** — durable "Mark Reviewed" state, `{ids, reviewed}` bulk update.
 - **`GET /api/ingest-status`** — the most recent `ingest_runs` row (success/error, counts, timestamp), so the frontend can show "last synced" without inferring it from `signals.created_at`, which doesn't move on a run that found nothing new. Every `/api/ingest` invocation logs one row here regardless of outcome.
+- **`GET/POST /api/claims`** — durable "manually claimed account" state (see [Manually claimed accounts](#manually-claimed-accounts)), independent of the derived `matchedAccounts`/`owningAes` fields above.
 
 Row shape (camelCase over the wire, snake_case in Postgres):
 
