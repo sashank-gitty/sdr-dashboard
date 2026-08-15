@@ -4,6 +4,7 @@ import ThemeToggle from "./ThemeToggle.jsx"
 import SyncStatus from "./SyncStatus.jsx"
 import {
   SparklesIcon,
+  SunriseIcon,
   FeedIcon,
   BriefcaseIcon,
   AlertIcon,
@@ -16,6 +17,7 @@ import {
 } from "./icons.jsx"
 
 const NAV_ITEMS = [
+  { page: "briefing", href: "/briefing", label: "Briefing", Icon: SunriseIcon },
   { page: "magic", href: "/magic", label: "Magic", Icon: SparklesIcon },
   { page: "feed", href: "/feed", label: "Global Feed", Icon: FeedIcon },
   { page: "accounts", href: "/accounts", label: "Accounts", Icon: BriefcaseIcon },

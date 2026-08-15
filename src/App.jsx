@@ -3,6 +3,7 @@ import TopNav from "./components/TopNav.jsx"
 import SignalDetailPanel from "./components/SignalDetailPanel.jsx"
 import CommandPalette from "./components/CommandPalette.jsx"
 import ErrorState from "./components/ErrorState.jsx"
+import Briefing from "./pages/Briefing.jsx"
 import GlobalFeed from "./pages/GlobalFeed.jsx"
 import Accounts from "./pages/Accounts.jsx"
 import AccountDetail from "./pages/AccountDetail.jsx"
@@ -183,6 +184,15 @@ function App() {
       />
 
       <main className="mx-auto max-w-[1600px] px-4 py-6 sm:px-6">
+        {route.page === "briefing" && (
+          <Briefing
+            signals={signals}
+            loading={loading}
+            onOpenSignal={openSignal}
+            onToggleReviewed={handleToggleReviewed}
+          />
+        )}
+
         {route.page === "magic" && (
           <Magic signals={signals} syncStatus={syncStatus} onOpenSignal={openSignal} loading={loading} />
         )}
