@@ -2,7 +2,17 @@ import { useEffect, useState } from "react"
 import { navigate } from "../lib/router.js"
 import { computeBriefing } from "../lib/briefing.js"
 import { PATCH_LABELS } from "../../shared/patches.js"
-import { PageHeader, Card, Button, Pill, SectionTitle, EmptyState } from "../components/ui.jsx"
+import {
+  PageHeader,
+  Card,
+  Button,
+  Pill,
+  SectionTitle,
+  EmptyState,
+  Eyebrow,
+  GradientText,
+  StatTile,
+} from "../components/ui.jsx"
 import SignalRow from "../components/SignalRow.jsx"
 
 // Same staleness bar SyncStatus.jsx uses in the top nav, kept local here
@@ -70,7 +80,7 @@ function SyncBanner({ status }) {
   if (status.phase === "empty") {
     return (
       <div className="rounded-xl border border-slate-200 bg-slate-50/70 px-4 py-3 dark:border-zinc-800 dark:bg-zinc-900/40">
-        <p className="text-[13px] font-medium text-slate-600 dark:text-zinc-300">No ingest runs recorded yet.</p>
+        <p className="text-[13px] font-medium text-body-600 dark:text-zinc-300">No ingest runs recorded yet.</p>
       </div>
     )
   }
@@ -103,33 +113,6 @@ function SyncBanner({ status }) {
   )
 }
 
-// A stat that isn't clickable is dead space. Every tile here jumps into
-// the Global Feed pre-filtered to exactly what it's counting, via the
-// quick-filter query params GlobalFeed.jsx reads on mount.
-function StatTile({ label, value, sub, accent = false, onClick }) {
-  return (
-    <button
-      type="button"
-      onClick={onClick}
-      className="group rounded-xl border border-slate-200 bg-white p-4 text-left transition-colors hover:border-indigo-500/40 hover:bg-indigo-500/5 dark:border-zinc-800 dark:bg-zinc-900/60 dark:hover:bg-indigo-500/10"
-    >
-      <p className="text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-zinc-400">{label}</p>
-      <p
-        className={`mt-2 font-mono text-3xl font-semibold tabular-nums ${
-          accent ? "text-indigo-600 dark:text-indigo-400" : "text-slate-900 dark:text-zinc-50"
-        }`}
-      >
-        {value}
-      </p>
-      {sub && (
-        <p className="mt-1 text-[12px] text-slate-400 group-hover:text-indigo-500 dark:text-zinc-500 dark:group-hover:text-indigo-400">
-          {sub} &rarr;
-        </p>
-      )}
-    </button>
-  )
-}
-
 function PatchBreakdown({ patchCounts }) {
   const max = Math.max(...patchCounts.map((p) => p.count), 1)
 
@@ -144,14 +127,14 @@ function PatchBreakdown({ patchCounts }) {
 
   return (
     <Card className="p-5">
-      <p className="mb-4 text-[12px] text-slate-500 dark:text-zinc-400">
+      <p className="mb-4 text-[12px] text-body-500 dark:text-zinc-400">
         Territory tags across all {patchCounts.reduce((sum, p) => sum + p.count, 0)} tag applications &mdash; a signal
         can carry more than one patch, or none.
       </p>
       <div className="space-y-3">
         {patchCounts.map(({ patch, count, swatch }) => (
           <div key={patch} className="flex items-center gap-3">
-            <span className="w-32 flex-shrink-0 truncate text-[13px] font-medium text-slate-700 dark:text-zinc-300">
+            <span className="w-32 flex-shrink-0 truncate text-[13px] font-medium text-body-600 dark:text-zinc-300">
               {PATCH_LABELS[patch] ?? patch}
             </span>
             <div className="h-2.5 flex-1 overflow-hidden rounded-full bg-slate-100 dark:bg-zinc-800">
@@ -160,7 +143,7 @@ function PatchBreakdown({ patchCounts }) {
                 style={{ width: `${Math.max((count / max) * 100, 4)}%` }}
               />
             </div>
-            <span className="w-6 flex-shrink-0 text-right font-mono text-[13px] font-semibold tabular-nums text-slate-500 dark:text-zinc-400">
+            <span className="w-6 flex-shrink-0 text-right text-[13px] font-semibold tabular-nums text-body-500 dark:text-zinc-400">
               {count}
             </span>
           </div>
@@ -184,51 +167,58 @@ function Briefing({ signals, loading, onOpenSignal, onToggleReviewed }) {
   return (
     <>
       <PageHeader
-        title="Morning Briefing"
+        eyebrow={<Eyebrow>Start of day</Eyebrow>}
+        title={
+          <>
+            Morning <GradientText>Briefing</GradientText>
+          </>
+        }
         actions={
           <Button variant="outline" onClick={() => navigate("/feed")}>
             Browse full feed
           </Button>
         }
       >
-        <p className="text-sm text-slate-500 dark:text-zinc-400">{today}</p>
+        <p className="text-sm text-body-600 dark:text-zinc-400">{today}</p>
         <div className="mt-3">
           <SyncBanner status={ingestStatus} />
         </div>
       </PageHeader>
 
       {loading ? (
-        <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
+        <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
           {Array.from({ length: 4 }).map((_, i) => (
-            <div key={i} className="h-24 animate-pulse rounded-xl bg-slate-100 dark:bg-zinc-800/60" />
+            <div key={i} className="h-[124px] animate-pulse rounded-xl bg-slate-100 dark:bg-zinc-800/60" />
           ))}
         </div>
       ) : (
         <>
-          <div className="mb-8 grid grid-cols-2 gap-3 lg:grid-cols-4">
+          <div className="mb-8 grid grid-cols-2 gap-4 lg:grid-cols-4">
             <StatTile
               label="New since yesterday"
               value={briefing.newSinceYesterday.length}
               sub="signals in the last 24h"
+              tone="ink"
               onClick={() => navigate("/feed?range=1")}
             />
             <StatTile
               label="High relevance"
               value={briefing.highRelevance.length}
               sub="rated 4–5 of 5"
-              accent
               onClick={() => navigate("/feed?relevance=high")}
             />
             <StatTile
               label="Account-matched"
               value={briefing.accountMatched.length}
               sub="named a tracked account"
+              tone="ink"
               onClick={() => navigate("/feed?matched=1")}
             />
             <StatTile
               label="Unreviewed"
               value={briefing.unreviewed.length}
               sub={`${briefing.total ? Math.round((briefing.unreviewed.length / briefing.total) * 100) : 0}% of the feed`}
+              tone="ink"
               onClick={() => navigate("/feed?reviewed=unreviewed")}
             />
           </div>
@@ -271,7 +261,7 @@ function Briefing({ signals, loading, onOpenSignal, onToggleReviewed }) {
           </SectionTitle>
           <PatchBreakdown patchCounts={briefing.patchCounts} />
 
-          <p className="mt-8 text-[11px] text-slate-400 dark:text-zinc-500">
+          <p className="mt-8 text-[11px] text-body-500 dark:text-zinc-500">
             {briefing.total} signals in the feed
             {briefing.anchor ? ` · latest ingested ${briefing.anchor.toLocaleString()}` : ""}
           </p>

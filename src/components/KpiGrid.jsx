@@ -30,12 +30,12 @@ function TrendBadge({ pct, delta, positiveIsGood = true, invert = false }) {
 // Two prominence tiers: "featured" tiles (the ones with a real weekly delta
 // worth reacting to) render their number much larger, with an accent color
 // that doubles as the severity read — rose for the highest-urgency tile,
-// indigo for the merely-important one. Static count tiles (no delta) stay
+// accent blue for the merely-important one. Static count tiles (no delta) stay
 // small and neutral so the hierarchy is unambiguous at a glance.
 const ACCENT_STYLES = {
-  indigo: {
-    border: "border-indigo-500/30 hover:border-indigo-500/50 dark:border-indigo-500/30 dark:hover:border-indigo-500/50",
-    value: "text-slate-900 dark:text-zinc-50",
+  brand: {
+    border: "border-brand-300 hover:border-brand-400 dark:border-brand-500/30 dark:hover:border-brand-500/50",
+    value: "text-brand-600 dark:text-brand-400",
   },
   rose: {
     border: REGULATORY_ACCENT.border,
@@ -43,26 +43,26 @@ const ACCENT_STYLES = {
   },
 }
 
-function KpiCard({ label, value, sub, children, featured = false, accent = "indigo", spark = null }) {
-  const accentStyles = ACCENT_STYLES[accent] ?? ACCENT_STYLES.indigo
+function KpiCard({ label, value, sub, children, featured = false, accent = "brand", spark = null }) {
+  const accentStyles = ACCENT_STYLES[accent] ?? ACCENT_STYLES.brand
 
   return (
     <div
-      className={`group flex flex-col rounded-lg border bg-white/60 p-4 backdrop-blur-sm transition-all duration-200 ease-spring hover:-translate-y-0.5 hover:shadow-md dark:bg-zinc-900/60 ${
+      className={`group flex flex-col rounded-xl border bg-white p-5 shadow-[0_1px_2px_rgba(9,23,43,0.04)] transition-all duration-200 ease-spring hover:-translate-y-0.5 hover:shadow-md dark:bg-zinc-900/60 dark:shadow-none ${
         featured
           ? accentStyles.border
           : "border-slate-200 hover:border-slate-300 dark:border-zinc-800 dark:hover:border-zinc-700"
       }`}
     >
-      <p className="text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-zinc-400">{label}</p>
+      <p className="text-[11px] font-semibold uppercase tracking-wider text-body-500 dark:text-zinc-400">{label}</p>
       <p
-        className={`mt-2 font-mono font-semibold tabular-nums ${
-          featured ? `text-5xl ${accentStyles.value}` : "text-2xl text-slate-900 dark:text-zinc-50"
+        className={`mt-2 font-bold leading-none tabular-nums ${
+          featured ? `text-5xl ${accentStyles.value}` : "text-4xl text-ink-900 dark:text-zinc-50"
         }`}
       >
         {value}
       </p>
-      <div className="mt-1.5">{sub ?? children}</div>
+      <div className="mt-2">{sub ?? children}</div>
       {spark && (
         <div className={`mt-auto pt-3 ${spark.className}`}>
           <Sparkline values={spark.values} height={24} />
@@ -78,20 +78,20 @@ function KpiGrid({ metrics }) {
   const riskSpark = metrics.dailyBuckets?.map((b) => b.risk) ?? []
 
   return (
-    <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-4">
+    <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
       <KpiCard
         label="Total Signals Tracked"
         value={metrics.totalSignals}
-        sub={<span className="text-xs text-slate-400 dark:text-zinc-500">last 30 days of activity</span>}
+        sub={<span className="text-xs text-body-500 dark:text-zinc-500">last 30 days of activity</span>}
       />
 
       <KpiCard
         featured
-        accent="indigo"
+        accent="brand"
         label="Signals This Week"
         value={metrics.thisWeekCount}
         sub={<TrendBadge pct={metrics.weekOverWeekPct} delta={metrics.weekOverWeekDelta} />}
-        spark={{ values: totalSpark, className: "text-indigo-500 dark:text-indigo-400" }}
+        spark={{ values: totalSpark, className: "text-brand-600 dark:text-brand-400" }}
       />
 
       <KpiCard
@@ -115,8 +115,9 @@ function KpiGrid({ metrics }) {
         label="Entities Tracked"
         value={metrics.entitiesTracked}
         sub={
-          <span className="text-xs font-medium text-slate-500 dark:text-zinc-400">
-            <span className="font-mono tabular-nums text-slate-700 dark:text-zinc-300">{metrics.entitiesThisWeek}</span> active this week
+          <span className="text-xs font-medium text-body-500 dark:text-zinc-400">
+            <span className="font-semibold tabular-nums text-body-600 dark:text-zinc-300">{metrics.entitiesThisWeek}</span>{" "}
+            active this week
           </span>
         }
       />

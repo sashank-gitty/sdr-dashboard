@@ -31,13 +31,13 @@ function AlertCard({ alert, signals, onUpdate, onDelete, onOpenSignal }) {
       <div className="flex flex-wrap items-start gap-3 p-4">
         <div className="min-w-0 flex-1">
           <div className="flex flex-wrap items-center gap-2">
-            <h3 className="text-[14px] font-semibold text-slate-900 dark:text-zinc-50">{alert.name}</h3>
-            <Pill tone={alert.frequency === "daily" ? "indigo" : "slate"}>
+            <h3 className="text-[14px] font-semibold text-ink-900 dark:text-zinc-50">{alert.name}</h3>
+            <Pill tone={alert.frequency === "daily" ? "brand" : "slate"}>
               {alert.frequency === "daily" ? "Daily" : "Weekly"}
             </Pill>
             {!alert.active && <Pill tone="slate">Paused</Pill>}
           </div>
-          <p className="mt-1 text-[12px] text-slate-500 dark:text-zinc-400">{facets.join(" · ") || "All signals"}</p>
+          <p className="mt-1 text-[12px] text-body-500 dark:text-zinc-400">{facets.join(" · ") || "All signals"}</p>
           <p className="mt-0.5 text-[11px] text-slate-400 dark:text-zinc-500">
             Created {formatDate(alert.createdAt)}
             {alert.emailCc ? ` · CC ${alert.emailCc}` : ""}
@@ -46,7 +46,7 @@ function AlertCard({ alert, signals, onUpdate, onDelete, onOpenSignal }) {
 
         <div className="flex items-center gap-3">
           <div className="text-right">
-            <p className="text-lg font-semibold tabular-nums text-slate-900 dark:text-zinc-50">{matches.length}</p>
+            <p className="text-lg font-semibold tabular-nums text-ink-900 dark:text-zinc-50">{matches.length}</p>
             <p className="text-[11px] text-slate-400 dark:text-zinc-500">matches now</p>
           </div>
           <Toggle checked={alert.active} onChange={(value) => onUpdate(alert.id, { active: value })} />
@@ -78,7 +78,7 @@ function AlertCard({ alert, signals, onUpdate, onDelete, onOpenSignal }) {
                     <Icon className="h-3 w-3" />
                     {signal.signalType}
                   </span>
-                  <span className="min-w-0 flex-1 truncate text-[13px] text-slate-700 dark:text-zinc-200">
+                  <span className="min-w-0 flex-1 truncate text-[13px] text-body-600 dark:text-zinc-200">
                     {signal.headline}
                   </span>
                   <span className="flex-shrink-0 text-[12px] tabular-nums text-slate-400 dark:text-zinc-500">

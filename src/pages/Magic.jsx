@@ -1,11 +1,25 @@
 import { useMemo } from "react"
 import { linkProps, navigate } from "../lib/router.js"
 import { deriveAccounts } from "../lib/accountModel.js"
-import { iconForSignal } from "../lib/signalGroups.js"
+import { iconForSignal, toneClassesForSignal } from "../lib/signalGroups.js"
 import { pillClassForSignalType } from "../lib/colors.js"
 import { HIGH_RELEVANCE_THRESHOLD } from "../lib/relevance.js"
 import { PATCH_LABELS } from "../../shared/patches.js"
-import { PageHeader, Card, Button, Pill, ScoreBadge, AccountAvatar, SectionTitle, EmptyState } from "../components/ui.jsx"
+import {
+  PageHeader,
+  Card,
+  Button,
+  Pill,
+  ScoreBadge,
+  AccountAvatar,
+  SectionTitle,
+  EmptyState,
+  Eyebrow,
+  GradientText,
+  IconBadge,
+  LiveDot,
+  StatTile,
+} from "../components/ui.jsx"
 import { SparklesIcon, ChartIcon, LightbulbIcon, PersonPlusIcon, ChevronRightIcon } from "../components/icons.jsx"
 
 const MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
@@ -28,33 +42,33 @@ function relativeHours(timestamp) {
 // The three-agent framing the reference product leads with, mapped onto
 // what this pipeline actually runs. Two of the three are real and
 // running; the third is not built, and says so rather than showing a
-// fake "active" light.
+// fake "active" light — a status pill is only worth having if it can
+// read false.
+const AGENT_TONES = {
+  live: { badge: "bg-emerald-100 text-emerald-700 dark:bg-emerald-500/15 dark:text-emerald-300" },
+  partial: { badge: "bg-amber-100 text-amber-700 dark:bg-amber-500/15 dark:text-amber-300", pill: "amber", label: "Partial" },
+  planned: { badge: "bg-slate-100 text-slate-500 dark:bg-zinc-800 dark:text-zinc-400", pill: "slate", label: "Not built" },
+}
+
 function AgentCard({ icon: Icon, name, role, status, detail, tone }) {
-  const tones = {
-    live: { pill: "emerald", label: "Running" },
-    partial: { pill: "amber", label: "Partial" },
-    planned: { pill: "slate", label: "Not built" },
-  }
-  const config = tones[tone]
+  const config = AGENT_TONES[tone] ?? AGENT_TONES.planned
 
   return (
     <Card className="p-5">
-      <div className="mb-3 flex items-center gap-2.5">
-        <span
-          className={`inline-flex h-9 w-9 items-center justify-center rounded-lg ${
-            tone === "planned" ? "bg-slate-100 text-slate-400 dark:bg-zinc-800 dark:text-zinc-500" : "bg-indigo-500/10 text-indigo-600 dark:text-indigo-400"
-          }`}
-        >
-          <Icon className="h-5 w-5" />
-        </span>
+      <div className="mb-3 flex items-center gap-3">
+        <IconBadge icon={Icon} tone={config.badge} />
         <div className="min-w-0 flex-1">
-          <h3 className="text-[14px] font-semibold text-slate-900 dark:text-zinc-50">{name}</h3>
-          <p className="text-[12px] text-slate-500 dark:text-zinc-400">{role}</p>
+          <h3 className="text-[14px] font-bold text-ink-900 dark:text-zinc-50">{name}</h3>
+          <p className="text-[12px] text-body-500 dark:text-zinc-400">{role}</p>
         </div>
-        <Pill tone={config.pill}>{config.label}</Pill>
+        {/* "Running" is the one state that earns a pulsing dot rather than
+            a static pill: it is a claim about right now. */}
+        {tone === "live" ? <LiveDot label="Running" title="This agent runs on the daily cron" /> : (
+          <Pill tone={config.pill}>{config.label}</Pill>
+        )}
       </div>
-      <p className="text-[12px] leading-relaxed text-slate-500 dark:text-zinc-400">{detail}</p>
-      {status && <p className="mt-2 text-[12px] font-medium text-slate-700 dark:text-zinc-300">{status}</p>}
+      <p className="text-[12.5px] leading-relaxed text-body-500 dark:text-zinc-400">{detail}</p>
+      {status && <p className="mt-2 text-[12.5px] font-semibold text-body-600 dark:text-zinc-300">{status}</p>}
     </Card>
   )
 }
@@ -79,25 +93,24 @@ function Magic({ signals, syncStatus, onOpenSignal, loading }) {
 
   return (
     <>
-      <PageHeader title="Magic" />
+      <PageHeader
+        eyebrow={<Eyebrow>What the pipeline did</Eyebrow>}
+        title={
+          <>
+            The <GradientText>Magic</GradientText>
+          </>
+        }
+        subtitle="Everything on this page is a claim about work that already ran — the agents below, the signals they scored, and the accounts that came out on top."
+      />
 
-      <div className="mb-6 grid grid-cols-2 gap-3 lg:grid-cols-4">
+      <div className="mb-8 grid grid-cols-2 gap-4 lg:grid-cols-4">
         {[
-          { label: "Signals this week", value: thisWeek.length },
-          { label: "Worth acting on", value: highThisWeek.length, accent: true },
-          { label: "Accounts in play", value: accounts.length },
-          { label: "Unreviewed", value: unreviewed },
+          { label: "Signals this week", value: thisWeek.length, tone: "ink" },
+          { label: "Worth acting on", value: highThisWeek.length, tone: "brand" },
+          { label: "Accounts in play", value: accounts.length, tone: "ink" },
+          { label: "Unreviewed", value: unreviewed, tone: "ink" },
         ].map((tile) => (
-          <Card key={tile.label} className="p-4">
-            <p className="text-[12px] text-slate-500 dark:text-zinc-400">{tile.label}</p>
-            <p
-              className={`mt-1 text-2xl font-semibold tabular-nums ${
-                tile.accent ? "text-indigo-600 dark:text-indigo-400" : "text-slate-900 dark:text-zinc-50"
-              }`}
-            >
-              {tile.value}
-            </p>
-          </Card>
+          <StatTile key={tile.label} label={tile.label} value={tile.value} tone={tile.tone} />
         ))}
       </div>
 
@@ -159,20 +172,21 @@ function Magic({ signals, syncStatus, onOpenSignal, loading }) {
               (s) => (s.outreachRelevance ?? 0) >= HIGH_RELEVANCE_THRESHOLD,
             )
             const Icon = lead ? iconForSignal(lead) : LightbulbIcon
+            const leadTone = lead ? toneClassesForSignal(lead) : null
             return (
-              <Card key={account.key} className="p-4 transition-colors hover:border-indigo-500/40">
+              <Card key={account.key} className="p-4 transition-colors hover:border-brand-300 dark:hover:border-brand-500/40">
                 <div className="flex flex-wrap items-start gap-3">
                   <AccountAvatar name={account.name} />
                   <div className="min-w-0 flex-1">
                     <div className="flex flex-wrap items-center gap-2">
                       <a
                         {...linkProps(`/accounts/${encodeURIComponent(account.key)}`)}
-                        className="text-[14px] font-semibold text-slate-900 hover:text-indigo-600 dark:text-zinc-50 dark:hover:text-indigo-400"
+                        className="text-[14px] font-bold text-ink-900 hover:text-brand-600 dark:text-zinc-50 dark:hover:text-brand-400"
                       >
                         {account.name}
                       </a>
                       {account.status && (
-                        <Pill tone={account.status === "customer" ? "emerald" : "amber"}>
+                        <Pill tone={account.status === "customer" ? "emerald" : "brand"}>
                           {account.status === "customer" ? "Customer" : "Prospect"}
                         </Pill>
                       )}
@@ -190,20 +204,22 @@ function Magic({ signals, syncStatus, onOpenSignal, loading }) {
                       <button
                         type="button"
                         onClick={() => onOpenSignal(lead.id)}
-                        className="mt-2 flex w-full items-start gap-2 text-left"
+                        className="mt-2.5 flex w-full items-start gap-2.5 text-left"
                       >
-                        <span
-                          className={`mt-0.5 inline-flex flex-shrink-0 items-center gap-1 rounded-md px-1.5 py-0.5 text-[11px] font-medium ${pillClassForSignalType(lead.signalType)}`}
-                        >
-                          <Icon className="h-3 w-3" />
-                          {lead.signalType}
-                        </span>
+                        <IconBadge icon={Icon} tone={leadTone.badge} size="sm" className="mt-0.5" />
                         <span className="min-w-0 flex-1">
-                          <span className="block text-[13px] font-medium text-slate-800 dark:text-zinc-200">
+                          <span className="block text-[13px] font-semibold text-ink-900 dark:text-zinc-200">
                             {lead.headline}
                           </span>
-                          <span className="mt-0.5 block line-clamp-2 text-[12px] text-slate-500 dark:text-zinc-400">
+                          <span className="mt-0.5 block line-clamp-2 text-[12px] text-body-500 dark:text-zinc-400">
                             {lead.summary}
+                          </span>
+                          <span className="mt-1.5 inline-flex">
+                            <span
+                              className={`rounded-full px-2 py-0.5 text-[11px] font-semibold capitalize ${pillClassForSignalType(lead.signalType)}`}
+                            >
+                              {lead.signalType}
+                            </span>
                           </span>
                         </span>
                         <span className="flex-shrink-0 text-[12px] tabular-nums text-slate-400 dark:text-zinc-500">
@@ -218,7 +234,7 @@ function Magic({ signals, syncStatus, onOpenSignal, loading }) {
                     <a
                       {...linkProps(`/accounts/${encodeURIComponent(account.key)}`)}
                       aria-label={`Open ${account.name}`}
-                      className="inline-flex h-7 w-7 items-center justify-center rounded-md text-slate-400 transition-colors hover:bg-slate-100 hover:text-slate-900 dark:text-zinc-500 dark:hover:bg-zinc-800 dark:hover:text-zinc-100"
+                      className="inline-flex h-8 w-8 items-center justify-center rounded-full text-slate-400 transition-colors hover:bg-slate-100 hover:text-ink-900 dark:text-zinc-500 dark:hover:bg-zinc-800 dark:hover:text-zinc-100"
                     >
                       <ChevronRightIcon className="h-4 w-4" />
                     </a>

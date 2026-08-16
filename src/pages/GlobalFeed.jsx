@@ -1,7 +1,13 @@
 import { useMemo, useState } from "react"
 import { linkProps } from "../lib/router.js"
 import { deriveAccounts } from "../lib/accountModel.js"
-import { SIGNAL_GROUPS, countByGroup, filterByGroup, groupForSignal } from "../lib/signalGroups.js"
+import {
+  SIGNAL_GROUPS,
+  countByGroup,
+  filterByGroup,
+  groupForSignal,
+  toneClassesForGroup,
+} from "../lib/signalGroups.js"
 import { PATCH_LABELS, PATCHES, AE_NAMES } from "../../shared/patches.js"
 import { HIGH_RELEVANCE_THRESHOLD } from "../lib/relevance.js"
 import {
@@ -54,10 +60,10 @@ function QuickFilterChip({ active, onClick, children }) {
       type="button"
       onClick={onClick}
       aria-pressed={active}
-      className={`rounded-lg border px-3 py-1.5 text-[13px] font-medium transition-colors ${
+      className={`rounded-full border px-3.5 py-1.5 text-[13px] font-semibold transition-colors ${
         active
-          ? "border-indigo-500/40 bg-indigo-500/10 text-indigo-600 dark:text-indigo-400"
-          : "border-slate-200 text-slate-600 hover:border-slate-300 hover:text-slate-900 dark:border-zinc-700 dark:text-zinc-300 dark:hover:border-zinc-600 dark:hover:text-zinc-100"
+          ? "border-transparent bg-brand-100 text-brand-700 dark:bg-brand-500/15 dark:text-brand-300"
+          : "border-slate-200 text-body-600 hover:border-slate-300 hover:bg-slate-50 dark:border-zinc-700 dark:text-zinc-300 dark:hover:border-zinc-600 dark:hover:text-zinc-100"
       }`}
     >
       {children}
@@ -76,23 +82,23 @@ function AccountBlock({ account, signals, onOpenSignal, onToggleReviewed }) {
 
   return (
     <div className="border-b border-slate-200 last:border-b-0 dark:border-zinc-800">
-      <div className="flex items-start gap-3 bg-slate-50/70 px-4 py-2.5 dark:bg-zinc-900/40">
+      <div className="flex items-start gap-3 bg-section px-4 py-2.5 dark:bg-zinc-900/40">
         <AccountAvatar name={account.name} size="sm" />
         <div className="min-w-0 flex-1">
           <div className="flex flex-wrap items-center gap-x-2 gap-y-1">
             <a
               {...linkProps(`/accounts/${encodeURIComponent(account.key)}`)}
-              className="truncate text-[13.5px] font-semibold text-slate-900 hover:text-indigo-600 dark:text-zinc-50 dark:hover:text-indigo-400"
+              className="truncate text-[13.5px] font-bold text-ink-900 hover:text-brand-600 dark:text-zinc-50 dark:hover:text-brand-400"
             >
               {account.name}
             </a>
             {account.status && (
-              <Pill tone={account.status === "customer" ? "emerald" : "amber"}>
+              <Pill tone={account.status === "customer" ? "emerald" : "brand"}>
                 {account.status === "customer" ? "Customer" : "Prospect"}
               </Pill>
             )}
             {!account.managed && <Pill tone="slate">Unassigned</Pill>}
-            <span className="text-[11.5px] text-slate-400 dark:text-zinc-500">
+            <span className="text-[11.5px] text-body-500 dark:text-zinc-500">
               {[
                 account.patches.map((p) => PATCH_LABELS[p] ?? p).join(", "),
                 account.aes.join(", "),
@@ -130,7 +136,7 @@ function AccountBlock({ account, signals, onOpenSignal, onToggleReviewed }) {
         <button
           type="button"
           onClick={() => setExpanded((v) => !v)}
-          className="flex w-full items-center justify-center gap-1 px-4 py-2 text-[12px] font-medium text-slate-500 transition-colors hover:bg-slate-50 hover:text-slate-900 dark:text-zinc-400 dark:hover:bg-zinc-800/40 dark:hover:text-zinc-100"
+          className="flex w-full items-center justify-center gap-1 px-4 py-2 text-[12px] font-medium text-slate-500 transition-colors hover:bg-slate-50 hover:text-ink-900 dark:text-zinc-400 dark:hover:bg-zinc-800/40 dark:hover:text-zinc-100"
         >
           <ChevronDownIcon className={`h-3.5 w-3.5 transition-transform ${expanded ? "rotate-180" : ""}`} />
           {expanded ? "Show fewer" : `Show all ${signals.length} signals`}
@@ -198,7 +204,13 @@ function GlobalFeed({ signals, loading, onOpenSignal, onToggleReviewed }) {
   const tabs = useMemo(
     () => [
       { id: "all", label: "All", count: groupCounts.all },
-      ...SIGNAL_GROUPS.map((g) => ({ id: g.id, label: g.label, count: groupCounts[g.id] ?? 0 })),
+      ...SIGNAL_GROUPS.map((g) => ({
+        id: g.id,
+        label: g.label,
+        count: groupCounts[g.id] ?? 0,
+        Icon: g.Icon,
+        tone: toneClassesForGroup(g.id).badge,
+      })),
     ],
     [groupCounts],
   )

@@ -195,7 +195,7 @@ function App() {
     : null
 
   return (
-    <div className="min-h-screen bg-slate-50 dark:bg-zinc-950">
+    <div className="min-h-screen bg-page dark:bg-zinc-950">
       <TopNav
         page={route.page}
         onOpenPalette={() => setPaletteOpen(true)}
@@ -259,8 +259,8 @@ function App() {
 
         {route.page === "not-found" && (
           <div className="flex flex-col items-center justify-center py-24 text-center">
-            <p className="text-sm font-semibold text-slate-900 dark:text-zinc-100">Page not found</p>
-            <p className="mt-1 text-[13px] text-slate-500 dark:text-zinc-400">
+            <p className="text-sm font-semibold text-ink-900 dark:text-zinc-100">Page not found</p>
+            <p className="mt-1 text-[13px] text-body-500 dark:text-zinc-400">
               {window.location.pathname} doesn&rsquo;t match any route.
             </p>
             <Button variant="primary" className="mt-4" onClick={() => navigate("/feed")}>

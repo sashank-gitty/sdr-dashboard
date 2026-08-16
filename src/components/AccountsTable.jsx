@@ -65,7 +65,7 @@ function ColumnsMenu({ columns, visible, onToggle }) {
                 className={`flex items-center gap-2.5 rounded-lg px-2.5 py-1.5 text-[13px] ${
                   column.always
                     ? "cursor-not-allowed text-slate-400 dark:text-zinc-600"
-                    : "cursor-pointer text-slate-700 hover:bg-slate-100 dark:text-zinc-300 dark:hover:bg-zinc-800"
+                    : "cursor-pointer text-body-600 hover:bg-slate-100 dark:text-zinc-300 dark:hover:bg-zinc-800"
                 }`}
               >
                 <input
@@ -73,7 +73,7 @@ function ColumnsMenu({ columns, visible, onToggle }) {
                   checked={column.always || visible.includes(column.id)}
                   disabled={column.always}
                   onChange={() => onToggle(column.id)}
-                  className="h-3.5 w-3.5 accent-indigo-600"
+                  className="h-3.5 w-3.5 accent-brand-600"
                 />
                 {column.label}
               </label>
@@ -139,8 +139,8 @@ function AccountsTable({
         <button
           type="button"
           onClick={() => handleSort(id)}
-          className={`inline-flex items-center gap-1 transition-colors hover:text-slate-900 dark:hover:text-zinc-100 ${
-            sort.key === id ? "text-slate-900 dark:text-zinc-100" : ""
+          className={`inline-flex items-center gap-1 transition-colors hover:text-ink-900 dark:hover:text-zinc-100 ${
+            sort.key === id ? "text-ink-900 dark:text-zinc-100" : ""
           }`}
         >
           {label}
@@ -157,8 +157,8 @@ function AccountsTable({
   return (
     <Card className="overflow-hidden">
       <div className="flex items-center justify-between border-b border-slate-200 px-3 py-2 dark:border-zinc-800">
-        <p className="px-1 text-[12px] text-slate-500 dark:text-zinc-400">
-          <span className="font-semibold tabular-nums text-slate-900 dark:text-zinc-100">{accounts.length}</span>{" "}
+        <p className="px-1 text-[12px] text-body-500 dark:text-zinc-400">
+          <span className="font-bold tabular-nums text-ink-900 dark:text-zinc-100">{accounts.length}</span>{" "}
           {accounts.length === 1 ? "account" : "accounts"}
         </p>
         <div className="flex items-center gap-2">
@@ -178,7 +178,7 @@ function AccountsTable({
       ) : (
         <div className="overflow-x-auto">
           <table className="w-full min-w-[820px] text-[13px]">
-            <thead className="border-b border-slate-200 text-[11px] uppercase tracking-wider text-slate-500 dark:border-zinc-800 dark:text-zinc-400">
+            <thead className="border-b border-slate-200 bg-section text-[11px] uppercase tracking-wider text-slate-500 dark:border-zinc-800 dark:bg-zinc-900/40 dark:text-zinc-400">
               <tr>
                 <SortHeader id="name" label="Name" className="pl-4" />
                 {shows("type") && <SortHeader id="type" label="Type" />}
@@ -195,19 +195,19 @@ function AccountsTable({
             </thead>
             <tbody className="divide-y divide-slate-100 dark:divide-zinc-800/70">
               {pageRows.map((account) => (
-                <tr key={account.key} className="transition-colors hover:bg-slate-50 dark:hover:bg-zinc-800/40">
+                <tr key={account.key} className="transition-colors hover:bg-section dark:hover:bg-zinc-800/40">
                   <td className="py-2 pl-4 pr-3">
                     <a
                       {...linkProps(`/accounts/${encodeURIComponent(account.key)}`)}
                       className="flex items-center gap-2.5"
                     >
                       <AccountAvatar name={account.name} size="sm" />
-                      <span className="truncate font-medium text-slate-900 hover:text-indigo-600 dark:text-zinc-100 dark:hover:text-indigo-400">
+                      <span className="truncate font-semibold text-ink-900 hover:text-brand-600 dark:text-zinc-100 dark:hover:text-brand-400">
                         {account.name}
                       </span>
                       {isClaimed?.(account.key) && (
                         <span title="Manually claimed">
-                          <PinIcon filled className="h-3.5 w-3.5 flex-shrink-0 text-indigo-500" />
+                          <PinIcon filled className="h-3.5 w-3.5 flex-shrink-0 text-brand-600" />
                         </span>
                       )}
                     </a>
@@ -215,7 +215,7 @@ function AccountsTable({
                   {shows("type") && (
                     <td className="px-3 py-2">
                       {account.status ? (
-                        <Pill tone={account.status === "customer" ? "emerald" : "amber"}>
+                        <Pill tone={account.status === "customer" ? "emerald" : "brand"}>
                           {account.status === "customer" ? "Customer" : "Prospect"}
                         </Pill>
                       ) : (
@@ -224,12 +224,12 @@ function AccountsTable({
                     </td>
                   )}
                   {shows("owner") && (
-                    <td className="px-3 py-2 text-slate-600 dark:text-zinc-300">
+                    <td className="px-3 py-2.5 text-body-600 dark:text-zinc-300">
                       {account.aes.length ? account.aes.join(", ") : <span className="text-slate-400 dark:text-zinc-600">—</span>}
                     </td>
                   )}
                   {shows("patch") && (
-                    <td className="px-3 py-2 text-slate-600 dark:text-zinc-300">
+                    <td className="px-3 py-2.5 text-body-600 dark:text-zinc-300">
                       {account.patches.length ? (
                         account.patches.map((p) => PATCH_LABELS[p] ?? p).join(", ")
                       ) : (
@@ -238,10 +238,10 @@ function AccountsTable({
                     </td>
                   )}
                   {shows("signals") && (
-                    <td className="px-3 py-2 tabular-nums text-slate-600 dark:text-zinc-300">
+                    <td className="px-3 py-2.5 tabular-nums text-body-600 dark:text-zinc-300">
                       {account.signalCount}
                       {account.highRelevanceCount > 0 && (
-                        <span className="ml-1.5 text-[11px] font-medium text-indigo-600 dark:text-indigo-400">
+                        <span className="ml-1.5 text-[11px] font-semibold text-brand-600 dark:text-brand-400">
                           {account.highRelevanceCount} high
                         </span>
                       )}
@@ -256,17 +256,17 @@ function AccountsTable({
                     <ScoreBadge score={account.score} size="sm" />
                   </td>
                   {shows("lastSignal") && (
-                    <td className="px-3 py-2 whitespace-nowrap tabular-nums text-slate-500 dark:text-zinc-400">
+                    <td className="px-3 py-2 whitespace-nowrap tabular-nums text-body-500 dark:text-zinc-400">
                       {formatDate(account.lastSignalDate)}
                     </td>
                   )}
                   {shows("firstSeen") && (
-                    <td className="px-3 py-2 whitespace-nowrap tabular-nums text-slate-500 dark:text-zinc-400">
+                    <td className="px-3 py-2 whitespace-nowrap tabular-nums text-body-500 dark:text-zinc-400">
                       {formatDate(account.firstSeen)}
                     </td>
                   )}
                   {showClaimedColumn && shows("claimed") && (
-                    <td className="px-3 py-2 whitespace-nowrap tabular-nums text-slate-500 dark:text-zinc-400">
+                    <td className="px-3 py-2 whitespace-nowrap tabular-nums text-body-500 dark:text-zinc-400">
                       {formatDateTime(claimedAt?.(account.key))}
                     </td>
                   )}
@@ -280,8 +280,8 @@ function AccountsTable({
                           aria-pressed={isClaimed?.(account.key)}
                           className={`transition-colors ${
                             isClaimed?.(account.key)
-                              ? "text-indigo-500 hover:text-indigo-600"
-                              : "text-slate-300 hover:text-slate-500 dark:text-zinc-600 dark:hover:text-zinc-400"
+                              ? "text-brand-600 hover:text-brand-700"
+                              : "text-slate-300 hover:text-body-600 dark:text-zinc-600 dark:hover:text-zinc-300"
                           }`}
                         >
                           <PinIcon filled={isClaimed?.(account.key)} className="h-4 w-4" />
@@ -295,8 +295,8 @@ function AccountsTable({
                           aria-pressed={starred?.includes(account.key)}
                           className={`transition-colors ${
                             starred?.includes(account.key)
-                              ? "text-amber-400 hover:text-amber-500"
-                              : "text-slate-300 hover:text-slate-500 dark:text-zinc-600 dark:hover:text-zinc-400"
+                              ? "text-amber-500 hover:text-amber-600"
+                              : "text-slate-300 hover:text-body-600 dark:text-zinc-600 dark:hover:text-zinc-300"
                           }`}
                         >
                           <StarIcon filled={starred?.includes(account.key)} className="h-4 w-4" />

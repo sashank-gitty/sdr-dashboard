@@ -48,12 +48,12 @@ function FilterDrawer({ open, onClose, ...sidebarProps }) {
         }`}
       >
         <div className="flex flex-shrink-0 items-center justify-between border-b border-slate-200 px-4 py-3 dark:border-zinc-800">
-          <p className="text-sm font-semibold text-slate-900 dark:text-zinc-50">Filters</p>
+          <p className="text-sm font-semibold text-ink-900 dark:text-zinc-50">Filters</p>
           <button
             type="button"
             onClick={onClose}
             aria-label="Close filters"
-            className="inline-flex h-8 w-8 items-center justify-center rounded-md border border-slate-200 text-slate-500 transition-colors hover:border-slate-300 hover:text-slate-900 dark:border-zinc-800 dark:text-zinc-400 dark:hover:border-zinc-700 dark:hover:text-zinc-100"
+            className="inline-flex h-8 w-8 items-center justify-center rounded-md border border-slate-200 text-slate-500 transition-colors hover:border-slate-300 hover:text-ink-900 dark:border-zinc-800 dark:text-zinc-400 dark:hover:border-zinc-700 dark:hover:text-zinc-100"
           >
             <XIcon className="h-4 w-4" />
           </button>

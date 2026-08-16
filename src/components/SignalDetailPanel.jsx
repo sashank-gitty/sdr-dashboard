@@ -1,7 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from "react"
 import {
   pillClassForScope,
-  pillClassForSignalType,
   pillClassForPracticeArea,
   PRACTICE_AREA_LABELS,
   PATCH_LABELS,
@@ -9,8 +8,8 @@ import {
 import { relevanceTierText } from "../lib/relevanceTiers.js"
 import { buildSignalReason, actionForReason, REASON_TONE_STYLES } from "../lib/signalReason.js"
 import { accountImpact, whoThisAffects, outreachAngles, scoreMeaning } from "../lib/signalInsights.js"
-import { iconForSignal, groupLabel, groupForSignal } from "../lib/signalGroups.js"
-import { AccountAvatar, Pill, Collapsible, NotIngested } from "./ui.jsx"
+import { iconForSignal, groupLabel, groupForSignal, toneClassesForSignal } from "../lib/signalGroups.js"
+import { AccountAvatar, Pill, IconBadge, Collapsible, NotIngested } from "./ui.jsx"
 import {
   XIcon,
   CopyIcon,
@@ -54,12 +53,29 @@ function markMatches(text, term, counter) {
       <mark
         key={i}
         data-find-index={index}
-        className="rounded-sm bg-indigo-500/25 px-0.5 font-medium text-indigo-800 dark:bg-indigo-500/35 dark:text-indigo-100"
+        className="rounded-sm bg-brand-500/25 px-0.5 font-medium text-brand-800 dark:bg-brand-500/35 dark:text-brand-100"
       >
         {part}
       </mark>
     )
   })
+}
+
+// The relevance figure as a graded pill, on the same green/amber/red
+// scale the account score badge uses — so "is this worth acting on"
+// reads identically whether you're looking at a signal or an account.
+function relevanceTone(score) {
+  if ((score ?? 0) >= 4) return "rose"
+  if ((score ?? 0) === 3) return "amber"
+  return "slate"
+}
+
+const RELEVANCE_LABELS = {
+  5: "Extremely relevant",
+  4: "Highly relevant",
+  3: "Moderately relevant",
+  2: "Low relevance",
+  1: "Background only",
 }
 
 function CopyButton({ value, label = "Copy" }) {
@@ -77,7 +93,7 @@ function CopyButton({ value, label = "Copy" }) {
           // Clipboard access can be denied by the browser; fail silently.
         }
       }}
-      className="inline-flex h-7 w-7 flex-shrink-0 items-center justify-center rounded-md text-slate-400 transition-colors hover:bg-slate-100 hover:text-slate-900 dark:text-zinc-500 dark:hover:bg-zinc-800 dark:hover:text-zinc-100"
+      className="inline-flex h-7 w-7 flex-shrink-0 items-center justify-center rounded-md text-slate-400 transition-colors hover:bg-slate-100 hover:text-ink-900 dark:text-zinc-500 dark:hover:bg-zinc-800 dark:hover:text-zinc-100"
     >
       {copied ? <span className="text-[10px] font-semibold text-emerald-600">✓</span> : <CopyIcon className="h-4 w-4" />}
     </button>
@@ -160,14 +176,10 @@ function SignalDetailPanel({ item, open, onClose, onToggleReviewed, relatedItems
   const reason = buildSignalReason(item)
   const reasonTone = REASON_TONE_STYLES[reason.tone] ?? REASON_TONE_STYLES.neutral
   const Icon = iconForSignal(item)
+  const groupTone = toneClassesForSignal(item)
   const account = (item.matchedAccounts ?? [])[0] ?? item.entity
 
-  const topics = [
-    ...(item.patches ?? []).map((p) => PATCH_LABELS[p] ?? p),
-    practiceAreaLabel,
-    item.scope,
-    groupLabel(groupForSignal(item)),
-  ]
+  const topics = [...(item.patches ?? []).map((p) => PATCH_LABELS[p] ?? p), practiceAreaLabel, item.scope]
 
   const fullText = `${item.headline}\n\n${item.summary}\n\n${item.sourceUrl}`
 
@@ -185,24 +197,25 @@ function SignalDetailPanel({ item, open, onClose, onToggleReviewed, relatedItems
           open ? "translate-x-0" : "translate-x-full"
         }`}
       >
-        {/* Header carries the account, not just the date: a signal opened
-            from the global feed needs to say which company it belongs to
-            without the reader scrolling back to the row they clicked. */}
-        <div className="flex flex-shrink-0 items-start gap-3 border-b border-slate-200 px-4 py-3 dark:border-zinc-800">
+        {/* The reference drawer opens on a photo with a dark gradient
+            wash over it. There is no image in this pipeline — RSS gives
+            headlines, not art — so the gradient carries the header on its
+            own rather than sitting over a stock photo standing in for
+            one. It still does the job the image did: mark where the
+            drawer begins and say whose signal this is. */}
+        <div className="bg-gradient-brand relative flex flex-shrink-0 items-center gap-3 px-4 py-3.5">
           <AccountAvatar name={account} size="sm" />
           <div className="min-w-0 flex-1">
-            <p className="truncate text-[13px] font-semibold text-slate-900 dark:text-zinc-50">{account}</p>
-            <time className="text-[12px] tabular-nums text-slate-400 dark:text-zinc-500">{formatDate(item.date)}</time>
+            <p className="truncate text-[13.5px] font-bold text-white">{account}</p>
+            <time className="text-[12px] tabular-nums text-white/70">{formatDate(item.date)}</time>
           </div>
           <button
             type="button"
             onClick={() => setFindOpen((v) => !v)}
             aria-label="Find in this signal"
             aria-pressed={findOpen}
-            className={`inline-flex h-8 w-8 items-center justify-center rounded-md transition-colors ${
-              findOpen
-                ? "bg-indigo-500/10 text-indigo-600 dark:text-indigo-400"
-                : "text-slate-400 hover:bg-slate-100 hover:text-slate-900 dark:text-zinc-500 dark:hover:bg-zinc-800 dark:hover:text-zinc-100"
+            className={`inline-flex h-8 w-8 items-center justify-center rounded-full transition-colors ${
+              findOpen ? "bg-white/25 text-white" : "text-white/70 hover:bg-white/15 hover:text-white"
             }`}
           >
             <SearchIcon className="h-4 w-4" />
@@ -211,41 +224,45 @@ function SignalDetailPanel({ item, open, onClose, onToggleReviewed, relatedItems
             type="button"
             onClick={onClose}
             aria-label="Close"
-            className="inline-flex h-8 w-8 items-center justify-center rounded-md text-slate-400 transition-colors hover:bg-slate-100 hover:text-slate-900 dark:text-zinc-500 dark:hover:bg-zinc-800 dark:hover:text-zinc-100"
+            className="inline-flex h-8 w-8 items-center justify-center rounded-full text-white/70 transition-colors hover:bg-white/15 hover:text-white"
           >
             <XIcon className="h-4 w-4" />
           </button>
         </div>
 
         <div ref={bodyRef} className="flex-1 overflow-y-auto px-5 py-4">
-          <h2 className="text-[17px] font-semibold leading-snug text-slate-900 dark:text-zinc-50">
-            {markMatches(item.headline, term, counter)}
-          </h2>
+          <div className="flex items-start gap-3">
+            <IconBadge icon={Icon} tone={groupTone.badge} className="mt-0.5" />
+            <h2 className="text-[17px] font-bold leading-snug text-ink-900 dark:text-zinc-50">
+              {markMatches(item.headline, term, counter)}
+            </h2>
+          </div>
 
           <p className={`mt-2 flex items-center gap-1.5 text-xs font-medium ${reasonTone.text}`}>
             <span className={`h-1.5 w-1.5 flex-shrink-0 rounded-full ${reasonTone.dot}`} aria-hidden="true" />
             {reason.label}
           </p>
-          <p className="mt-1.5 text-[13px] leading-relaxed text-slate-600 dark:text-zinc-300">
-            <span className="font-semibold text-slate-900 dark:text-zinc-100">Do this:</span> {actionForReason(reason, item)}
+          <p className="mt-1.5 text-[13px] leading-relaxed text-body-600 dark:text-zinc-300">
+            <span className="font-bold text-ink-900 dark:text-zinc-100">Do this:</span> {actionForReason(reason, item)}
           </p>
 
           {/* Metadata grid — label/value rows rather than a pill soup, so
               Type, Topics, Date and Source are each findable by position. */}
           <dl className="mt-4 space-y-2.5 border-y border-slate-200 py-4 dark:border-zinc-800">
             <div className="flex gap-4">
-              <dt className="w-16 flex-shrink-0 text-[12px] text-slate-500 dark:text-zinc-400">Type</dt>
-              <dd>
+              <dt className="w-20 flex-shrink-0 text-[12px] text-body-500 dark:text-zinc-400">Type</dt>
+              <dd className="flex flex-wrap gap-1">
                 <span
-                  className={`inline-flex items-center gap-1 rounded-md px-1.5 py-0.5 text-[11px] font-medium capitalize ${pillClassForSignalType(item.signalType)}`}
+                  className={`inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[11px] font-semibold capitalize ${groupTone.pill}`}
                 >
                   <Icon className="h-3 w-3" />
                   {item.signalType}
                 </span>
+                <Pill tone="slate">{groupLabel(groupForSignal(item))}</Pill>
               </dd>
             </div>
             <div className="flex gap-4">
-              <dt className="w-16 flex-shrink-0 text-[12px] text-slate-500 dark:text-zinc-400">Topics</dt>
+              <dt className="w-20 flex-shrink-0 text-[12px] text-body-500 dark:text-zinc-400">Topics</dt>
               <dd className="flex flex-wrap gap-1">
                 {topics.map((topic, i) => (
                   <Pill key={`${topic}-${i}`} tone="slate">
@@ -255,17 +272,25 @@ function SignalDetailPanel({ item, open, onClose, onToggleReviewed, relatedItems
               </dd>
             </div>
             <div className="flex gap-4">
-              <dt className="w-16 flex-shrink-0 text-[12px] text-slate-500 dark:text-zinc-400">Date</dt>
-              <dd className="text-[12px] tabular-nums text-slate-900 dark:text-zinc-100">{formatDate(item.date)}</dd>
+              <dt className="w-20 flex-shrink-0 text-[12px] text-body-500 dark:text-zinc-400">Relevance</dt>
+              <dd>
+                <Pill tone={relevanceTone(item.outreachRelevance)}>
+                  {item.outreachRelevance ? `${RELEVANCE_LABELS[item.outreachRelevance]} · ${item.outreachRelevance}/5` : "Unscored"}
+                </Pill>
+              </dd>
             </div>
             <div className="flex gap-4">
-              <dt className="w-16 flex-shrink-0 text-[12px] text-slate-500 dark:text-zinc-400">Source</dt>
+              <dt className="w-20 flex-shrink-0 text-[12px] text-body-500 dark:text-zinc-400">Date</dt>
+              <dd className="text-[12px] tabular-nums text-ink-900 dark:text-zinc-100">{formatDate(item.date)}</dd>
+            </div>
+            <div className="flex gap-4">
+              <dt className="w-20 flex-shrink-0 text-[12px] text-body-500 dark:text-zinc-400">Source</dt>
               <dd>
                 <a
                   href={item.sourceUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-flex items-center gap-1 text-[12px] text-indigo-600 hover:underline dark:text-indigo-400"
+                  className="inline-flex items-center gap-1 text-[12px] text-brand-600 hover:underline dark:text-brand-400"
                 >
                   {domainFromUrl(item.sourceUrl)}
                   <ExternalLinkIcon className="h-3 w-3" />
@@ -273,7 +298,7 @@ function SignalDetailPanel({ item, open, onClose, onToggleReviewed, relatedItems
               </dd>
             </div>
             <div className="flex gap-4">
-              <dt className="w-16 flex-shrink-0 text-[12px] text-slate-500 dark:text-zinc-400">Origin</dt>
+              <dt className="w-20 flex-shrink-0 text-[12px] text-body-500 dark:text-zinc-400">Origin</dt>
               <dd>
                 <span
                   title={
@@ -283,22 +308,22 @@ function SignalDetailPanel({ item, open, onClose, onToggleReviewed, relatedItems
                         ? "Loaded from the initial seed set, not a live ingest run"
                         : "Found by the standing daily news pipeline"
                   }
-                  className="rounded-md border border-slate-200 px-1.5 py-0.5 text-[11px] font-medium capitalize text-slate-600 dark:border-zinc-700 dark:text-zinc-300"
+                  className="rounded-full bg-slate-100 px-2 py-0.5 text-[11px] font-semibold capitalize text-slate-600 dark:bg-zinc-800 dark:text-zinc-300"
                 >
                   {item.origin ?? "news"}
                 </span>
               </dd>
             </div>
             <div className="flex gap-4">
-              <dt className="w-16 flex-shrink-0 text-[12px] text-slate-500 dark:text-zinc-400">Scope</dt>
+              <dt className="w-20 flex-shrink-0 text-[12px] text-body-500 dark:text-zinc-400">Scope</dt>
               <dd className="flex flex-wrap gap-1">
                 <span
-                  className={`rounded-md px-1.5 py-0.5 text-[11px] font-medium capitalize ${pillClassForScope(item.scope)}`}
+                  className={`rounded-full px-2 py-0.5 text-[11px] font-semibold capitalize ${pillClassForScope(item.scope)}`}
                 >
                   {item.scope}
                 </span>
                 <span
-                  className={`rounded-md px-1.5 py-0.5 text-[11px] font-medium ${pillClassForPracticeArea(item.practiceArea)}`}
+                  className={`rounded-full px-2 py-0.5 text-[11px] font-semibold ${pillClassForPracticeArea(item.practiceArea)}`}
                 >
                   {practiceAreaLabel}
                 </span>
@@ -307,7 +332,7 @@ function SignalDetailPanel({ item, open, onClose, onToggleReviewed, relatedItems
           </dl>
 
           <Collapsible title="Smart Summary" action={<CopyButton value={item.summary} label="Copy summary" />}>
-            <p className="text-[13px] leading-relaxed text-slate-600 dark:text-zinc-300">
+            <p className="text-[13px] leading-relaxed text-body-600 dark:text-zinc-300">
               {markMatches(item.summary, term, counter)}
             </p>
           </Collapsible>
@@ -323,14 +348,14 @@ function SignalDetailPanel({ item, open, onClose, onToggleReviewed, relatedItems
                 <p className="mb-1 text-[11px] font-semibold uppercase tracking-wider text-slate-400 dark:text-zinc-500">
                   For the account
                 </p>
-                <p className="text-[13px] leading-relaxed text-slate-700 dark:text-zinc-300">{accountImpact(item)}</p>
+                <p className="text-[13px] leading-relaxed text-body-600 dark:text-zinc-300">{accountImpact(item)}</p>
               </div>
               <div>
                 <p className="mb-1 flex items-center gap-1.5 text-[11px] font-semibold uppercase tracking-wider text-slate-400 dark:text-zinc-500">
                   <UsersIcon className="h-3.5 w-3.5" />
                   Who this affects
                 </p>
-                <p className="text-[13px] leading-relaxed text-slate-700 dark:text-zinc-300">{whoThisAffects(item)}</p>
+                <p className="text-[13px] leading-relaxed text-body-600 dark:text-zinc-300">{whoThisAffects(item)}</p>
               </div>
               <div>
                 <p className="mb-1.5 flex items-center gap-1.5 text-[11px] font-semibold uppercase tracking-wider text-slate-400 dark:text-zinc-500">
@@ -339,8 +364,8 @@ function SignalDetailPanel({ item, open, onClose, onToggleReviewed, relatedItems
                 </p>
                 <ul className="space-y-2.5">
                   {outreachAngles(item).map((a, i) => (
-                    <li key={i} className="text-[13px] leading-relaxed text-slate-700 dark:text-zinc-300">
-                      <span className="font-semibold text-slate-900 dark:text-zinc-100">{a.label}.</span> {a.angle}
+                    <li key={i} className="text-[13px] leading-relaxed text-body-600 dark:text-zinc-300">
+                      <span className="font-bold text-ink-900 dark:text-zinc-100">{a.label}.</span> {a.angle}
                     </li>
                   ))}
                 </ul>
@@ -351,10 +376,10 @@ function SignalDetailPanel({ item, open, onClose, onToggleReviewed, relatedItems
           {tierText && (
             <Collapsible title={`Why this scored ${item.outreachRelevance}`} defaultOpen={(item.outreachRelevance ?? 0) >= 4}>
               <div className="space-y-2.5">
-                <p className="text-[13px] leading-relaxed text-slate-700 dark:text-zinc-300">
+                <p className="text-[13px] leading-relaxed text-body-600 dark:text-zinc-300">
                   {scoreMeaning(item.outreachRelevance ?? null)}
                 </p>
-                <p className="text-[13px] leading-relaxed text-slate-500 dark:text-zinc-400">
+                <p className="text-[13px] leading-relaxed text-body-500 dark:text-zinc-400">
                   {markMatches(tierText, term, counter)}
                 </p>
               </div>
@@ -365,19 +390,19 @@ function SignalDetailPanel({ item, open, onClose, onToggleReviewed, relatedItems
             <Collapsible title="Territory" defaultOpen>
               <dl className="space-y-2 text-[13px]">
                 <div className="flex gap-3">
-                  <dt className="w-20 flex-shrink-0 text-slate-500 dark:text-zinc-400">Accounts</dt>
-                  <dd className="text-slate-900 dark:text-zinc-100">{item.matchedAccounts.join(", ")}</dd>
+                  <dt className="w-20 flex-shrink-0 text-body-500 dark:text-zinc-400">Accounts</dt>
+                  <dd className="text-ink-900 dark:text-zinc-100">{item.matchedAccounts.join(", ")}</dd>
                 </div>
                 {(item.owningAes ?? []).length > 0 && (
                   <div className="flex gap-3">
-                    <dt className="w-20 flex-shrink-0 text-slate-500 dark:text-zinc-400">Owner</dt>
-                    <dd className="text-slate-900 dark:text-zinc-100">{item.owningAes.join(", ")}</dd>
+                    <dt className="w-20 flex-shrink-0 text-body-500 dark:text-zinc-400">Owner</dt>
+                    <dd className="text-ink-900 dark:text-zinc-100">{item.owningAes.join(", ")}</dd>
                   </div>
                 )}
                 {item.accountStatus && (
                   <div className="flex gap-3">
-                    <dt className="w-20 flex-shrink-0 text-slate-500 dark:text-zinc-400">Status</dt>
-                    <dd className="capitalize text-slate-900 dark:text-zinc-100">{item.accountStatus}</dd>
+                    <dt className="w-20 flex-shrink-0 text-body-500 dark:text-zinc-400">Status</dt>
+                    <dd className="capitalize text-ink-900 dark:text-zinc-100">{item.accountStatus}</dd>
                   </div>
                 )}
               </dl>
@@ -392,7 +417,7 @@ function SignalDetailPanel({ item, open, onClose, onToggleReviewed, relatedItems
                     key={related.id}
                     type="button"
                     onClick={() => onSelectRelated(related.id)}
-                    className="flex items-start gap-2 rounded-md px-2 py-1.5 text-left text-[13px] text-slate-600 transition-colors hover:bg-slate-100 dark:text-zinc-400 dark:hover:bg-zinc-800/80"
+                    className="flex items-start gap-2 rounded-md px-2 py-1.5 text-left text-[13px] text-body-600 transition-colors hover:bg-slate-100 dark:text-zinc-400 dark:hover:bg-zinc-800/80"
                   >
                     <time className="flex-shrink-0 text-[11px] tabular-nums text-slate-400 dark:text-zinc-500">
                       {formatDate(related.date)}
@@ -438,9 +463,9 @@ function SignalDetailPanel({ item, open, onClose, onToggleReviewed, relatedItems
                 if (e.key === "Enter") step(e.shiftKey ? -1 : 1)
               }}
               placeholder="Find in this signal"
-              className="min-w-0 flex-1 bg-transparent text-[13px] text-slate-900 outline-none placeholder:text-slate-400 dark:text-zinc-100 dark:placeholder:text-zinc-500"
+              className="min-w-0 flex-1 bg-transparent text-[13px] text-ink-900 outline-none placeholder:text-slate-400 dark:text-zinc-100 dark:placeholder:text-zinc-500"
             />
-            <span className="flex-shrink-0 text-[12px] tabular-nums text-slate-500 dark:text-zinc-400">
+            <span className="flex-shrink-0 text-[12px] tabular-nums text-body-500 dark:text-zinc-400">
               {matchCount === 0 ? (term ? "0/0" : "") : `${activeMatch + 1}/${matchCount}`}
             </span>
             <button
@@ -477,10 +502,10 @@ function SignalDetailPanel({ item, open, onClose, onToggleReviewed, relatedItems
           <button
             type="button"
             onClick={() => onToggleReviewed(item.id)}
-            className={`rounded-lg border px-3 py-1.5 text-[13px] font-medium transition-colors ${
+            className={`rounded-full border px-4 py-2 text-[13px] font-semibold transition-colors ${
               item.reviewed
                 ? "border-emerald-500/30 text-emerald-600 dark:text-emerald-400"
-                : "border-slate-200 text-slate-600 hover:border-slate-300 hover:text-slate-900 dark:border-zinc-700 dark:text-zinc-300 dark:hover:border-zinc-600 dark:hover:text-zinc-100"
+                : "border-slate-200 text-slate-600 hover:border-slate-300 hover:text-ink-900 dark:border-zinc-700 dark:text-zinc-300 dark:hover:border-zinc-600 dark:hover:text-zinc-100"
             }`}
           >
             {item.reviewed ? "Reviewed" : "Mark Reviewed"}
@@ -489,7 +514,7 @@ function SignalDetailPanel({ item, open, onClose, onToggleReviewed, relatedItems
             href={item.sourceUrl}
             target="_blank"
             rel="noopener noreferrer"
-            className="ml-auto inline-flex items-center gap-1.5 rounded-lg bg-indigo-600 px-3 py-1.5 text-[13px] font-medium text-white transition-colors hover:bg-indigo-700"
+            className="ml-auto inline-flex items-center gap-1.5 rounded-full bg-navy-900 px-4 py-2 text-[13px] font-semibold text-white transition-colors hover:bg-navy-800 dark:bg-brand-600 dark:hover:bg-brand-500"
           >
             Open source
             <ExternalLinkIcon className="h-3.5 w-3.5" />

@@ -1,17 +1,53 @@
 import { useEffect, useRef, useState } from "react"
-import { ChevronDownIcon, ChevronLeftIcon, ChevronRightIcon, SearchIcon } from "./icons.jsx"
+import { priorityFor } from "../lib/accountModel.js"
+import {
+  ChevronDownIcon,
+  ChevronLeftIcon,
+  ChevronRightIcon,
+  ChevronUpIcon,
+  DashIcon,
+  SearchIcon,
+} from "./icons.jsx"
 
 // Shared presentational primitives. Everything here is stateless styling
 // or self-contained interaction — no data shape from this app leaks in,
 // so the same components serve the feed, the account table and search.
 
-export function PageHeader({ title, actions, children }) {
+// The small uppercase label that sits above a heading in a tinted pill.
+// Used sparingly — one per page section at most — as the thing that tells
+// you what kind of block you are looking at before you read the heading.
+export function Eyebrow({ tone = "brand", className = "", children }) {
+  const tones = {
+    brand: "bg-brand-100 text-navy-900 dark:bg-brand-500/15 dark:text-brand-200",
+    slate: "bg-slate-100 text-slate-600 dark:bg-zinc-800 dark:text-zinc-300",
+  }
+  return (
+    <span
+      className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-[11px] font-semibold uppercase tracking-wider ${
+        tones[tone] ?? tones.brand
+      } ${className}`}
+    >
+      {children}
+    </span>
+  )
+}
+
+// Navy-to-blue clipped to the glyphs. Deliberately a component rather than
+// a bare class, so the "one or two words, never a sentence" rule has an
+// obvious shape at every call site.
+export function GradientText({ children, className = "" }) {
+  return <span className={`text-gradient-brand ${className}`}>{children}</span>
+}
+
+export function PageHeader({ title, eyebrow, subtitle, actions, children }) {
   return (
     <div className="mb-6">
+      {eyebrow && <div className="mb-2.5">{eyebrow}</div>}
       <div className="flex flex-wrap items-center gap-3">
-        <h1 className="text-2xl font-semibold tracking-tight text-slate-900 dark:text-zinc-50">{title}</h1>
+        <h1 className="text-[28px] font-bold leading-tight tracking-tight text-ink-900 dark:text-zinc-50">{title}</h1>
         {actions && <div className="ml-auto flex items-center gap-2">{actions}</div>}
       </div>
+      {subtitle && <p className="mt-1.5 max-w-2xl text-sm leading-relaxed text-body-600 dark:text-zinc-400">{subtitle}</p>}
       {children && <div className="mt-4">{children}</div>}
     </div>
   )
@@ -20,7 +56,7 @@ export function PageHeader({ title, actions, children }) {
 export function Card({ className = "", children, ...props }) {
   return (
     <div
-      className={`rounded-xl border border-slate-200 bg-white dark:border-zinc-800 dark:bg-zinc-900/60 ${className}`}
+      className={`rounded-xl border border-slate-200/80 bg-white shadow-[0_1px_2px_rgba(9,23,43,0.04)] dark:border-zinc-800 dark:bg-zinc-900/60 dark:shadow-none ${className}`}
       {...props}
     >
       {children}
@@ -31,7 +67,7 @@ export function Card({ className = "", children, ...props }) {
 export function SectionTitle({ children, hint }) {
   return (
     <div className="mb-3 flex items-center gap-2">
-      <h2 className="text-lg font-semibold tracking-tight text-slate-900 dark:text-zinc-50">{children}</h2>
+      <h2 className="text-lg font-bold tracking-tight text-ink-900 dark:text-zinc-50">{children}</h2>
       {hint && (
         <span
           title={hint}
@@ -44,21 +80,28 @@ export function SectionTitle({ children, hint }) {
   )
 }
 
+// Fully rounded, the way every button and badge in the reference product
+// is. Primary is solid navy rather than the accent blue: the blue is
+// doing so much work elsewhere (links, stats, active states) that a blue
+// button would stop reading as the one thing to click.
 export function Button({ variant = "secondary", className = "", children, ...props }) {
   const variants = {
+    // Navy in light mode. On a near-black page navy has almost no
+    // contrast against the background, so dark mode promotes the accent
+    // blue into the primary slot instead.
     primary:
-      "bg-indigo-600 text-white border-indigo-600 hover:bg-indigo-700 hover:border-indigo-700 disabled:bg-slate-200 disabled:border-slate-200 disabled:text-slate-400 dark:disabled:bg-zinc-800 dark:disabled:border-zinc-800 dark:disabled:text-zinc-600",
+      "bg-navy-900 text-white border-navy-900 hover:bg-navy-800 hover:border-navy-800 dark:bg-brand-600 dark:border-brand-600 dark:hover:bg-brand-500 dark:hover:border-brand-500 disabled:bg-slate-200 disabled:border-slate-200 disabled:text-slate-400 dark:disabled:bg-zinc-800 dark:disabled:border-zinc-800 dark:disabled:text-zinc-600",
     secondary:
-      "bg-white text-slate-700 border-slate-200 hover:border-slate-300 hover:text-slate-900 dark:bg-zinc-900 dark:text-zinc-300 dark:border-zinc-700 dark:hover:border-zinc-600 dark:hover:text-zinc-100",
+      "bg-white text-ink-900 border-slate-200 hover:border-slate-300 hover:bg-slate-50 dark:bg-zinc-900 dark:text-zinc-200 dark:border-zinc-700 dark:hover:border-zinc-600 dark:hover:text-zinc-100",
     outline:
-      "bg-transparent text-indigo-600 border-indigo-500/40 hover:bg-indigo-500/5 hover:border-indigo-500/60 dark:text-indigo-400",
+      "bg-transparent text-brand-600 border-brand-500/40 hover:bg-brand-50 hover:border-brand-500/60 dark:text-brand-400 dark:hover:bg-brand-500/10",
     ghost:
-      "bg-transparent text-slate-500 border-transparent hover:bg-slate-100 hover:text-slate-900 dark:text-zinc-400 dark:hover:bg-zinc-800 dark:hover:text-zinc-100",
+      "bg-transparent text-body-600 border-transparent hover:bg-slate-100 hover:text-ink-900 dark:text-zinc-400 dark:hover:bg-zinc-800 dark:hover:text-zinc-100",
   }
   return (
     <button
       type="button"
-      className={`inline-flex items-center justify-center gap-1.5 rounded-lg border px-3 py-1.5 text-[13px] font-medium transition-colors disabled:cursor-not-allowed ${variants[variant]} ${className}`}
+      className={`inline-flex items-center justify-center gap-1.5 rounded-full border px-5 py-2.5 text-sm font-semibold leading-none transition-colors disabled:cursor-not-allowed ${variants[variant]} ${className}`}
       {...props}
     >
       {children}
@@ -66,46 +109,177 @@ export function Button({ variant = "secondary", className = "", children, ...pro
   )
 }
 
+// Every badge in the system is a fully-rounded, light-tint chip with dark
+// text — no borders, no outline-only variants. Consistency of shape is
+// what lets colour carry meaning: if pills differ in shape as well as
+// hue, the hue stops being the signal.
 export function Pill({ tone = "slate", className = "", children }) {
   const tones = {
-    slate: "bg-slate-500/10 text-slate-600 border-slate-500/20 dark:text-zinc-400 dark:border-zinc-600/40",
-    indigo: "bg-indigo-500/10 text-indigo-600 border-indigo-500/20 dark:text-indigo-400",
-    emerald: "bg-emerald-500/10 text-emerald-600 border-emerald-500/20 dark:text-emerald-400",
-    amber: "bg-amber-500/10 text-amber-600 border-amber-500/20 dark:text-amber-400",
-    rose: "bg-rose-500/10 text-rose-600 border-rose-500/20 dark:text-rose-400",
-    sky: "bg-sky-500/10 text-sky-600 border-sky-500/20 dark:text-sky-400",
-    violet: "bg-violet-500/10 text-violet-600 border-violet-500/20 dark:text-violet-400",
+    slate: "bg-slate-100 text-slate-600 dark:bg-zinc-800 dark:text-zinc-300",
+    brand: "bg-brand-100 text-brand-800 dark:bg-brand-500/15 dark:text-brand-300",
+    navy: "bg-navy-900 text-white dark:bg-navy-800",
+    emerald: "bg-emerald-100 text-emerald-700 dark:bg-emerald-500/15 dark:text-emerald-300",
+    amber: "bg-amber-100 text-amber-700 dark:bg-amber-500/15 dark:text-amber-300",
+    rose: "bg-rose-100 text-rose-700 dark:bg-rose-500/15 dark:text-rose-300",
+    sky: "bg-sky-100 text-sky-700 dark:bg-sky-500/15 dark:text-sky-300",
+    violet: "bg-violet-100 text-violet-700 dark:bg-violet-500/15 dark:text-violet-300",
   }
   return (
     <span
-      className={`inline-flex items-center gap-1 rounded-md border px-1.5 py-0.5 text-[11px] font-medium whitespace-nowrap ${tones[tone] ?? tones.slate} ${className}`}
+      className={`inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[11px] font-semibold whitespace-nowrap ${tones[tone] ?? tones.slate} ${className}`}
     >
       {children}
     </span>
   )
 }
 
-// The account score, rendered as the reference product does it: a filled
-// disc whose tint tracks the number, so a table can be scanned by color
-// before any digit is read.
-export function ScoreBadge({ score, size = "md" }) {
-  const tone =
-    score >= 80
-      ? "bg-indigo-600 text-white"
-      : score >= 55
-        ? "bg-indigo-500/20 text-indigo-700 dark:bg-indigo-500/25 dark:text-indigo-300"
-        : score >= 25
-          ? "bg-slate-200 text-slate-600 dark:bg-zinc-700 dark:text-zinc-300"
-          : "bg-slate-100 text-slate-400 dark:bg-zinc-800 dark:text-zinc-500"
+// The rounded-square icon container that fronts every category on every
+// surface — feed rows, account tabs, agent cards, brief subsections. A
+// ~32px tile, 8px radius, light tint of the category colour with the
+// darker shade of the same hue for the glyph. This is the single biggest
+// lever in the whole system: it turns a list of text rows into something
+// that reads as a designed product.
+export function IconBadge({ icon: Icon, tone = "bg-slate-100 text-slate-600", size = "md", className = "" }) {
   const sizes = {
-    sm: "h-6 w-6 text-[10px]",
-    md: "h-7 w-7 text-[11px]",
-    lg: "h-10 w-10 text-sm",
+    sm: "h-7 w-7 rounded-md",
+    md: "h-9 w-9 rounded-lg",
+    lg: "h-11 w-11 rounded-xl",
+  }
+  const glyphs = { sm: "h-3.5 w-3.5", md: "h-[18px] w-[18px]", lg: "h-5 w-5" }
+  return (
+    <span
+      aria-hidden="true"
+      className={`inline-flex flex-shrink-0 items-center justify-center ${sizes[size]} ${tone} ${className}`}
+    >
+      <Icon className={glyphs[size]} />
+    </span>
+  )
+}
+
+// "LIVE": green text next to a pulsing green dot. Reserved for something
+// that is genuinely running right now, not for anything merely enabled.
+export function LiveDot({ label = "Live", title }) {
+  return (
+    <span
+      title={title}
+      className="inline-flex items-center gap-1.5 text-[11px] font-semibold uppercase tracking-wider text-emerald-600 dark:text-emerald-400"
+    >
+      <span className="relative inline-flex h-2 w-2">
+        <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-500 opacity-70" />
+        <span className="relative inline-flex h-2 w-2 rounded-full bg-emerald-500" />
+      </span>
+      {label}
+    </span>
+  )
+}
+
+// The homepage-callout stat: a large bold accent-blue number with a
+// quiet caption under it. Optionally a button — a stat that filters the
+// view it is summarising is worth far more than a static one, and the
+// hover lift is the only affordance that says so.
+export function StatTile({ label, value, sub, tone = "brand", onClick, className = "" }) {
+  const valueTones = {
+    brand: "text-brand-600 dark:text-brand-400",
+    ink: "text-ink-900 dark:text-zinc-50",
+    rose: "text-rose-600 dark:text-rose-400",
+    emerald: "text-emerald-600 dark:text-emerald-400",
+  }
+  const Tag = onClick ? "button" : "div"
+  return (
+    <Tag
+      {...(onClick ? { type: "button", onClick } : {})}
+      className={`group flex flex-col rounded-xl border border-slate-200/80 bg-white p-5 text-left shadow-[0_1px_2px_rgba(9,23,43,0.04)] transition-all duration-200 ease-spring dark:border-zinc-800 dark:bg-zinc-900/60 dark:shadow-none ${
+        onClick ? "hover:-translate-y-0.5 hover:border-brand-300 hover:shadow-md dark:hover:border-brand-500/40" : ""
+      } ${className}`}
+    >
+      <p className="text-[11px] font-semibold uppercase tracking-wider text-body-500 dark:text-zinc-400">{label}</p>
+      <p className={`mt-2 text-4xl font-bold leading-none tabular-nums ${valueTones[tone] ?? valueTones.brand}`}>
+        {value}
+      </p>
+      {sub && (
+        <p className="mt-2 text-[12.5px] leading-snug text-body-500 dark:text-zinc-500">
+          {sub}
+          {onClick && (
+            <span className="ml-1 inline-block text-brand-600 opacity-0 transition-opacity group-hover:opacity-100 dark:text-brand-400">
+              &rarr;
+            </span>
+          )}
+        </p>
+      )}
+    </Tag>
+  )
+}
+
+// The account header banner: navy-to-blue at 135deg, a white rounded-square
+// tile carrying the company mark on the left, identity stacked beside it,
+// and a semi-transparent line of context on the right. Nothing in here is
+// clickable — it exists to make an account page feel like a record you
+// opened rather than a table you drilled into.
+export function GradientBanner({ tile, title, subtitle, aside, children }) {
+  return (
+    <div className="bg-gradient-brand relative overflow-hidden rounded-xl px-5 py-5 sm:px-6">
+      {/* A soft off-centre highlight so the gradient doesn't read as a
+          flat two-stop ramp across a wide banner. */}
+      <div
+        aria-hidden="true"
+        className="pointer-events-none absolute -right-16 -top-24 h-64 w-64 rounded-full bg-white/10 blur-2xl"
+      />
+      <div className="relative flex flex-wrap items-center gap-x-5 gap-y-4">
+        {tile && (
+          <span className="inline-flex h-14 w-14 flex-shrink-0 items-center justify-center rounded-xl bg-white text-xl font-bold text-navy-900 shadow-sm sm:h-16 sm:w-16 sm:text-2xl">
+            {tile}
+          </span>
+        )}
+        <div className="min-w-0 flex-1">
+          <h1 className="truncate text-2xl font-bold tracking-tight text-white sm:text-3xl">{title}</h1>
+          {subtitle && <p className="mt-1 truncate text-[13px] font-medium text-white/70">{subtitle}</p>}
+        </div>
+        {aside && <p className="max-w-xs text-[13px] leading-relaxed text-white/70">{aside}</p>}
+        {children}
+      </div>
+    </div>
+  )
+}
+
+// P1 up-chevron in green, P3 down-chevron in red, "No Priority" a plain
+// grey dash. The chevron is a real icon rather than a text arrow: at
+// 11px a glyph like "\u2303" renders at wildly different weights across
+// platforms, and the direction is the whole message.
+const PRIORITY_STYLES = {
+  p1: { tone: "emerald", Icon: ChevronUpIcon },
+  p2: { tone: "amber", Icon: ChevronUpIcon },
+  p3: { tone: "rose", Icon: ChevronDownIcon },
+  none: { tone: "slate", Icon: DashIcon },
+}
+
+// Same four bands as PRIORITY_STYLES above, as disc fills.
+const SCORE_TONES = {
+  p1: "bg-emerald-100 text-emerald-700 dark:bg-emerald-500/20 dark:text-emerald-300",
+  p2: "bg-amber-100 text-amber-700 dark:bg-amber-500/20 dark:text-amber-300",
+  p3: "bg-rose-100 text-rose-700 dark:bg-rose-500/20 dark:text-rose-300",
+  none: "bg-slate-100 text-slate-500 dark:bg-zinc-800 dark:text-zinc-400",
+}
+
+// The account score, rendered as the reference product does it: a filled
+// disc whose tint tracks the number, so a table can be scanned by colour
+// before any digit is read.
+//
+// The bands come from priorityFor() rather than from thresholds of their
+// own. A P1 account showing an amber score would be the system arguing
+// with itself in two colours; deriving both from the same function means
+// it cannot happen.
+export function ScoreBadge({ score, size = "md" }) {
+  const sizes = {
+    sm: "h-7 w-7 text-[11px]",
+    md: "h-8 w-8 text-[12px]",
+    lg: "h-11 w-11 text-[15px]",
   }
   return (
     <span
       title={`Account score ${score} / 100`}
-      className={`inline-flex flex-shrink-0 items-center justify-center rounded-full font-bold tabular-nums ${tone} ${sizes[size]}`}
+      className={`inline-flex flex-shrink-0 items-center justify-center rounded-full font-bold tabular-nums ${
+        SCORE_TONES[priorityFor(score).id] ?? SCORE_TONES.none
+      } ${sizes[size]}`}
     >
       {score}
     </span>
@@ -113,11 +287,10 @@ export function ScoreBadge({ score, size = "md" }) {
 }
 
 export function PriorityPill({ priority }) {
-  const tones = { p1: "emerald", p2: "amber", p3: "rose", none: "slate" }
-  const arrows = { p1: "⌃", p2: "⌃", p3: "⌄", none: "" }
+  const style = PRIORITY_STYLES[priority.id] ?? PRIORITY_STYLES.none
   return (
-    <Pill tone={tones[priority.id]}>
-      {arrows[priority.id] && <span aria-hidden="true">{arrows[priority.id]}</span>}
+    <Pill tone={style.tone}>
+      <style.Icon className="h-3 w-3 flex-shrink-0" />
       {priority.label}
     </Pill>
   )
@@ -129,7 +302,7 @@ export function PriorityPill({ priority }) {
 // swatch, which is what makes a table scannable.
 export function AccountAvatar({ name, size = "md" }) {
   const hues = [
-    "bg-indigo-500",
+    "bg-brand-500",
     "bg-sky-500",
     "bg-emerald-500",
     "bg-amber-500",
@@ -153,11 +326,16 @@ export function AccountAvatar({ name, size = "md" }) {
     .join("")
     .toUpperCase()
 
-  const sizes = { sm: "h-6 w-6 text-[10px]", md: "h-8 w-8 text-[11px]", lg: "h-12 w-12 text-base" }
+  const sizes = {
+    sm: "h-7 w-7 rounded-md text-[10px]",
+    md: "h-9 w-9 rounded-lg text-[12px]",
+    lg: "h-12 w-12 rounded-xl text-base",
+    xl: "h-16 w-16 rounded-2xl text-2xl",
+  }
   return (
     <span
       aria-hidden="true"
-      className={`inline-flex flex-shrink-0 items-center justify-center rounded-lg font-bold text-white ${hue} ${sizes[size]}`}
+      className={`inline-flex flex-shrink-0 items-center justify-center font-bold text-white ${hue} ${sizes[size]}`}
     >
       {initials || "?"}
     </span>
@@ -179,18 +357,24 @@ export function TabStrip({ tabs, active, onChange, className = "" }) {
               type="button"
               onClick={() => onChange(tab.id)}
               aria-current={isActive ? "true" : undefined}
-              className={`relative inline-flex items-center gap-1.5 whitespace-nowrap px-3 py-2.5 text-[13px] font-medium transition-colors ${
+              className={`relative inline-flex items-center gap-2 whitespace-nowrap px-3 py-2.5 text-[13px] font-semibold transition-colors ${
                 isActive
-                  ? "text-indigo-600 dark:text-indigo-400"
-                  : "text-slate-500 hover:text-slate-900 dark:text-zinc-400 dark:hover:text-zinc-100"
+                  ? "text-brand-600 dark:text-brand-400"
+                  : "text-body-600 hover:text-ink-900 dark:text-zinc-400 dark:hover:text-zinc-100"
               }`}
             >
+              {/* A tab that names a category wears that category's badge,
+                  in the same tint it wears on every row underneath. The
+                  tint stays on when the tab is inactive — that is the
+                  point of it, so the colour can be learned by scanning
+                  the strip rather than by clicking through it. */}
+              {tab.Icon && <IconBadge icon={tab.Icon} tone={tab.tone ?? ""} size="sm" />}
               {tab.label}
               {tab.count !== undefined && (
                 <span
-                  className={`inline-flex h-4 min-w-4 items-center justify-center rounded px-1 text-[10px] font-semibold tabular-nums ${
+                  className={`inline-flex h-[18px] min-w-[18px] items-center justify-center rounded-full px-1.5 text-[10px] font-semibold tabular-nums ${
                     isActive
-                      ? "bg-indigo-500/15 text-indigo-600 dark:text-indigo-400"
+                      ? "bg-brand-100 text-brand-700 dark:bg-brand-500/15 dark:text-brand-300"
                       : "bg-slate-100 text-slate-500 dark:bg-zinc-800 dark:text-zinc-400"
                   }`}
                 >
@@ -198,7 +382,7 @@ export function TabStrip({ tabs, active, onChange, className = "" }) {
                 </span>
               )}
               {isActive && (
-                <span className="absolute inset-x-2 -bottom-px h-0.5 rounded-full bg-indigo-500" />
+                <span className="absolute inset-x-2 -bottom-px h-0.5 rounded-full bg-brand-500" />
               )}
             </button>
           )
@@ -222,10 +406,10 @@ export function SubNav({ tabs, active, onChange }) {
               key={tab.id}
               type="button"
               onClick={() => onChange(tab.id)}
-              className={`whitespace-nowrap rounded-lg px-3 py-1.5 text-[13px] font-medium transition-colors ${
+              className={`whitespace-nowrap rounded-full px-3.5 py-1.5 text-[13px] font-semibold transition-colors ${
                 isActive
-                  ? "text-indigo-600 dark:text-indigo-400"
-                  : "text-slate-500 hover:bg-slate-100 hover:text-slate-900 dark:text-zinc-400 dark:hover:bg-zinc-800/60 dark:hover:text-zinc-100"
+                  ? "bg-brand-100 text-brand-700 dark:bg-brand-500/15 dark:text-brand-300"
+                  : "text-body-600 hover:bg-slate-100 hover:text-ink-900 dark:text-zinc-400 dark:hover:bg-zinc-800/60 dark:hover:text-zinc-100"
               }`}
             >
               {tab.label}
@@ -247,13 +431,13 @@ export function FilterSelect({ label, value, options, onChange, className = "" }
         value={value ?? ""}
         onChange={(e) => onChange(e.target.value || null)}
         aria-label={label}
-        className={`w-full appearance-none rounded-lg border border-slate-200 bg-white py-2 pl-3 pr-8 text-[13px] outline-none transition-colors focus:border-indigo-400 focus:ring-2 focus:ring-indigo-500/20 dark:border-zinc-700 dark:bg-zinc-900 ${
-          value ? "text-slate-900 dark:text-zinc-100" : "text-slate-400 dark:text-zinc-500"
+        className={`w-full appearance-none rounded-lg border border-slate-200 bg-white py-2 pl-3 pr-8 text-[13px] outline-none transition-colors focus:border-brand-400 focus:ring-2 focus:ring-brand-500/20 dark:border-zinc-700 dark:bg-zinc-900 ${
+          value ? "text-ink-900 dark:text-zinc-100" : "text-slate-400 dark:text-zinc-500"
         }`}
       >
         <option value="">{label}</option>
         {options.map((option) => (
-          <option key={option.value} value={option.value} className="text-slate-900 dark:text-zinc-100">
+          <option key={option.value} value={option.value} className="text-ink-900 dark:text-zinc-100">
             {option.label}
             {option.count !== undefined ? ` (${option.count})` : ""}
           </option>
@@ -274,7 +458,7 @@ export function SearchInput({ value, onChange, placeholder = "Search...", classN
         value={value}
         onChange={(e) => onChange(e.target.value)}
         placeholder={placeholder}
-        className="w-full rounded-lg border border-slate-200 bg-white py-2 pl-9 pr-3 text-[13px] text-slate-900 outline-none transition-colors placeholder:text-slate-400 focus:border-indigo-400 focus:ring-2 focus:ring-indigo-500/20 dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-100 dark:placeholder:text-zinc-500"
+        className="w-full rounded-lg border border-slate-200 bg-white py-2 pl-9 pr-3 text-[13px] text-ink-900 outline-none transition-colors placeholder:text-slate-400 focus:border-brand-400 focus:ring-2 focus:ring-brand-500/20 dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-100 dark:placeholder:text-zinc-500"
       />
     </div>
   )
@@ -291,7 +475,7 @@ export function Toggle({ checked, onChange, label }) {
     >
       <span
         className={`relative inline-flex h-5 w-9 flex-shrink-0 items-center rounded-full transition-colors ${
-          checked ? "bg-indigo-600" : "bg-slate-300 dark:bg-zinc-700"
+          checked ? "bg-brand-600" : "bg-slate-300 dark:bg-zinc-700"
         }`}
       >
         <span
@@ -300,7 +484,7 @@ export function Toggle({ checked, onChange, label }) {
           }`}
         />
       </span>
-      {label && <span className="text-[13px] text-slate-700 dark:text-zinc-300">{label}</span>}
+      {label && <span className="text-[13px] text-body-600 dark:text-zinc-300">{label}</span>}
     </button>
   )
 }
@@ -311,7 +495,7 @@ export function Pagination({ page, pageSize, total, onPageChange, onPageSizeChan
   const lastPage = Math.max(0, Math.ceil(total / pageSize) - 1)
 
   return (
-    <div className="flex flex-wrap items-center justify-end gap-x-4 gap-y-2 px-4 py-3 text-[12px] text-slate-500 dark:text-zinc-400">
+    <div className="flex flex-wrap items-center justify-end gap-x-4 gap-y-2 px-4 py-3 text-[12px] text-body-500 dark:text-zinc-400">
       <label className="flex items-center gap-2">
         Rows per page:
         <select
@@ -358,7 +542,7 @@ function PagerButton({ onClick, disabled, label, children }) {
       onClick={onClick}
       disabled={disabled}
       aria-label={label}
-      className="inline-flex h-7 w-7 items-center justify-center rounded text-slate-500 transition-colors hover:bg-slate-100 hover:text-slate-900 disabled:pointer-events-none disabled:opacity-30 dark:text-zinc-400 dark:hover:bg-zinc-800 dark:hover:text-zinc-100"
+      className="inline-flex h-7 w-7 items-center justify-center rounded text-slate-500 transition-colors hover:bg-slate-100 hover:text-ink-900 disabled:pointer-events-none disabled:opacity-30 dark:text-zinc-400 dark:hover:bg-zinc-800 dark:hover:text-zinc-100"
     >
       {children}
     </button>
@@ -373,8 +557,8 @@ function PagerButton({ onClick, disabled, label, children }) {
 export function NotIngested({ title, sources, note }) {
   return (
     <Card className="p-6">
-      <p className="text-sm font-semibold text-slate-900 dark:text-zinc-100">{title}</p>
-      <p className="mt-1.5 max-w-xl text-[13px] leading-relaxed text-slate-500 dark:text-zinc-400">{note}</p>
+      <p className="text-sm font-bold text-ink-900 dark:text-zinc-100">{title}</p>
+      <p className="mt-1.5 max-w-xl text-[13px] leading-relaxed text-body-600 dark:text-zinc-400">{note}</p>
       <div className="mt-3 flex flex-wrap gap-1.5">
         {sources.map((source) => (
           <Pill key={source} tone="slate">
@@ -390,7 +574,7 @@ export function NotIngested({ title, sources, note }) {
 // quieter than body text and separated by a hairline.
 export function SectionNote({ children }) {
   return (
-    <p className="mt-3 border-t border-slate-200 pt-3 text-[12px] leading-relaxed text-slate-500 dark:border-zinc-800 dark:text-zinc-400">
+    <p className="mt-3 border-t border-slate-200 pt-3 text-[12px] leading-relaxed text-body-500 dark:border-zinc-800 dark:text-zinc-400">
       {children}
     </p>
   )
@@ -399,8 +583,8 @@ export function SectionNote({ children }) {
 export function EmptyState({ title, description, action }) {
   return (
     <div className="flex flex-col items-center justify-center px-6 py-16 text-center">
-      <p className="text-sm font-semibold text-slate-900 dark:text-zinc-100">{title}</p>
-      {description && <p className="mt-1 max-w-sm text-[13px] text-slate-500 dark:text-zinc-400">{description}</p>}
+      <p className="text-sm font-bold text-ink-900 dark:text-zinc-100">{title}</p>
+      {description && <p className="mt-1 max-w-sm text-[13px] leading-relaxed text-body-600 dark:text-zinc-400">{description}</p>}
       {action && <div className="mt-4">{action}</div>}
     </div>
   )
@@ -425,7 +609,7 @@ export function Highlight({ text, term }) {
     tokens.includes(part.toLowerCase()) ? (
       <mark
         key={index}
-        className="rounded-sm bg-indigo-500/20 px-0.5 font-medium text-indigo-700 dark:bg-indigo-500/30 dark:text-indigo-200"
+        className="rounded-sm bg-brand-500/20 px-0.5 font-medium text-brand-700 dark:bg-brand-500/30 dark:text-brand-200"
       >
         {part}
       </mark>
@@ -467,7 +651,7 @@ export function Modal({ open, onClose, title, children, footer }) {
         aria-label={title}
         className="relative z-10 w-full max-w-md rounded-2xl border border-slate-200 bg-white p-6 shadow-xl dark:border-zinc-800 dark:bg-zinc-900"
       >
-        <h2 className="text-lg font-semibold tracking-tight text-slate-900 dark:text-zinc-50">{title}</h2>
+        <h2 className="text-lg font-bold tracking-tight text-ink-900 dark:text-zinc-50">{title}</h2>
         <div className="mt-4">{children}</div>
         {footer && <div className="mt-6 flex items-center gap-2">{footer}</div>}
       </div>
@@ -478,7 +662,7 @@ export function Modal({ open, onClose, title, children, footer }) {
 export function Field({ label, children }) {
   return (
     <label className="block">
-      <span className="mb-1.5 block text-[12px] font-medium text-slate-500 dark:text-zinc-400">{label}</span>
+      <span className="mb-1.5 block text-[12px] font-medium text-body-500 dark:text-zinc-400">{label}</span>
       {children}
     </label>
   )
@@ -488,7 +672,7 @@ export function TextInput({ className = "", ...props }) {
   return (
     <input
       type="text"
-      className={`w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-[13px] text-slate-900 outline-none transition-colors placeholder:text-slate-400 focus:border-indigo-400 focus:ring-2 focus:ring-indigo-500/20 dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-100 dark:placeholder:text-zinc-500 ${className}`}
+      className={`w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-[13px] text-ink-900 outline-none transition-colors placeholder:text-slate-400 focus:border-brand-400 focus:ring-2 focus:ring-brand-500/20 dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-100 dark:placeholder:text-zinc-500 ${className}`}
       {...props}
     />
   )
@@ -503,9 +687,9 @@ export function Radio({ name, value, checked, onChange, label }) {
         value={value}
         checked={checked}
         onChange={() => onChange(value)}
-        className="h-4 w-4 accent-indigo-600"
+        className="h-4 w-4 accent-brand-600"
       />
-      <span className="text-[13px] text-slate-700 dark:text-zinc-300">{label}</span>
+      <span className="text-[13px] text-body-600 dark:text-zinc-300">{label}</span>
     </label>
   )
 }
@@ -527,7 +711,7 @@ export function Collapsible({ title, defaultOpen = true, action, children }) {
               open ? "" : "-rotate-90"
             }`}
           />
-          <h3 className="text-[15px] font-semibold text-slate-900 dark:text-zinc-50">{title}</h3>
+          <h3 className="text-[15px] font-bold text-ink-900 dark:text-zinc-50">{title}</h3>
         </button>
         {action}
       </div>

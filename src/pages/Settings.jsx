@@ -7,8 +7,8 @@ function Row({ label, description, children }) {
   return (
     <div className="flex flex-wrap items-start gap-4 border-b border-slate-100 py-4 last:border-b-0 dark:border-zinc-800/70">
       <div className="min-w-0 flex-1">
-        <p className="text-[13px] font-medium text-slate-900 dark:text-zinc-100">{label}</p>
-        {description && <p className="mt-0.5 text-[12px] leading-relaxed text-slate-500 dark:text-zinc-400">{description}</p>}
+        <p className="text-[13px] font-medium text-ink-900 dark:text-zinc-100">{label}</p>
+        {description && <p className="mt-0.5 text-[12px] leading-relaxed text-body-500 dark:text-zinc-400">{description}</p>}
       </div>
       {children && <div className="flex-shrink-0">{children}</div>}
     </div>
@@ -80,8 +80,8 @@ function Settings({ theme, onToggleTheme, signals }) {
           <div className="space-y-3">
             {PATCHES.map((patch) => (
               <div key={patch} className="flex flex-wrap items-baseline gap-2">
-                <Pill tone="indigo">{PATCH_LABELS[patch]}</Pill>
-                <p className="min-w-0 flex-1 text-[12px] leading-relaxed text-slate-500 dark:text-zinc-400">
+                <Pill tone="brand">{PATCH_LABELS[patch]}</Pill>
+                <p className="min-w-0 flex-1 text-[12px] leading-relaxed text-body-500 dark:text-zinc-400">
                   {PATCH_DESCRIPTIONS[patch]}
                 </p>
               </div>
@@ -97,7 +97,7 @@ function Settings({ theme, onToggleTheme, signals }) {
                 key={ae.name}
                 className="inline-flex items-center gap-2 rounded-lg border border-slate-200 px-2.5 py-1.5 text-[13px] dark:border-zinc-700"
               >
-                <span className="font-medium text-slate-900 dark:text-zinc-100">{ae.name}</span>
+                <span className="font-medium text-ink-900 dark:text-zinc-100">{ae.name}</span>
                 <Pill tone="slate">{PATCH_LABELS[ae.primaryPatch]}</Pill>
               </span>
             ))}
@@ -111,11 +111,11 @@ function Settings({ theme, onToggleTheme, signals }) {
           <div className="space-y-2">
             {SIGNAL_GROUPS.map((group) => (
               <div key={group.id} className="flex flex-wrap items-baseline gap-2">
-                <span className="inline-flex items-center gap-1.5 text-[13px] font-medium text-slate-900 dark:text-zinc-100">
+                <span className="inline-flex items-center gap-1.5 text-[13px] font-medium text-ink-900 dark:text-zinc-100">
                   <group.Icon className="h-3.5 w-3.5 text-slate-400 dark:text-zinc-500" />
                   {group.label}
                 </span>
-                <span className="text-[12px] text-slate-500 dark:text-zinc-400">{group.types.join(", ")}</span>
+                <span className="text-[12px] text-body-500 dark:text-zinc-400">{group.types.join(", ")}</span>
               </div>
             ))}
           </div>

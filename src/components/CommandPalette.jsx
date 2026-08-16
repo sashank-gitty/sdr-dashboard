@@ -101,7 +101,7 @@ function CommandPalette({ open, onClose, items, onSelectItem, onClearFilters, on
           value={query}
           onChange={(e) => setQuery(e.target.value)}
           placeholder="Search signals or run a command..."
-          className="w-full border-b border-slate-200 bg-transparent px-4 py-3 text-sm text-slate-900 outline-none placeholder:text-slate-400 dark:border-zinc-800 dark:text-zinc-100 dark:placeholder:text-zinc-500"
+          className="w-full border-b border-slate-200 bg-transparent px-4 py-3 text-sm text-ink-900 outline-none placeholder:text-slate-400 dark:border-zinc-800 dark:text-zinc-100 dark:placeholder:text-zinc-500"
         />
 
         <div className="max-h-80 overflow-y-auto p-2">
@@ -119,8 +119,8 @@ function CommandPalette({ open, onClose, items, onSelectItem, onClearFilters, on
                     onClick={() => runEntry(entries[entryIndex])}
                     className={`flex w-full items-center gap-2 rounded-md px-2 py-2 text-left text-sm transition-colors ${
                       activeIndex === entryIndex
-                        ? "bg-indigo-500/10 text-slate-900 dark:text-zinc-100"
-                        : "text-slate-700 hover:bg-slate-100 dark:text-zinc-300 dark:hover:bg-zinc-800"
+                        ? "bg-brand-500/10 text-ink-900 dark:text-zinc-100"
+                        : "text-body-600 hover:bg-slate-100 dark:text-zinc-300 dark:hover:bg-zinc-800"
                     }`}
                   >
                     <span className={`rounded-sm px-1.5 py-0.5 text-[10px] font-semibold capitalize ${pillClassForScope(item.scope)}`}>
@@ -147,8 +147,8 @@ function CommandPalette({ open, onClose, items, onSelectItem, onClearFilters, on
                     onClick={() => runEntry(entries[entryIndex])}
                     className={`flex w-full items-center rounded-md px-2 py-2 text-left text-sm transition-colors ${
                       activeIndex === entryIndex
-                        ? "bg-indigo-500/10 text-slate-900 dark:text-zinc-100"
-                        : "text-slate-700 hover:bg-slate-100 dark:text-zinc-300 dark:hover:bg-zinc-800"
+                        ? "bg-brand-500/10 text-ink-900 dark:text-zinc-100"
+                        : "text-body-600 hover:bg-slate-100 dark:text-zinc-300 dark:hover:bg-zinc-800"
                     }`}
                   >
                     {action.label}

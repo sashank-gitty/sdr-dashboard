@@ -33,16 +33,16 @@ function Wordmark() {
   return (
     <a
       {...linkProps("/feed")}
-      className="flex flex-shrink-0 items-center gap-2 rounded-md outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/40"
+      className="flex flex-shrink-0 items-center gap-2 rounded-md outline-none focus-visible:ring-2 focus-visible:ring-brand-500/40"
     >
-      <span className="text-[17px] font-semibold tracking-tight text-slate-900 dark:text-zinc-50">
-        command<span className="text-indigo-600 dark:text-indigo-400">center</span>
+      <span className="text-[17px] font-bold tracking-tight text-ink-900 dark:text-zinc-50">
+        command<span className="text-brand-600 dark:text-brand-400">center</span>
       </span>
       {/* The toggle-pill glyph: two overlapping discs in a rounded track,
           echoing the "always-on agents" idea the nav sits above. */}
-      <span className="hidden h-5 w-9 items-center rounded-full bg-slate-900 px-0.5 sm:inline-flex dark:bg-zinc-100">
-        <span className="h-4 w-4 rounded-full bg-indigo-500" />
-        <span className="-ml-1.5 h-4 w-4 rounded-full bg-sky-400" />
+      <span className="hidden h-5 w-9 items-center rounded-full bg-navy-900 px-0.5 sm:inline-flex dark:bg-zinc-100">
+        <span className="h-4 w-4 rounded-full bg-brand-600" />
+        <span className="-ml-1.5 h-4 w-4 rounded-full bg-brand-300" />
       </span>
     </a>
   )
@@ -54,10 +54,10 @@ function NavLink({ item, active }) {
     <a
       {...linkProps(href)}
       aria-current={active ? "page" : undefined}
-      className={`inline-flex items-center gap-1.5 rounded-lg px-2.5 py-1.5 text-[13px] font-medium transition-colors ${
+      className={`inline-flex items-center gap-1.5 whitespace-nowrap rounded-full px-2.5 py-1.5 text-[13px] font-semibold transition-colors ${
         active
-          ? "bg-indigo-500/10 text-indigo-600 dark:bg-indigo-500/15 dark:text-indigo-400"
-          : "text-slate-600 hover:bg-slate-100 hover:text-slate-900 dark:text-zinc-400 dark:hover:bg-zinc-800/60 dark:hover:text-zinc-100"
+          ? "bg-brand-100 text-brand-700 dark:bg-brand-500/15 dark:text-brand-300"
+          : "text-body-600 hover:bg-slate-100 hover:text-ink-900 dark:text-zinc-400 dark:hover:bg-zinc-800/60 dark:hover:text-zinc-100"
       }`}
     >
       <Icon className="h-4 w-4" />
@@ -101,27 +101,27 @@ function TopNav({
           onClick={() => setMobileOpen((v) => !v)}
           aria-label={mobileOpen ? "Close menu" : "Open menu"}
           aria-expanded={mobileOpen}
-          className="inline-flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-md text-slate-500 transition-colors hover:bg-slate-100 hover:text-slate-900 md:hidden dark:text-zinc-400 dark:hover:bg-zinc-800 dark:hover:text-zinc-100"
+          className="inline-flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-md text-slate-500 transition-colors hover:bg-slate-100 hover:text-ink-900 md:hidden dark:text-zinc-400 dark:hover:bg-zinc-800 dark:hover:text-zinc-100"
         >
           {mobileOpen ? <XIcon className="h-5 w-5" /> : <MenuIcon className="h-5 w-5" />}
         </button>
 
         <Wordmark />
 
-        <nav aria-label="Primary" className="ml-4 hidden items-center gap-0.5 md:flex">
+        <nav aria-label="Primary" className="ml-3 hidden items-center gap-0.5 md:flex">
           {NAV_ITEMS.map((item) => (
             <NavLink key={item.page} item={item} active={page === item.page} />
           ))}
         </nav>
 
-        <div className="ml-auto flex items-center gap-1.5">
+        <div className="ml-auto flex flex-shrink-0 items-center gap-1.5">
           {/* Search is a button, not an input: the real search surface is
               the /search page and the ⌘K palette, and a second always-live
               input in the chrome would compete with both. */}
           <button
             type="button"
             onClick={onOpenPalette}
-            className="inline-flex items-center gap-2 rounded-lg border border-transparent px-2.5 py-1.5 text-[13px] font-medium text-slate-500 transition-colors hover:bg-slate-100 hover:text-slate-900 dark:text-zinc-400 dark:hover:bg-zinc-800/60 dark:hover:text-zinc-100"
+            className="inline-flex items-center gap-2 rounded-full border border-transparent px-3 py-1.5 text-[13px] font-semibold text-body-500 transition-colors hover:bg-slate-100 hover:text-ink-900 dark:text-zinc-400 dark:hover:bg-zinc-800/60 dark:hover:text-zinc-100"
           >
             <SearchIcon className="h-4 w-4" />
             <span className="hidden sm:inline">Search</span>
@@ -156,11 +156,11 @@ function TopNav({
           <ThemeToggle theme={theme} onToggle={onToggleTheme} />
 
           <div className="ml-1 flex items-center gap-2">
-            <div className="hidden text-right leading-tight lg:block">
-              <p className="text-[13px] font-semibold text-slate-900 dark:text-zinc-50">{user.name}</p>
-              <p className="text-[11px] text-slate-400 dark:text-zinc-500">{user.org}</p>
+            <div className="hidden whitespace-nowrap text-right leading-tight 2xl:block">
+              <p className="text-[13px] font-bold text-ink-900 dark:text-zinc-50">{user.name}</p>
+              <p className="text-[11px] text-body-500 dark:text-zinc-500">{user.org}</p>
             </div>
-            <div className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full bg-amber-400 text-[13px] font-bold text-white">
+            <div className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full bg-navy-900 text-[13px] font-bold text-white">
               {user.name
                 .split(" ")
                 .map((part) => part[0])
@@ -182,10 +182,10 @@ function TopNav({
                   key={itemPage}
                   {...linkProps(href)}
                   aria-current={active ? "page" : undefined}
-                  className={`inline-flex items-center gap-2.5 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors ${
+                  className={`inline-flex items-center gap-2.5 rounded-full px-3 py-2.5 text-sm font-semibold transition-colors ${
                     active
-                      ? "bg-indigo-500/10 text-indigo-600 dark:bg-indigo-500/15 dark:text-indigo-400"
-                      : "text-slate-600 hover:bg-slate-100 dark:text-zinc-400 dark:hover:bg-zinc-800/60"
+                      ? "bg-brand-100 text-brand-700 dark:bg-brand-500/15 dark:text-brand-300"
+                      : "text-body-600 hover:bg-slate-100 dark:text-zinc-400 dark:hover:bg-zinc-800/60"
                   }`}
                 >
                   <Icon className="h-4.5 w-4.5" />

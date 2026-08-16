@@ -3,7 +3,15 @@ import { linkProps, navigate } from "../lib/router.js"
 import { PATCH_LABELS } from "../../shared/patches.js"
 import { PRACTICE_AREA_LABELS, pillClassForSignalType } from "../lib/colors.js"
 import { HIGH_RELEVANCE_THRESHOLD } from "../lib/relevance.js"
-import { SIGNAL_GROUPS, countByGroup, filterByGroup, iconForSignal } from "../lib/signalGroups.js"
+import {
+  SIGNAL_GROUPS,
+  countByGroup,
+  filterByGroup,
+  groupForSignal,
+  iconForSignal,
+  toneClassesForGroup,
+  toneClassesForSignal,
+} from "../lib/signalGroups.js"
 import {
   bucketByRecency,
   keyInsights,
@@ -21,7 +29,8 @@ import {
   Pill,
   ScoreBadge,
   PriorityPill,
-  AccountAvatar,
+  GradientBanner,
+  IconBadge,
   SubNav,
   TabStrip,
   SectionTitle,
@@ -29,6 +38,7 @@ import {
   NotIngested,
 } from "../components/ui.jsx"
 import {
+  TrendUpIcon,
   RefreshIcon,
   ChevronLeftIcon,
   LightbulbIcon,
@@ -38,6 +48,8 @@ import {
   MapPinIcon,
   BuildingIcon,
   PinIcon,
+  ScaleIcon,
+  QuoteIcon,
 } from "../components/icons.jsx"
 
 const MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
@@ -47,6 +59,8 @@ function formatDate(dateString) {
   const [year, month, day] = dateString.split("-").map(Number)
   return `${String(day).padStart(2, "0")} ${MONTHS[month - 1]} ${year}`
 }
+
+const OPPORTUNITY_GROUPS = new Set(["earnings", "funding", "transformation"])
 
 const TABS = [
   { id: "facts", label: "Fast Facts" },
@@ -59,12 +73,51 @@ const TABS = [
   { id: "tech", label: "Tech" },
 ]
 
+// A monogram for the banner's white tile. Same derivation the avatar
+// component uses, minus the colour — on a navy gradient the tile is
+// always white with navy type.
+function initialsFor(name) {
+  return (
+    name
+      .replace(/[^a-zA-Z0-9 ]/g, "")
+      .split(/\s+/)
+      .filter(Boolean)
+      .map((word) => word[0])
+      .slice(0, 2)
+      .join("")
+      .toUpperCase() || "?"
+  )
+}
+
+// The subsection pattern the whole Summary tab is built from: a tinted
+// icon badge, a heading, and a list. Colour comes from the shared group
+// palette, so "amber = insight, green = opportunity, red = challenge"
+// holds here exactly as it does on a feed row.
+function BriefSection({ icon, tone, title, count, children, className = "" }) {
+  return (
+    <section className={className}>
+      <div className="mb-3 flex items-center gap-2.5">
+        <IconBadge icon={icon} tone={tone.badge} size="sm" />
+        <h3 className="text-[15px] font-bold text-ink-900 dark:text-zinc-50">{title}</h3>
+        {count !== undefined && count > 0 && (
+          <span className="text-[11px] font-semibold tabular-nums text-slate-400 dark:text-zinc-500">{count}</span>
+        )}
+      </div>
+      {children}
+    </section>
+  )
+}
+
+function EmptyLine({ children }) {
+  return <p className="text-[13px] leading-relaxed text-body-500 dark:text-zinc-400">{children}</p>
+}
+
 function InfoRow({ icon: Icon, label, value }) {
   return (
     <div className="flex items-start gap-2 py-1.5">
       {Icon && <Icon className="mt-0.5 h-4 w-4 flex-shrink-0 text-slate-400 dark:text-zinc-500" />}
-      <span className="text-[13px] text-slate-500 dark:text-zinc-400">{label}</span>
-      <span className="ml-auto text-right text-[13px] font-medium text-slate-900 dark:text-zinc-100">{value}</span>
+      <span className="text-[13px] text-body-500 dark:text-zinc-400">{label}</span>
+      <span className="ml-auto text-right text-[13px] font-semibold text-ink-900 dark:text-zinc-100">{value}</span>
     </div>
   )
 }
@@ -92,6 +145,23 @@ function AccountDetail({ account, onOpenSignal, loading, isClaimed, claimedAt, o
   const distribution = useMemo(() => (account ? groupDistribution(account.signals) : []), [account])
   const questions = useMemo(() => (account ? discoveryQuestionsFor(account.signals) : []), [account])
   const groupCounts = useMemo(() => (account ? countByGroup(account.signals) : {}), [account])
+
+  // "Opportunity" and "Challenge" are a presentational split of the same
+  // signals the rest of the page already shows, keyed off the group each
+  // one is filed under — the earnings/funding/transformation categories
+  // read as an opening, the regulatory one reads as pressure. Nothing is
+  // inferred here that the taxonomy didn't already assert.
+  const opportunities = useMemo(
+    () =>
+      (account?.signals ?? [])
+        .filter((signal) => OPPORTUNITY_GROUPS.has(groupForSignal(signal)))
+        .slice(0, 5),
+    [account],
+  )
+  const challenges = useMemo(
+    () => (account?.signals ?? []).filter((signal) => groupForSignal(signal) === "regulatory").slice(0, 5),
+    [account],
+  )
 
   if (loading) {
     return (
@@ -124,59 +194,70 @@ function AccountDetail({ account, onOpenSignal, loading, isClaimed, claimedAt, o
     <>
       <a
         {...linkProps("/accounts")}
-        className="mb-3 inline-flex items-center gap-1 text-[13px] font-medium text-slate-500 transition-colors hover:text-slate-900 dark:text-zinc-400 dark:hover:text-zinc-100"
+        className="mb-3 inline-flex items-center gap-1 text-[13px] font-medium text-slate-500 transition-colors hover:text-ink-900 dark:text-zinc-400 dark:hover:text-zinc-100"
       >
         <ChevronLeftIcon className="h-4 w-4" />
         Accounts
       </a>
 
-      {/* Account bar: identity on the left, sub-navigation in the middle,
-          the one write action on the right — the same three-part split
-          the reference product uses, so the tabs never move when you
-          switch accounts. */}
-      <div className="sticky top-14 z-20 -mx-4 mb-5 border-b border-slate-200 bg-white/90 px-4 py-3 backdrop-blur-md sm:-mx-6 sm:px-6 dark:border-zinc-800 dark:bg-zinc-950/90">
-        <div className="flex flex-wrap items-center gap-x-4 gap-y-3">
-          <div className="flex min-w-0 items-center gap-3">
-            <AccountAvatar name={account.name} size="lg" />
-            <div className="min-w-0">
-              <h1 className="truncate text-lg font-semibold tracking-tight text-slate-900 dark:text-zinc-50">
-                {account.name}
-              </h1>
-              <div className="mt-0.5 flex flex-wrap items-center gap-1.5">
-                {account.status ? (
-                  <Pill tone={account.status === "customer" ? "emerald" : "amber"}>
-                    {account.status === "customer" ? "Customer" : "Prospect"}
-                  </Pill>
-                ) : (
-                  <Pill tone="slate">Unassigned</Pill>
-                )}
-                <PriorityPill priority={account.priority} />
-                {isClaimed?.(account.key) && <Pill tone="indigo">Mine</Pill>}
-              </div>
-            </div>
-          </div>
-
-          <div className="order-last w-full lg:order-none lg:w-auto lg:flex-1">
-            <SubNav tabs={TABS} active={tab} onChange={setTab} />
-          </div>
-
-          <div className="ml-auto flex items-center gap-2">
-            <ScoreBadge score={account.score} size="lg" />
-            {onToggleClaim && (
-              <Button
-                variant={isClaimed?.(account.key) ? "primary" : "outline"}
-                onClick={() => onToggleClaim(account.key, account.name, !isClaimed?.(account.key))}
-              >
-                <PinIcon filled={isClaimed?.(account.key)} className="h-4 w-4" />
-                {isClaimed?.(account.key) ? "In My Accounts" : "Add to My Accounts"}
-              </Button>
-            )}
-            <Button variant="outline" onClick={() => window.location.reload()}>
-              <RefreshIcon className="h-4 w-4" />
-              Refresh
-            </Button>
-          </div>
+      {/* Gradient identity banner, then the pills, then the sticky tab
+          rail. Splitting the three means the banner can be as loud as it
+          likes (it only renders once, at the top) while the rail that
+          actually has to stay put while you scroll stays quiet and thin. */}
+      <GradientBanner
+        tile={initialsFor(account.name)}
+        title={account.name}
+        subtitle={
+          account.patches.length
+            ? account.patches.map((p) => PATCH_LABELS[p] ?? p).join(" · ")
+            : "No territory patch"
+        }
+        aside={
+          account.managed
+            ? `Covered by ${account.aes.length ? account.aes.join(", ") : "the territory book"} — ${account.signalCount} ${
+                account.signalCount === 1 ? "signal" : "signals"
+              } tracked, ${account.highRelevanceCount} high relevance.`
+            : `Not in the territory book. Derived from ${account.signalCount} ${
+                account.signalCount === 1 ? "signal" : "signals"
+              } that named this company.`
+        }
+      >
+        <div className="flex flex-shrink-0 flex-col items-center rounded-xl bg-white/15 px-4 py-2.5 text-white backdrop-blur-sm">
+          <span className="text-2xl font-bold leading-none tabular-nums">{account.score}</span>
+          <span className="mt-1 text-[10px] font-semibold uppercase tracking-wider text-white/70">Score</span>
         </div>
+      </GradientBanner>
+
+      <div className="mt-4 flex flex-wrap items-center gap-x-3 gap-y-2">
+        {account.status ? (
+          <Pill tone={account.status === "customer" ? "emerald" : "brand"}>
+            {account.status === "customer" ? "Customer" : "Prospect"}
+          </Pill>
+        ) : (
+          <Pill tone="slate">Unassigned</Pill>
+        )}
+        <PriorityPill priority={account.priority} />
+        {isClaimed?.(account.key) && <Pill tone="navy">Mine</Pill>}
+
+        <div className="ml-auto flex items-center gap-2">
+          {onToggleClaim && (
+            <Button
+              variant={isClaimed?.(account.key) ? "primary" : "outline"}
+              onClick={() => onToggleClaim(account.key, account.name, !isClaimed?.(account.key))}
+            >
+              <PinIcon filled={isClaimed?.(account.key)} className="h-4 w-4" />
+              {isClaimed?.(account.key) ? "In My Accounts" : "Add to My Accounts"}
+            </Button>
+          )}
+          <Button variant="secondary" onClick={() => window.location.reload()}>
+            <RefreshIcon className="h-4 w-4" />
+            Refresh
+          </Button>
+        </div>
+      </div>
+
+      <div className="sticky top-14 z-20 -mx-4 mb-5 mt-3 border-b border-slate-200 bg-page/90 px-4 py-2 backdrop-blur-md sm:-mx-6 sm:px-6 dark:border-zinc-800 dark:bg-zinc-950/90">
+        <SubNav tabs={TABS} active={tab} onChange={setTab} />
       </div>
 
       {tab === "facts" && (
@@ -193,21 +274,22 @@ function AccountDetail({ account, onOpenSignal, loading, isClaimed, claimedAt, o
                       {bucket.label}
                     </p>
                     <ul className="space-y-1">
-                      {bucket.signals.map((signal) => {
-                        const Icon = iconForSignal(signal)
-                        return (
-                          <li key={signal.id}>
-                            <button
-                              type="button"
-                              onClick={() => onOpenSignal(signal.id)}
-                              className={`flex w-full items-start gap-2 rounded-md px-2 py-1.5 text-left text-[12px] transition-colors ${pillClassForSignalType(signal.signalType)} hover:brightness-95`}
-                            >
-                              <Icon className="mt-0.5 h-3.5 w-3.5 flex-shrink-0" />
-                              <span className="min-w-0 flex-1 truncate">{signal.headline}</span>
-                            </button>
-                          </li>
-                        )
-                      })}
+                      {bucket.signals.map((signal) => (
+                        <li key={signal.id}>
+                          <button
+                            type="button"
+                            onClick={() => onOpenSignal(signal.id)}
+                            className="flex w-full items-center gap-2.5 rounded-lg px-2 py-1.5 text-left text-[12.5px] text-body-600 transition-colors hover:bg-slate-50 dark:text-zinc-300 dark:hover:bg-zinc-800/40"
+                          >
+                            <IconBadge
+                              icon={iconForSignal(signal)}
+                              tone={toneClassesForSignal(signal).badge}
+                              size="sm"
+                            />
+                            <span className="min-w-0 flex-1 truncate">{signal.headline}</span>
+                          </button>
+                        </li>
+                      ))}
                     </ul>
                   </div>
                 ))}
@@ -219,16 +301,16 @@ function AccountDetail({ account, onOpenSignal, loading, isClaimed, claimedAt, o
               <div className="space-y-2">
                 {distribution.map((entry) => (
                   <div key={entry.id} className="flex items-center gap-3">
-                    <span className="w-40 flex-shrink-0 truncate text-[12px] text-slate-600 dark:text-zinc-300">
+                    <span className="w-40 flex-shrink-0 truncate text-[12px] text-body-600 dark:text-zinc-300">
                       {entry.label}
                     </span>
                     <div className="h-2 flex-1 overflow-hidden rounded-full bg-slate-100 dark:bg-zinc-800">
                       <div
-                        className="h-full rounded-full bg-indigo-500"
+                        className={`h-full rounded-full ${toneClassesForGroup(entry.id).dot}`}
                         style={{ width: `${Math.max(4, entry.share * 100)}%` }}
                       />
                     </div>
-                    <span className="w-8 flex-shrink-0 text-right text-[12px] tabular-nums text-slate-500 dark:text-zinc-400">
+                    <span className="w-8 flex-shrink-0 text-right text-[12px] tabular-nums text-body-500 dark:text-zinc-400">
                       {entry.count}
                     </span>
                   </div>
@@ -271,24 +353,33 @@ function AccountDetail({ account, onOpenSignal, loading, isClaimed, claimedAt, o
             What You Need to Know
           </SectionTitle>
 
+          {/* Two columns: what the account is doing on the left (insight →
+              opportunity → challenge, the order a rep actually reasons in),
+              who and what is being said about it on the right. Both are
+              relayouts of signals already on the page — nothing here is
+              synthesized that wasn't before. */}
           <div className="grid grid-cols-1 gap-5 lg:grid-cols-2">
-            <Card className="p-5">
-              <h3 className="mb-3 text-[15px] font-semibold text-slate-900 dark:text-zinc-50">Key Insights</h3>
-              {insights.length === 0 ? (
-                <p className="text-[13px] text-slate-500 dark:text-zinc-400">No signals yet for this account.</p>
-              ) : (
-                <ul className="space-y-4">
-                  {insights.map((insight) => {
-                    const angle = outreachAngles(insight.signals[0])[0]
-                    return (
-                      <li key={insight.id} className="flex gap-2.5">
-                        <LightbulbIcon className="mt-0.5 h-4 w-4 flex-shrink-0 text-amber-500" />
-                        <div className="min-w-0">
-                          <p className="text-[13px] leading-relaxed text-slate-700 dark:text-zinc-300">
-                            <span className="font-semibold text-slate-900 dark:text-zinc-100">{insight.label}:</span>{" "}
+            <Card className="divide-y divide-slate-100 p-5 dark:divide-zinc-800">
+              <BriefSection
+                icon={LightbulbIcon}
+                tone={toneClassesForGroup("research")}
+                title="Key Insights"
+                count={insights.length}
+                className="pb-5"
+              >
+                {insights.length === 0 ? (
+                  <EmptyLine>No signals yet for this account.</EmptyLine>
+                ) : (
+                  <ul className="space-y-4">
+                    {insights.map((insight) => {
+                      const angle = outreachAngles(insight.signals[0])[0]
+                      return (
+                        <li key={insight.id} className="min-w-0">
+                          <p className="text-[13px] leading-relaxed text-body-600 dark:text-zinc-300">
+                            <span className="font-semibold text-ink-900 dark:text-zinc-100">{insight.label}:</span>{" "}
                             {insight.count} {insight.count === 1 ? "signal" : "signals"}
                             {insight.highCount > 0 && (
-                              <span className="font-medium text-indigo-600 dark:text-indigo-400">
+                              <span className="font-semibold text-brand-600 dark:text-brand-400">
                                 {" "}
                                 ({insight.highCount} high-relevance)
                               </span>
@@ -296,73 +387,142 @@ function AccountDetail({ account, onOpenSignal, loading, isClaimed, claimedAt, o
                             , most recent {formatDate(insight.newest)}. Lead: &ldquo;{insight.lead}&rdquo;
                             <Citations signals={insight.signals} indexOf={indexOf} onOpen={onOpenSignal} />
                           </p>
-                          <p className="mt-1.5 text-[12px] leading-relaxed text-slate-500 dark:text-zinc-400">
+                          <p className="mt-1.5 text-[12px] leading-relaxed text-body-500 dark:text-zinc-400">
                             {accountImpact(insight.signals[0])}
                           </p>
                           {angle && (
-                            <p className="mt-1.5 text-[12px] leading-relaxed text-slate-500 dark:text-zinc-400">
-                              <span className="font-medium text-slate-700 dark:text-zinc-300">Angle — {angle.label}:</span>{" "}
+                            <p className="mt-1.5 text-[12px] leading-relaxed text-body-500 dark:text-zinc-400">
+                              <span className="font-semibold text-body-600 dark:text-zinc-300">
+                                Angle &mdash; {angle.label}:
+                              </span>{" "}
                               {angle.angle}
                             </p>
                           )}
-                        </div>
-                      </li>
-                    )
-                  })}
-                </ul>
-              )}
-            </Card>
+                        </li>
+                      )
+                    })}
+                  </ul>
+                )}
+              </BriefSection>
 
-            <div className="space-y-5">
-              <Card className="p-5">
-                <h3 className="mb-3 text-[15px] font-semibold text-slate-900 dark:text-zinc-50">People Updates</h3>
-                {people.length === 0 ? (
-                  <p className="text-[13px] text-slate-500 dark:text-zinc-400">
-                    No leadership changes detected for this account.
-                  </p>
+              <BriefSection
+                icon={TrendUpIcon}
+                tone={toneClassesForGroup("earnings")}
+                title="Opportunities"
+                count={opportunities.length}
+                className="py-5"
+              >
+                {opportunities.length === 0 ? (
+                  <EmptyLine>
+                    Nothing in the earnings, funding or transformation categories yet &mdash; those are the signals that
+                    read as an opening.
+                  </EmptyLine>
                 ) : (
                   <ul className="space-y-2.5">
-                    {people.map((signal) => (
-                      <li key={signal.id} className="flex gap-2.5">
-                        <UsersIcon className="mt-0.5 h-4 w-4 flex-shrink-0 text-violet-500" />
-                        <p className="text-[13px] leading-relaxed text-slate-700 dark:text-zinc-300">
-                          {signal.headline}
-                          <Citations signals={[signal]} indexOf={indexOf} onOpen={onOpenSignal} />
-                        </p>
+                    {opportunities.map((signal) => (
+                      <li key={signal.id} className="text-[13px] leading-relaxed text-body-600 dark:text-zinc-300">
+                        {signal.headline}
+                        <Citations signals={[signal]} indexOf={indexOf} onOpen={onOpenSignal} />
                       </li>
                     ))}
                   </ul>
                 )}
-              </Card>
+              </BriefSection>
 
-              <Card className="p-5">
-                <h3 className="mb-3 text-[15px] font-semibold text-slate-900 dark:text-zinc-50">Top News</h3>
-                <ul className="space-y-2.5">
-                  {news.map((signal) => (
-                    <li key={signal.id} className="flex gap-2.5">
-                      <NewspaperIcon className="mt-0.5 h-4 w-4 flex-shrink-0 text-sky-500" />
-                      <p className="text-[13px] leading-relaxed text-slate-700 dark:text-zinc-300">
+              <BriefSection
+                icon={ScaleIcon}
+                tone={toneClassesForGroup("regulatory")}
+                title="Challenges"
+                count={challenges.length}
+                className="pt-5"
+              >
+                {challenges.length === 0 ? (
+                  <EmptyLine>No regulatory or pain-point signals against this account.</EmptyLine>
+                ) : (
+                  <ul className="space-y-2.5">
+                    {challenges.map((signal) => (
+                      <li key={signal.id} className="text-[13px] leading-relaxed text-body-600 dark:text-zinc-300">
+                        {signal.headline}
+                        <Citations signals={[signal]} indexOf={indexOf} onOpen={onOpenSignal} />
+                      </li>
+                    ))}
+                  </ul>
+                )}
+              </BriefSection>
+            </Card>
+
+            <Card className="divide-y divide-slate-100 p-5 dark:divide-zinc-800">
+              {/* The reference layout opens this column with an attributed
+                  executive quote. This pipeline ingests Google News RSS —
+                  headlines and summaries, no transcripts — so the panel says
+                  what it would need rather than putting invented words in a
+                  named executive's mouth. */}
+              <BriefSection
+                icon={QuoteIcon}
+                tone={toneClassesForGroup("transformation")}
+                title="Executive Perspective"
+                className="pb-5"
+              >
+                <EmptyLine>
+                  Attributed quotes need earnings-call transcripts or investor-relations feeds. Neither is wired into
+                  ingest, and writing a quote from a headline would put words in a named executive&rsquo;s mouth.
+                </EmptyLine>
+                <div className="mt-3 flex flex-wrap gap-1.5">
+                  {["Earnings call transcripts", "Investor relations feeds", "SEC / ASX filings"].map((source) => (
+                    <Pill key={source} tone="slate">
+                      {source}
+                    </Pill>
+                  ))}
+                </div>
+              </BriefSection>
+
+              <BriefSection
+                icon={UsersIcon}
+                tone={toneClassesForGroup("leadership")}
+                title="People Updates"
+                count={people.length}
+                className="py-5"
+              >
+                {people.length === 0 ? (
+                  <EmptyLine>No leadership changes detected for this account.</EmptyLine>
+                ) : (
+                  <ul className="space-y-2.5">
+                    {people.map((signal) => (
+                      <li key={signal.id} className="text-[13px] leading-relaxed text-body-600 dark:text-zinc-300">
+                        {signal.headline}
+                        <Citations signals={[signal]} indexOf={indexOf} onOpen={onOpenSignal} />
+                      </li>
+                    ))}
+                  </ul>
+                )}
+              </BriefSection>
+
+              <BriefSection
+                icon={NewspaperIcon}
+                tone={toneClassesForGroup("news")}
+                title="Top News"
+                count={news.length}
+                className="pt-5"
+              >
+                {news.length === 0 ? (
+                  <EmptyLine>Nothing in the news categories for this account yet.</EmptyLine>
+                ) : (
+                  <ul className="space-y-2.5">
+                    {news.map((signal) => (
+                      <li key={signal.id} className="text-[13px] leading-relaxed text-body-600 dark:text-zinc-300">
                         {signal.headline}
                         {(signal.outreachRelevance ?? 0) >= HIGH_RELEVANCE_THRESHOLD && (
                           <span className="ml-1.5 align-middle">
-                            <Pill tone="indigo">High</Pill>
+                            <Pill tone="brand">High</Pill>
                           </span>
                         )}
                         <Citations signals={[signal]} indexOf={indexOf} onOpen={onOpenSignal} />
-                      </p>
-                    </li>
-                  ))}
-                </ul>
-              </Card>
-            </div>
-          </div>
-
-          <div className="mt-5">
-            <NotIngested
-              title="Executive Perspective — not available from this pipeline"
-              note="The reference layout puts attributed executive quotes here, pulled from earnings-call transcripts. This pipeline ingests Google News RSS, which carries headlines and summaries but no transcripts, so there is nothing real to quote. Writing quotes from headlines would put words in named executives' mouths — so the panel stays empty until a transcript source is wired in."
-              sources={["Earnings call transcripts", "Investor relations feeds", "SEC / ASX filings"]}
-            />
+                      </li>
+                    ))}
+                  </ul>
+                )}
+              </BriefSection>
+            </Card>
           </div>
         </>
       )}
@@ -373,43 +533,48 @@ function AccountDetail({ account, onOpenSignal, loading, isClaimed, claimedAt, o
             <TabStrip
               tabs={[
                 { id: "all", label: "All", count: groupCounts.all },
-                ...SIGNAL_GROUPS.map((g) => ({ id: g.id, label: g.label, count: groupCounts[g.id] ?? 0 })),
+                ...SIGNAL_GROUPS.map((g) => ({
+        id: g.id,
+        label: g.label,
+        count: groupCounts[g.id] ?? 0,
+        Icon: g.Icon,
+        tone: toneClassesForGroup(g.id).badge,
+      })),
               ]}
               active={group}
               onChange={setGroup}
             />
           </div>
           <ul className="divide-y divide-slate-100 dark:divide-zinc-800/70">
-            {filterByGroup(account.signals, group).map((signal) => {
-              const Icon = iconForSignal(signal)
-              return (
-                <li key={signal.id}>
-                  <button
-                    type="button"
-                    onClick={() => onOpenSignal(signal.id)}
-                    className="flex w-full items-start gap-3 px-4 py-3 text-left transition-colors hover:bg-slate-50 dark:hover:bg-zinc-800/40"
-                  >
-                    <span
-                      className={`mt-0.5 inline-flex flex-shrink-0 items-center gap-1 rounded-md px-1.5 py-0.5 text-[11px] font-medium ${pillClassForSignalType(signal.signalType)}`}
-                    >
-                      <Icon className="h-3 w-3" />
-                      {signal.signalType}
+            {filterByGroup(account.signals, group).map((signal) => (
+              <li key={signal.id}>
+                <button
+                  type="button"
+                  onClick={() => onOpenSignal(signal.id)}
+                  className="flex w-full items-start gap-3 px-4 py-3 text-left transition-colors hover:bg-slate-50 dark:hover:bg-zinc-800/40"
+                >
+                  <IconBadge icon={iconForSignal(signal)} tone={toneClassesForSignal(signal).badge} />
+                  <span className="min-w-0 flex-1">
+                    <span className="block text-[13px] font-semibold text-ink-900 dark:text-zinc-100">
+                      {signal.headline}
                     </span>
-                    <span className="min-w-0 flex-1">
-                      <span className="block text-[13px] font-medium text-slate-900 dark:text-zinc-100">
-                        {signal.headline}
+                    <span className="mt-0.5 block line-clamp-2 text-[12px] text-body-500 dark:text-zinc-400">
+                      {signal.summary}
+                    </span>
+                    <span className="mt-1.5 inline-flex">
+                      <span
+                        className={`rounded-full px-2 py-0.5 text-[11px] font-semibold capitalize ${pillClassForSignalType(signal.signalType)}`}
+                      >
+                        {signal.signalType}
                       </span>
-                      <span className="mt-0.5 block line-clamp-2 text-[12px] text-slate-500 dark:text-zinc-400">
-                        {signal.summary}
-                      </span>
                     </span>
-                    <span className="flex-shrink-0 text-[12px] tabular-nums text-slate-400 dark:text-zinc-500">
-                      {formatDate(signal.date)}
-                    </span>
-                  </button>
-                </li>
-              )
-            })}
+                  </span>
+                  <span className="flex-shrink-0 text-[12px] tabular-nums text-slate-400 dark:text-zinc-500">
+                    {formatDate(signal.date)}
+                  </span>
+                </button>
+              </li>
+            ))}
           </ul>
         </Card>
       )}
@@ -420,19 +585,19 @@ function AccountDetail({ account, onOpenSignal, loading, isClaimed, claimedAt, o
             Value Pyramid
           </SectionTitle>
           {pyramid.length === 0 ? (
-            <p className="text-[13px] text-slate-500 dark:text-zinc-400">
+            <p className="text-[13px] text-body-500 dark:text-zinc-400">
               Not enough signal variety yet to build a value view for this account.
             </p>
           ) : (
             <div className="space-y-6">
               {pyramid.map((tier) => (
-                <section key={tier.id} className="border-l-2 border-indigo-500 pl-4">
-                  <h3 className="text-[15px] font-semibold text-indigo-600 dark:text-indigo-400">{tier.label}</h3>
-                  <p className="mt-0.5 text-[12px] text-slate-500 dark:text-zinc-400">{tier.blurb}</p>
+                <section key={tier.id} className="border-l-2 border-brand-500 pl-4">
+                  <h3 className="text-[15px] font-semibold text-brand-600 dark:text-brand-400">{tier.label}</h3>
+                  <p className="mt-0.5 text-[12px] text-body-500 dark:text-zinc-400">{tier.blurb}</p>
                   <ul className="mt-2.5 space-y-2">
                     {tier.items.map((item) => (
-                      <li key={item.groupId} className="text-[13px] leading-relaxed text-slate-700 dark:text-zinc-300">
-                        <span className="font-medium text-slate-900 dark:text-zinc-100">{item.label}</span> —{" "}
+                      <li key={item.groupId} className="text-[13px] leading-relaxed text-body-600 dark:text-zinc-300">
+                        <span className="font-medium text-ink-900 dark:text-zinc-100">{item.label}</span> —{" "}
                         {item.signals.length} {item.signals.length === 1 ? "signal" : "signals"}, led by &ldquo;
                         {item.signals[0].headline}&rdquo;
                         <Citations signals={item.signals} indexOf={indexOf} onOpen={onOpenSignal} />
@@ -472,13 +637,13 @@ function AccountDetail({ account, onOpenSignal, loading, isClaimed, claimedAt, o
                   {questions.map((q, i) => (
                     <tr key={i} className="align-top">
                       <td className="px-4 py-3">
-                        <span className="font-medium text-slate-900 dark:text-zinc-100">{q.persona}</span>
+                        <span className="font-medium text-ink-900 dark:text-zinc-100">{q.persona}</span>
                         <span className="mt-1 block">
                           <Pill tone="sky">{PRACTICE_AREA_LABELS[q.practiceArea] ?? q.practiceArea}</Pill>
                         </span>
                       </td>
-                      <td className="px-4 py-3 italic text-slate-700 dark:text-zinc-300">&ldquo;{q.question}&rdquo;</td>
-                      <td className="px-4 py-3 text-slate-500 dark:text-zinc-400">{q.uncovers}</td>
+                      <td className="px-4 py-3 italic text-body-600 dark:text-zinc-300">&ldquo;{q.question}&rdquo;</td>
+                      <td className="px-4 py-3 text-body-500 dark:text-zinc-400">{q.uncovers}</td>
                     </tr>
                   ))}
                 </tbody>
@@ -497,10 +662,10 @@ function AccountDetail({ account, onOpenSignal, loading, isClaimed, claimedAt, o
             <div className="mb-4 flex items-center gap-3">
               <ScoreBadge score={account.score} size="lg" />
               <div>
-                <p className="text-[13px] font-medium text-slate-900 dark:text-zinc-100">
+                <p className="text-[13px] font-medium text-ink-900 dark:text-zinc-100">
                   {account.score} / 100 &middot; {account.priority.label}
                 </p>
-                <p className="text-[12px] text-slate-500 dark:text-zinc-400">
+                <p className="text-[12px] text-body-500 dark:text-zinc-400">
                   Weighted: relevance 55%, recency 30%, volume 15%
                 </p>
               </div>
@@ -512,14 +677,14 @@ function AccountDetail({ account, onOpenSignal, loading, isClaimed, claimedAt, o
                 { label: "Sustained activity (volume)", value: account.scoreBreakdown.volume, weight: "15%" },
               ].map((row) => (
                 <div key={row.label} className="flex items-center gap-3">
-                  <span className="w-56 flex-shrink-0 text-[12px] text-slate-600 dark:text-zinc-300">{row.label}</span>
+                  <span className="w-56 flex-shrink-0 text-[12px] text-body-600 dark:text-zinc-300">{row.label}</span>
                   <div className="h-2 flex-1 overflow-hidden rounded-full bg-slate-100 dark:bg-zinc-800">
                     <div
-                      className="h-full rounded-full bg-indigo-500"
+                      className="h-full rounded-full bg-brand-500"
                       style={{ width: `${Math.max(2, row.value * 100)}%` }}
                     />
                   </div>
-                  <span className="w-16 flex-shrink-0 text-right text-[12px] tabular-nums text-slate-500 dark:text-zinc-400">
+                  <span className="w-16 flex-shrink-0 text-right text-[12px] tabular-nums text-body-500 dark:text-zinc-400">
                     {Math.round(row.value * 100)}% &times; {row.weight}
                   </span>
                 </div>
@@ -539,7 +704,7 @@ function AccountDetail({ account, onOpenSignal, loading, isClaimed, claimedAt, o
                     href={signal.sourceUrl}
                     target="_blank"
                     rel="noreferrer noopener"
-                    className="group inline-flex min-w-0 items-baseline gap-1 text-slate-700 hover:text-indigo-600 dark:text-zinc-300 dark:hover:text-indigo-400"
+                    className="group inline-flex min-w-0 items-baseline gap-1 text-slate-700 hover:text-brand-600 dark:text-zinc-300 dark:hover:text-brand-400"
                   >
                     <span className="truncate">{signal.headline}</span>
                     <ExternalLinkIcon className="h-3 w-3 flex-shrink-0 opacity-0 transition-opacity group-hover:opacity-100" />

@@ -27,51 +27,65 @@ import {
 // surface. Every canonical type in shared/signalTypes.js appears in
 // exactly one group; anything unrecognized falls through to "other" so a
 // new type from the normalizer is never silently invisible.
+//
+// Each group also owns exactly one colour, and that colour is used
+// everywhere the group appears — the icon badge on a feed row, the tab in
+// the account strip, the citation pill in a brief. One colour per group,
+// never per surface: the whole point of the icon-badge system is that a
+// reader learns "amber means research" once and it holds on every page.
 export const SIGNAL_GROUPS = [
   {
     id: "news",
+    tone: "sky",
     label: "News & Press",
     Icon: NewspaperIcon,
     types: ["market shift", "brand move", "product launch", "new entrant"],
   },
   {
     id: "leadership",
+    tone: "violet",
     label: "Leadership",
     Icon: PersonPlusIcon,
     types: ["leadership change"],
   },
   {
     id: "earnings",
+    tone: "emerald",
     label: "Earnings",
     Icon: ChartIcon,
     types: ["earnings"],
   },
   {
     id: "funding",
+    tone: "teal",
     label: "Funding & M&A",
     Icon: BriefcaseIcon,
     types: ["funding", "partnership"],
   },
   {
     id: "research",
+    tone: "amber",
     label: "Research & Reports",
     Icon: DocumentIcon,
     types: ["analyst report", "research shift"],
   },
   {
     id: "regulatory",
+    tone: "rose",
     label: "Regulatory",
     Icon: ScaleIcon,
     types: ["regulation", "pain point"],
   },
   {
     id: "transformation",
+    tone: "indigo",
     label: "Transformation",
     Icon: SparklesIcon,
     types: ["digital transformation", "restructure"],
   },
   {
     id: "community",
+    tone: "pink",
     label: "Community",
     Icon: MicIcon,
     // The one group keyed off origin rather than signal type: community
@@ -116,4 +130,80 @@ export function countByGroup(signals) {
 export function filterByGroup(signals, groupId) {
   if (!groupId || groupId === "all") return signals
   return signals.filter((s) => groupForSignal(s) === groupId)
+}
+
+// The one place a group's colour is spelled out. Every class is a full
+// literal string rather than built by concatenation, because Tailwind
+// scans source text and never sees a name assembled at runtime.
+//
+// `badge` is the rounded-square icon container (light tint, darker
+// glyph), `pill` the rounded-full label chip, `dot` a solid swatch for
+// legends and bars, `text` for a bare tinted glyph or number.
+export const GROUP_TONE_CLASSES = {
+  sky: {
+    badge: "bg-sky-100 text-sky-700 dark:bg-sky-500/15 dark:text-sky-300",
+    pill: "bg-sky-100 text-sky-700 dark:bg-sky-500/15 dark:text-sky-300",
+    dot: "bg-sky-500",
+    text: "text-sky-600 dark:text-sky-400",
+  },
+  violet: {
+    badge: "bg-violet-100 text-violet-700 dark:bg-violet-500/15 dark:text-violet-300",
+    pill: "bg-violet-100 text-violet-700 dark:bg-violet-500/15 dark:text-violet-300",
+    dot: "bg-violet-500",
+    text: "text-violet-600 dark:text-violet-400",
+  },
+  emerald: {
+    badge: "bg-emerald-100 text-emerald-700 dark:bg-emerald-500/15 dark:text-emerald-300",
+    pill: "bg-emerald-100 text-emerald-700 dark:bg-emerald-500/15 dark:text-emerald-300",
+    dot: "bg-emerald-500",
+    text: "text-emerald-600 dark:text-emerald-400",
+  },
+  teal: {
+    badge: "bg-teal-100 text-teal-700 dark:bg-teal-500/15 dark:text-teal-300",
+    pill: "bg-teal-100 text-teal-700 dark:bg-teal-500/15 dark:text-teal-300",
+    dot: "bg-teal-500",
+    text: "text-teal-600 dark:text-teal-400",
+  },
+  amber: {
+    badge: "bg-amber-100 text-amber-700 dark:bg-amber-500/15 dark:text-amber-300",
+    pill: "bg-amber-100 text-amber-700 dark:bg-amber-500/15 dark:text-amber-300",
+    dot: "bg-amber-500",
+    text: "text-amber-600 dark:text-amber-400",
+  },
+  rose: {
+    badge: "bg-rose-100 text-rose-700 dark:bg-rose-500/15 dark:text-rose-300",
+    pill: "bg-rose-100 text-rose-700 dark:bg-rose-500/15 dark:text-rose-300",
+    dot: "bg-rose-500",
+    text: "text-rose-600 dark:text-rose-400",
+  },
+  indigo: {
+    badge: "bg-indigo-100 text-indigo-700 dark:bg-indigo-500/15 dark:text-indigo-300",
+    pill: "bg-indigo-100 text-indigo-700 dark:bg-indigo-500/15 dark:text-indigo-300",
+    dot: "bg-indigo-500",
+    text: "text-indigo-600 dark:text-indigo-400",
+  },
+  pink: {
+    badge: "bg-pink-100 text-pink-700 dark:bg-pink-500/15 dark:text-pink-300",
+    pill: "bg-pink-100 text-pink-700 dark:bg-pink-500/15 dark:text-pink-300",
+    dot: "bg-pink-500",
+    text: "text-pink-600 dark:text-pink-400",
+  },
+  slate: {
+    badge: "bg-slate-100 text-slate-600 dark:bg-zinc-800 dark:text-zinc-400",
+    pill: "bg-slate-100 text-slate-600 dark:bg-zinc-800 dark:text-zinc-400",
+    dot: "bg-slate-400",
+    text: "text-slate-500 dark:text-zinc-400",
+  },
+}
+
+export function toneForGroup(groupId) {
+  return SIGNAL_GROUPS.find((g) => g.id === groupId)?.tone ?? "slate"
+}
+
+export function toneClassesForGroup(groupId) {
+  return GROUP_TONE_CLASSES[toneForGroup(groupId)] ?? GROUP_TONE_CLASSES.slate
+}
+
+export function toneClassesForSignal(signal) {
+  return toneClassesForGroup(groupForSignal(signal))
 }

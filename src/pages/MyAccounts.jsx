@@ -121,11 +121,11 @@ function MyAccounts({ accounts, claims, loading, isClaimed, onToggleClaim }) {
 
           {orphanedClaims.length > 0 && (
             <Card className="mt-4 p-4">
-              <p className="flex items-center gap-1.5 text-[13px] font-medium text-slate-700 dark:text-zinc-300">
+              <p className="flex items-center gap-1.5 text-[13px] font-medium text-body-600 dark:text-zinc-300">
                 <PinIcon className="h-4 w-4 text-slate-400 dark:text-zinc-500" />
                 {orphanedClaims.length} claimed {orphanedClaims.length === 1 ? "account has" : "accounts have"} no current signals
               </p>
-              <p className="mt-1 text-[12px] leading-relaxed text-slate-500 dark:text-zinc-400">
+              <p className="mt-1 text-[12px] leading-relaxed text-body-500 dark:text-zinc-400">
                 Still claimed, just nothing recent to show a row for: {orphanedClaims.map((c) => c.accountName).join(", ")}.
               </p>
             </Card>
