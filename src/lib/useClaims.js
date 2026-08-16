@@ -34,16 +34,23 @@ export function useClaims() {
 
   const isClaimed = (key) => claims.some((c) => c.accountKey === key)
   const claimedAt = (key) => claims.find((c) => c.accountKey === key)?.claimedAt ?? null
+  const noteFor = (key) => claims.find((c) => c.accountKey === key)?.note ?? null
 
-  const setClaim = (accountKey, accountName, claimed) => {
-    const optimisticRow = { accountKey, accountName, claimedAt: new Date().toISOString(), note: null }
+  // `note` is what makes this double as "add an account manually": the
+  // pin toggle on an existing row calls this with no note (undefined ->
+  // null), while the "+ Add Account" flow on My Accounts calls it with a
+  // company name that may have no live signals at all and a reason for
+  // tracking it — same claim mechanism either way, just with the note
+  // filled in.
+  const setClaim = (accountKey, accountName, claimed, note = null) => {
+    const optimisticRow = { accountKey, accountName, claimedAt: new Date().toISOString(), note }
 
     setClaims((prev) => (claimed ? [optimisticRow, ...prev.filter((c) => c.accountKey !== accountKey)] : prev.filter((c) => c.accountKey !== accountKey)))
 
     fetch("/api/claims", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ accountKey, accountName, claimed }),
+      body: JSON.stringify({ accountKey, accountName, claimed, note }),
     })
       .then((res) => {
         if (!res.ok) throw new Error(`Server responded ${res.status}`)
@@ -54,5 +61,5 @@ export function useClaims() {
       })
   }
 
-  return { claims, loading, isClaimed, claimedAt, setClaim }
+  return { claims, loading, isClaimed, claimedAt, noteFor, setClaim }
 }

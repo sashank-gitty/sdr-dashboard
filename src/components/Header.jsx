@@ -71,8 +71,7 @@ function Header({
             SC
           </div>
           <div className="leading-tight">
-            <p className="text-sm font-semibold text-ink-900 dark:text-zinc-50">SDR Command Center</p>
-            <p className="text-[11px] font-medium text-slate-400 dark:text-zinc-500">Qualtrics ANZ &middot; Signal Intelligence</p>
+            <p className="text-sm font-semibold text-ink-900 dark:text-zinc-50">Personal Dashboard</p>
           </div>
         </div>
 

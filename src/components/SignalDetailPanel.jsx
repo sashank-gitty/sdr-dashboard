@@ -8,6 +8,8 @@ import {
 import { relevanceTierText } from "../lib/relevanceTiers.js"
 import { buildSignalReason, actionForReason, REASON_TONE_STYLES } from "../lib/signalReason.js"
 import { accountImpact, whoThisAffects, outreachAngles, scoreMeaning } from "../lib/signalInsights.js"
+import { positioningRead, competitiveWatch, differentiationAngles } from "../lib/competitorInsights.js"
+import { isCompetitorEntity } from "../../shared/competitors.js"
 import { iconForSignal, groupLabel, groupForSignal, toneClassesForSignal } from "../lib/signalGroups.js"
 import { AccountAvatar, Pill, IconBadge, Collapsible, NotIngested } from "./ui.jsx"
 import {
@@ -20,6 +22,7 @@ import {
   SearchIcon,
   LightbulbIcon,
   UsersIcon,
+  TargetIcon,
 } from "./icons.jsx"
 
 const MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
@@ -178,6 +181,11 @@ function SignalDetailPanel({ item, open, onClose, onToggleReviewed, relatedItems
   const Icon = iconForSignal(item)
   const groupTone = toneClassesForSignal(item)
   const account = (item.matchedAccounts ?? [])[0] ?? item.entity
+  // A competitor is never a sales prospect, so this signal gets a
+  // different read entirely — see src/lib/competitorInsights.js. Checked
+  // here rather than baked into signalInsights.js so that module can stay
+  // entirely about accounts, and this one entirely about vendors.
+  const isCompetitor = isCompetitorEntity(item.entity)
 
   const topics = [...(item.patches ?? []).map((p) => PATCH_LABELS[p] ?? p), practiceAreaLabel, item.scope]
 
@@ -206,7 +214,15 @@ function SignalDetailPanel({ item, open, onClose, onToggleReviewed, relatedItems
         <div className="bg-gradient-brand relative flex flex-shrink-0 items-center gap-3 px-4 py-3.5">
           <AccountAvatar name={account} size="sm" />
           <div className="min-w-0 flex-1">
-            <p className="truncate text-[13.5px] font-bold text-white">{account}</p>
+            <p className="flex items-center gap-1.5 truncate text-[13.5px] font-bold text-white">
+              {account}
+              {isCompetitor && (
+                <span className="inline-flex flex-shrink-0 items-center gap-1 rounded-full bg-white/20 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-white">
+                  <TargetIcon className="h-2.5 w-2.5" />
+                  Competitor
+                </span>
+              )}
+            </p>
             <time className="text-[12px] tabular-nums text-white/70">{formatDate(item.date)}</time>
           </div>
           <button
@@ -337,41 +353,78 @@ function SignalDetailPanel({ item, open, onClose, onToggleReviewed, relatedItems
             </p>
           </Collapsible>
 
-          {/* The deeper read: what this class of signal usually means for
-              the account, who inside or around it actually feels it, and
+          {/* The deeper read. For an account signal: what this class of
+              trigger usually means for the account, who feels it, and
               several concrete openers rather than one generic action
-              line. Open by default — this is the depth the drawer was
-              missing, not an optional extra. */}
-          <Collapsible title="What This Means" defaultOpen>
-            <div className="space-y-4">
-              <div>
-                <p className="mb-1 text-[11px] font-semibold uppercase tracking-wider text-slate-400 dark:text-zinc-500">
-                  For the account
-                </p>
-                <p className="text-[13px] leading-relaxed text-body-600 dark:text-zinc-300">{accountImpact(item)}</p>
+              line. For a competitor signal, there is no account and no
+              outreach to open — see competitorInsights.js — so the same
+              slot instead answers "what does this change about how I
+              position" and "what should I watch next." Open by default
+              either way — this is the depth the drawer was missing, not
+              an optional extra. */}
+          {isCompetitor ? (
+            <Collapsible title="What This Means For Positioning" defaultOpen>
+              <div className="space-y-4">
+                <div>
+                  <p className="mb-1 text-[11px] font-semibold uppercase tracking-wider text-slate-400 dark:text-zinc-500">
+                    Why it matters
+                  </p>
+                  <p className="text-[13px] leading-relaxed text-body-600 dark:text-zinc-300">{positioningRead(item)}</p>
+                </div>
+                <div>
+                  <p className="mb-1 flex items-center gap-1.5 text-[11px] font-semibold uppercase tracking-wider text-slate-400 dark:text-zinc-500">
+                    <TargetIcon className="h-3.5 w-3.5" />
+                    What to watch next
+                  </p>
+                  <p className="text-[13px] leading-relaxed text-body-600 dark:text-zinc-300">{competitiveWatch(item)}</p>
+                </div>
+                <div>
+                  <p className="mb-1.5 flex items-center gap-1.5 text-[11px] font-semibold uppercase tracking-wider text-slate-400 dark:text-zinc-500">
+                    <LightbulbIcon className="h-3.5 w-3.5" />
+                    How this updates your positioning
+                  </p>
+                  <ul className="space-y-2.5">
+                    {differentiationAngles(item).map((a, i) => (
+                      <li key={i} className="text-[13px] leading-relaxed text-body-600 dark:text-zinc-300">
+                        <span className="font-bold text-ink-900 dark:text-zinc-100">{a.label}.</span> {a.angle}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
               </div>
-              <div>
-                <p className="mb-1 flex items-center gap-1.5 text-[11px] font-semibold uppercase tracking-wider text-slate-400 dark:text-zinc-500">
-                  <UsersIcon className="h-3.5 w-3.5" />
-                  Who this affects
-                </p>
-                <p className="text-[13px] leading-relaxed text-body-600 dark:text-zinc-300">{whoThisAffects(item)}</p>
+            </Collapsible>
+          ) : (
+            <Collapsible title="What This Means" defaultOpen>
+              <div className="space-y-4">
+                <div>
+                  <p className="mb-1 text-[11px] font-semibold uppercase tracking-wider text-slate-400 dark:text-zinc-500">
+                    For the account
+                  </p>
+                  <p className="text-[13px] leading-relaxed text-body-600 dark:text-zinc-300">{accountImpact(item)}</p>
+                </div>
+                <div>
+                  <p className="mb-1 flex items-center gap-1.5 text-[11px] font-semibold uppercase tracking-wider text-slate-400 dark:text-zinc-500">
+                    <UsersIcon className="h-3.5 w-3.5" />
+                    Who this affects
+                  </p>
+                  <p className="text-[13px] leading-relaxed text-body-600 dark:text-zinc-300">{whoThisAffects(item)}</p>
+                </div>
+                <div>
+                  <p className="mb-1.5 flex items-center gap-1.5 text-[11px] font-semibold uppercase tracking-wider text-slate-400 dark:text-zinc-500">
+                    <LightbulbIcon className="h-3.5 w-3.5" />
+                    Angles to approach with
+                  </p>
+                  <ul className="space-y-2.5">
+                    {outreachAngles(item).map((a, i) => (
+                      <li key={i} className="text-[13px] leading-relaxed text-body-600 dark:text-zinc-300">
+                        <span className="font-bold text-ink-900 dark:text-zinc-100">{a.label}.</span> {a.angle}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
               </div>
-              <div>
-                <p className="mb-1.5 flex items-center gap-1.5 text-[11px] font-semibold uppercase tracking-wider text-slate-400 dark:text-zinc-500">
-                  <LightbulbIcon className="h-3.5 w-3.5" />
-                  Angles to approach with
-                </p>
-                <ul className="space-y-2.5">
-                  {outreachAngles(item).map((a, i) => (
-                    <li key={i} className="text-[13px] leading-relaxed text-body-600 dark:text-zinc-300">
-                      <span className="font-bold text-ink-900 dark:text-zinc-100">{a.label}.</span> {a.angle}
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            </div>
-          </Collapsible>
+            </Collapsible>
+          )}
 
           {tierText && (
             <Collapsible title={`Why this scored ${item.outreachRelevance}`} defaultOpen={(item.outreachRelevance ?? 0) >= 4}>

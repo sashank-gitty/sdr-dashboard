@@ -1,5 +1,6 @@
 import { groupForSignal, groupLabel } from "./signalGroups.js"
 import { HIGH_RELEVANCE_THRESHOLD } from "./relevance.js"
+import { isVendorEntity } from "../../shared/competitors.js"
 
 // The account layer.
 //
@@ -57,10 +58,20 @@ export function accountKey(name) {
 // outright — it's the precision-first path and carries the owning AE. A
 // micro signal with no match still names a company worth tracking, so it
 // files under its entity. A macro signal files under nothing.
+//
+// A vendor/competitor entity (Sprinklr, Medallia, Qualtrics itself, ...)
+// never files under itself here, even on a micro signal, because it
+// isn't a sales prospect — nobody is cold-calling a competitor. Without
+// this, every piece of competitor news the ingest pipeline collects (see
+// shared/competitors.js) would otherwise show up as a normal account row
+// carrying "angles to approach," which makes no sense for a company
+// you're never going to sell into. Those signals still exist in the full
+// signal set; the Competitors page (src/pages/Competitors.jsx) is where
+// they're meant to be read, not here.
 function accountNamesFor(signal) {
   const matched = signal.matchedAccounts ?? []
   if (matched.length) return matched
-  if (signal.scope === "micro" && signal.entity) return [signal.entity]
+  if (signal.scope === "micro" && signal.entity && !isVendorEntity(signal.entity)) return [signal.entity]
   return []
 }
 

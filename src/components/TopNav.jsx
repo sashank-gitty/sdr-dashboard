@@ -1,9 +1,11 @@
 import { useEffect, useRef, useState } from "react"
 import { linkProps } from "../lib/router.js"
+import { ORG_NAME } from "../config.js"
 import ThemeToggle from "./ThemeToggle.jsx"
 import SyncStatus from "./SyncStatus.jsx"
 import {
-  SparklesIcon,
+  RadarIcon,
+  TargetIcon,
   SunriseIcon,
   FeedIcon,
   BriefcaseIcon,
@@ -20,8 +22,9 @@ import {
 
 const NAV_ITEMS = [
   { page: "briefing", href: "/briefing", label: "Briefing", Icon: SunriseIcon },
-  { page: "magic", href: "/magic", label: "Magic", Icon: SparklesIcon },
+  { page: "radar", href: "/radar", label: "Radar", Icon: RadarIcon },
   { page: "feed", href: "/feed", label: "Global Feed", Icon: FeedIcon },
+  { page: "competitors", href: "/competitors", label: "Competitors", Icon: TargetIcon },
   { page: "accounts", href: "/accounts", label: "Accounts", Icon: BriefcaseIcon },
   { page: "my-accounts", href: "/my-accounts", label: "My Accounts", Icon: PinIcon },
   { page: "territory", href: "/territory", label: "Territory", Icon: ScaleIcon },
@@ -29,20 +32,23 @@ const NAV_ITEMS = [
   { page: "settings", href: "/settings", label: "Settings", Icon: SlidersIcon },
 ]
 
+// The wordmark: an original radar-sweep mark (see icons.jsx) inside a
+// solid navy tile, next to "Personal Dashboard" split navy/brand the way
+// the rest of the app uses a two-tone treatment for a compound name. No
+// element here is borrowed from another product — the mark is a glyph
+// this app doesn't share with anything else, not a stylised wordplay on
+// a name.
 function Wordmark() {
   return (
     <a
       {...linkProps("/feed")}
       className="flex flex-shrink-0 items-center gap-2 rounded-md outline-none focus-visible:ring-2 focus-visible:ring-brand-500/40"
     >
-      <span className="text-[17px] font-bold tracking-tight text-ink-900 dark:text-zinc-50">
-        command<span className="text-brand-600 dark:text-brand-400">center</span>
+      <span className="inline-flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-lg bg-navy-900 text-white dark:bg-brand-600">
+        <RadarIcon className="h-[18px] w-[18px]" />
       </span>
-      {/* The toggle-pill glyph: two overlapping discs in a rounded track,
-          echoing the "always-on agents" idea the nav sits above. */}
-      <span className="hidden h-5 w-9 items-center rounded-full bg-navy-900 px-0.5 sm:inline-flex dark:bg-zinc-100">
-        <span className="h-4 w-4 rounded-full bg-brand-600" />
-        <span className="-ml-1.5 h-4 w-4 rounded-full bg-brand-300" />
+      <span className="hidden text-[15px] font-bold leading-none tracking-tight text-ink-900 sm:inline dark:text-zinc-50">
+        Personal <span className="text-brand-600 dark:text-brand-400">Dashboard</span>
       </span>
     </a>
   )
@@ -66,6 +72,15 @@ function NavLink({ item, active }) {
   )
 }
 
+// Initials for the org badge: two letters, either the first letter of the
+// first two words of a multi-word name ("Culture Amp" -> "CA") or the
+// first two letters of a single-word one ("Qualtrics" -> "QU").
+function orgInitials(name) {
+  const words = String(name ?? "").trim().split(/\s+/).filter(Boolean)
+  if (words.length >= 2) return (words[0][0] + words[1][0]).toUpperCase()
+  return (words[0] ?? "").slice(0, 2).toUpperCase()
+}
+
 function TopNav({
   page,
   onOpenPalette,
@@ -73,7 +88,7 @@ function TopNav({
   onToggleTheme,
   syncStatus,
   unreadCount = 0,
-  user = { name: "SDR Team", org: "Qualtrics ANZ" },
+  orgName = ORG_NAME,
 }) {
   const [mobileOpen, setMobileOpen] = useState(false)
   const mobileRef = useRef(null)
@@ -155,17 +170,16 @@ function TopNav({
 
           <ThemeToggle theme={theme} onToggle={onToggleTheme} />
 
+          {/* Just the company name — this app has no login system and
+              is single-user, so there's no "SDR Team" persona to name.
+              Change ORG_NAME in src/config.js when you move employers
+              and this updates everywhere it's shown. */}
           <div className="ml-1 flex items-center gap-2">
-            <div className="hidden whitespace-nowrap text-right leading-tight 2xl:block">
-              <p className="text-[13px] font-bold text-ink-900 dark:text-zinc-50">{user.name}</p>
-              <p className="text-[11px] text-body-500 dark:text-zinc-500">{user.org}</p>
-            </div>
+            <p className="hidden whitespace-nowrap text-[13px] font-bold text-ink-900 2xl:block dark:text-zinc-50">
+              {orgName}
+            </p>
             <div className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full bg-navy-900 text-[13px] font-bold text-white">
-              {user.name
-                .split(" ")
-                .map((part) => part[0])
-                .slice(0, 2)
-                .join("")}
+              {orgInitials(orgName)}
             </div>
           </div>
         </div>

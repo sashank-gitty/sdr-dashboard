@@ -82,9 +82,13 @@ function AccountBlock({ account, signals, onOpenSignal, onToggleReviewed }) {
 
   return (
     <div className="border-b border-slate-200 last:border-b-0 dark:border-zinc-800">
-      <div className="flex items-start gap-3 bg-section px-4 py-2.5 dark:bg-zinc-900/40">
+      <div className="flex items-start gap-3 bg-section px-4 py-3 dark:bg-zinc-900/40">
         <AccountAvatar name={account.name} size="sm" />
         <div className="min-w-0 flex-1">
+          {/* Identity on its own line, meta (patch / owner) on the line
+              beneath it — kept apart rather than run together so the
+              account name is the thing a scan lands on first, not one
+              chip among several competing for the same line. */}
           <div className="flex flex-wrap items-center gap-x-2 gap-y-1">
             <a
               {...linkProps(`/accounts/${encodeURIComponent(account.key)}`)}
@@ -98,15 +102,14 @@ function AccountBlock({ account, signals, onOpenSignal, onToggleReviewed }) {
               </Pill>
             )}
             {!account.managed && <Pill tone="slate">Unassigned</Pill>}
-            <span className="text-[11.5px] text-body-500 dark:text-zinc-500">
-              {[
-                account.patches.map((p) => PATCH_LABELS[p] ?? p).join(", "),
-                account.aes.join(", "),
-              ]
+          </div>
+          {(account.patches.length > 0 || account.aes.length > 0) && (
+            <p className="mt-0.5 truncate text-[11.5px] text-body-500 dark:text-zinc-500">
+              {[account.patches.map((p) => PATCH_LABELS[p] ?? p).join(", "), account.aes.join(", ")]
                 .filter(Boolean)
                 .join(" · ")}
-            </span>
-          </div>
+            </p>
+          )}
         </div>
         <div className="flex flex-shrink-0 items-center gap-2">
           <ScoreBadge score={account.score} size="sm" />
@@ -252,71 +255,73 @@ function GlobalFeed({ signals, loading, onOpenSignal, onToggleReviewed }) {
           </Button>
         }
       >
-        <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-6">
-          <SearchInput value={search} onChange={setSearch} placeholder="Search..." className="col-span-2 sm:col-span-1" />
-          <FilterSelect
-            label="Owner"
-            value={owner}
-            onChange={setOwner}
-            options={AE_NAMES.map((name) => ({ value: name, label: name }))}
-          />
-          <FilterSelect
-            label="Type"
-            value={type}
-            onChange={setType}
-            options={[
-              { value: "customer", label: "Customer" },
-              { value: "prospect", label: "Prospect" },
-              { value: "unassigned", label: "Unassigned" },
-            ]}
-          />
-          <FilterSelect
-            label="Priority"
-            value={priority}
-            onChange={setPriority}
-            options={[
-              { value: "p1", label: "P1" },
-              { value: "p2", label: "P2" },
-              { value: "p3", label: "P3" },
-              { value: "none", label: "No Priority" },
-            ]}
-          />
-          <FilterSelect
-            label="Patch"
-            value={patch}
-            onChange={setPatch}
-            options={PATCHES.map((p) => ({ value: p, label: PATCH_LABELS[p] }))}
-          />
-          <FilterSelect label="Date range" value={range} onChange={(v) => setRange(v ?? "30")} options={RANGE_OPTIONS} />
-        </div>
+        <Card className="p-3.5">
+          <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-6">
+            <SearchInput value={search} onChange={setSearch} placeholder="Search..." className="col-span-2 sm:col-span-1" />
+            <FilterSelect
+              label="Owner"
+              value={owner}
+              onChange={setOwner}
+              options={AE_NAMES.map((name) => ({ value: name, label: name }))}
+            />
+            <FilterSelect
+              label="Type"
+              value={type}
+              onChange={setType}
+              options={[
+                { value: "customer", label: "Customer" },
+                { value: "prospect", label: "Prospect" },
+                { value: "unassigned", label: "Unassigned" },
+              ]}
+            />
+            <FilterSelect
+              label="Priority"
+              value={priority}
+              onChange={setPriority}
+              options={[
+                { value: "p1", label: "P1" },
+                { value: "p2", label: "P2" },
+                { value: "p3", label: "P3" },
+                { value: "none", label: "No Priority" },
+              ]}
+            />
+            <FilterSelect
+              label="Patch"
+              value={patch}
+              onChange={setPatch}
+              options={PATCHES.map((p) => ({ value: p, label: PATCH_LABELS[p] }))}
+            />
+            <FilterSelect label="Date range" value={range} onChange={(v) => setRange(v ?? "30")} options={RANGE_OPTIONS} />
+          </div>
 
-        <div className="mt-2.5 flex flex-wrap items-center gap-2">
-          <QuickFilterChip active={unreviewedOnly} onClick={() => setUnreviewedOnly((v) => !v)}>
-            Unreviewed only
-          </QuickFilterChip>
-          <QuickFilterChip active={highRelevanceOnly} onClick={() => setHighRelevanceOnly((v) => !v)}>
-            High relevance only
-          </QuickFilterChip>
-          <QuickFilterChip active={matchedOnly} onClick={() => setMatchedOnly((v) => !v)}>
-            Account-matched only
-          </QuickFilterChip>
-          {anyQuickFilterActive && (
-            <button
-              type="button"
-              onClick={() => {
-                setUnreviewedOnly(false)
-                setHighRelevanceOnly(false)
-                setMatchedOnly(false)
-              }}
-              className="text-[12px] font-medium text-slate-400 hover:text-slate-700 dark:text-zinc-500 dark:hover:text-zinc-200"
-            >
-              Clear quick filters
-            </button>
-          )}
-        </div>
+          <div className="mt-3 flex flex-wrap items-center gap-2 border-t border-slate-100 pt-3 dark:border-zinc-800/70">
+            <QuickFilterChip active={unreviewedOnly} onClick={() => setUnreviewedOnly((v) => !v)}>
+              Unreviewed only
+            </QuickFilterChip>
+            <QuickFilterChip active={highRelevanceOnly} onClick={() => setHighRelevanceOnly((v) => !v)}>
+              High relevance only
+            </QuickFilterChip>
+            <QuickFilterChip active={matchedOnly} onClick={() => setMatchedOnly((v) => !v)}>
+              Account-matched only
+            </QuickFilterChip>
+            {anyQuickFilterActive && (
+              <button
+                type="button"
+                onClick={() => {
+                  setUnreviewedOnly(false)
+                  setHighRelevanceOnly(false)
+                  setMatchedOnly(false)
+                }}
+                className="text-[12px] font-medium text-slate-400 hover:text-slate-700 dark:text-zinc-500 dark:hover:text-zinc-200"
+              >
+                Clear quick filters
+              </button>
+            )}
+          </div>
+        </Card>
       </PageHeader>
 
-      <SectionTitle hint="Signals grouped by the account they name. Accounts with no territory-book match appear as Unassigned — companies in the news that nobody is covering.">
+      <SectionTitle hint="Signals grouped by the account they name. No territory-book match shows as Unassigned.">
         Recent Account Signals
       </SectionTitle>
 

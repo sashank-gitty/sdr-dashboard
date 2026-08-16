@@ -1,9 +1,11 @@
-# SDR Dashboard
+# Personal Dashboard
 
 An account intelligence dashboard for ANZ SDR/AE territory work, built
 with React, Vite, and Tailwind CSS v4. Signals are ingested from news,
 scored for outreach relevance by an LLM, attributed to AE territories,
-and presented account-first.
+and presented account-first. The employer name shown in the UI
+(top-right badge, avatar initials) lives in one place —
+`src/config.js` — so moving to a different company is a one-line change.
 
 ## Structure
 
@@ -17,9 +19,10 @@ rather than one generic action line — see
 below. "Open source" always stays one click away for verifying the
 underlying article.
 
-**Magic** — the landing screen. Four counters, the three agents that make
-up the pipeline (Signal and Research are live; Outreach is not built and
-says so), and "Start Here": accounts carrying at least one high-relevance
+**Radar** — the landing screen. Four counters, the pipeline stages that
+produce this dashboard's data (Scan and Score are live; Draft is not
+built and says so), a pointer into Competitor Intelligence (see below),
+and "Top Priorities": accounts carrying at least one high-relevance
 signal, ranked by score.
 
 **Global Feed** — signals nested under the account they name, rather than
@@ -28,21 +31,35 @@ rollup, a score, and a signal count. Filter by owner, type, priority,
 patch and date range; tab across signal groups; export the filtered set
 as CSV.
 
+**Competitors** — the CX, EX and market-research vendors tracked in
+`shared/competitors.js`, with their own news nested the same way Global
+Feed nests account news — but read for a different purpose. A competitor
+is never a sales prospect, so `deriveAccounts()` in
+`src/lib/accountModel.js` excludes every entity on this list (and
+Qualtrics itself) from ever becoming an account row; this page is where
+that same signal data actually belongs. Opening a competitor's signal
+shows a positioning read, not an outreach angle — see
+[Competitor Intelligence](#competitor-intelligence) below.
+
 **Accounts** — the full derived account table. Sortable on every column,
 with a 0–100 score, a P1–P3 priority tier, toggleable columns, starring,
 claiming (see below), and CSV export.
 
 **My Accounts** — the same table, pre-filtered to whatever's been
-manually claimed. An account is *derived* from the territory book and
-signals — nobody "owns" it in this app unless a book match says so — but
-an SDR working the unassigned whitespace, or a good account sitting on
-someone else's patch, still wants a personal list of "the ones I'm
-tracking." Claiming an account (the pin icon on any Accounts row, or "Add
-to My Accounts" on the account page) adds it here without touching
-territory ownership at all. Persisted server-side (`account_claims`
-table, `api/claims.js`) rather than to `localStorage` the way starring
-is, so the list is the same wherever the dashboard is opened — see
-[Manually claimed accounts](#manually-claimed-accounts) below.
+manually claimed, plus a "+ Add Account" flow for tracking a company that
+has no signals yet at all — just a name and a note on why you're reaching
+out. An account is *derived* from the territory book and signals —
+nobody "owns" it in this app unless a book match says so — but an SDR
+working the unassigned whitespace, a good account sitting on someone
+else's patch, or a company they simply want to keep an eye on, still
+wants a personal list of "the ones I'm tracking." Claiming an account
+(the pin icon on any Accounts row, "Add to My Accounts" on the account
+page, or the manual "+ Add Account" flow here) adds it here without
+touching territory ownership at all. Persisted server-side
+(`account_claims` table, `api/claims.js`) rather than to `localStorage`
+the way starring is, so the list is the same wherever the dashboard is
+opened — see [Manually claimed accounts](#manually-claimed-accounts)
+below.
 
 **Account detail** — eight tabs:
 
@@ -284,6 +301,54 @@ without pretending the territory book says it's yours.
   shape as the reviewed-state toggle), passed down to the Accounts, My
   Accounts and account-detail pages so the pin icon reads the same state
   everywhere.
+
+**Adding an account manually** (`src/pages/MyAccounts.jsx`,
+`AddAccountModal`) is the same claim mechanism with the `note` field
+actually filled in: a name and a reason for tracking it, with no signal
+required to exist yet. It calls `setClaim` exactly like the pin icon
+does, just with a fresh `accountKey()` computed from typed-in text
+instead of an existing account row. Until a signal naming that company
+shows up, it renders in its own "Added Manually — Watching for News"
+list on My Accounts rather than in the scored table; the moment a
+matching signal is ingested, it's a normal claimed account like any
+other; nothing else has to happen for that handoff.
+
+### Competitor Intelligence
+
+`shared/competitors.js` is the single list of CX, EX and market-research
+vendors this dashboard tracks as competitors, not prospects — the same
+file `api/_lib/watchlist.js` reads to build the ingest queries that keep
+it "constantly scanning" (one Google News RSS query per vendor per cron
+run, same mechanism as everything else in `STANDING_WATCHLIST`) and the
+frontend reads to recognize when a signal's `entity` names one of them.
+
+The problem this solves: a signal about Sprinklr (or any other tracked
+vendor) used to become a normal account row — full "angles to approach
+with," as if it were a prospect. Nobody is cold-calling Sprinklr.
+`deriveAccounts()` in `src/lib/accountModel.js` now excludes every entity
+matched by `isVendorEntity()` (every tracked competitor, plus Qualtrics
+itself) from ever becoming an account, so that signal data shows up
+exactly once, on the **Competitors** page instead — grouped by vendor,
+same nested layout as Global Feed, but reading for a different purpose.
+
+Opening a competitor's signal in the drawer swaps the "What This Means"
+section entirely: instead of `signalInsights.js`'s account-impact /
+who-it-affects / outreach-angles read, `src/lib/competitorInsights.js`
+answers "why this matters for positioning," "what to watch next," and
+"how this updates the way you talk about Qualtrics against them" — never
+an outreach angle, since there's no outreach to have. Same hard rule as
+every other insight module in this app: nothing in it invents a fact
+about a real company, it's a generic, defensible read keyed off the
+signal's own fields.
+
+A vendor name is matched on its full name or a curated `aliases` entry
+(`NICE` for `NICE CXone`, `Glint` for `Microsoft Viva Glint`, and so on)
+— deliberately not an automatic "first word of the name" rule, since
+several of these compounds start with a word ("Microsoft", "Workday")
+too generic to safely treat as that vendor every time it appears. Add a
+new competitor, or a new alias for an existing one, in
+`shared/competitors.js` only; ingestion, the accounts-page filter, and
+the Competitors page all read from that one array.
 
 ### Sharing a patch view
 

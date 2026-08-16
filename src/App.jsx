@@ -11,7 +11,8 @@ import Territory from "./pages/Territory.jsx"
 import AccountDetail from "./pages/AccountDetail.jsx"
 import SearchPage from "./pages/Search.jsx"
 import Alerts from "./pages/Alerts.jsx"
-import Magic from "./pages/Magic.jsx"
+import Radar from "./pages/Radar.jsx"
+import Competitors from "./pages/Competitors.jsx"
 import Settings from "./pages/Settings.jsx"
 import { useTheme } from "./lib/useTheme.js"
 import { useRoute, navigate } from "./lib/router.js"
@@ -215,12 +216,21 @@ function App() {
           />
         )}
 
-        {route.page === "magic" && (
-          <Magic signals={signals} syncStatus={syncStatus} onOpenSignal={openSignal} loading={loading} />
+        {route.page === "radar" && (
+          <Radar signals={signals} syncStatus={syncStatus} onOpenSignal={openSignal} loading={loading} />
         )}
 
         {route.page === "feed" && (
           <GlobalFeed
+            signals={signals}
+            loading={loading}
+            onOpenSignal={openSignal}
+            onToggleReviewed={handleToggleReviewed}
+          />
+        )}
+
+        {route.page === "competitors" && (
+          <Competitors
             signals={signals}
             loading={loading}
             onOpenSignal={openSignal}
