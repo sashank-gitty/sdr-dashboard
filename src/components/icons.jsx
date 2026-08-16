@@ -384,3 +384,36 @@ export function MenuIcon(props) {
     </Icon>
   )
 }
+
+export function PlusIcon(props) {
+  return (
+    <Icon {...props}>
+      <path d="M12 5v14M5 12h14" />
+    </Icon>
+  )
+}
+
+export function TargetIcon(props) {
+  return (
+    <Icon {...props}>
+      <circle cx="12" cy="12" r="8.5" />
+      <circle cx="12" cy="12" r="4.5" />
+      <circle cx="12" cy="12" r="0.6" fill="currentColor" />
+    </Icon>
+  )
+}
+
+// The wordmark glyph and the Radar nav icon share this shape — concentric
+// sweep arcs plus a blip, standing in for "always scanning for what's
+// new" rather than the sparkle/toggle-pill imagery this app used to
+// borrow. Original to this app: not a copy of any other product's mark.
+export function RadarIcon(props) {
+  return (
+    <Icon {...props}>
+      <path d="M12 12 19 7.5" />
+      <path d="M12 3v3M12 18v3M3 12h3M18 12h3" />
+      <path d="M6.5 6.5a8 8 0 1 0 11 11" strokeDasharray="0.5 3.6" strokeLinecap="round" />
+      <circle cx="12" cy="12" r="1.3" fill="currentColor" stroke="none" />
+    </Icon>
+  )
+}

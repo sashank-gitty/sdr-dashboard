@@ -1,48 +1,21 @@
-// What the ingest pipeline queries Google News RSS for. Kept as plain
-// data (not derived from the DB) so it's trivial to edit without touching
-// ingest logic. Add/remove strings freely — each becomes one RSS query
-// per cron run. Raw compound labels from the old static dataset (e.g.
-// "AFCA / general insurance sector") were deliberately NOT reused here;
-// they make poor search queries. These are clean, single-subject terms.
+// What the ingest pipeline queries Google News RSS for — your own brand
+// plus every tracked competitor, imported from shared/competitors.js so
+// this list and the frontend's Competitor Intelligence page (which needs
+// the same names to recognize a signal as vendor news) can never drift
+// apart. Add/remove vendors there, not here; each becomes one RSS query
+// per cron run either way. Raw compound labels from the old static
+// dataset (e.g. "AFCA / general insurance sector") were deliberately NOT
+// reused here; they make poor search queries. These are clean,
+// single-subject terms.
 //
 // Originally CX-only. Expanded to cover all three Qualtrics practice
 // areas — CX, EX, and Strategy & Research (market research) — since the
 // account base for those spans every industry, not just financial
 // services. See shared/practiceAreas.js for how normalize.js classifies
 // what comes back.
+import { VENDOR_WATCHLIST } from "../../shared/competitors.js"
 
-export const VENDOR_WATCHLIST = [
-  // CX
-  "Qualtrics",
-  "Medallia",
-  "NICE CXone",
-  "Genesys",
-  "Verint",
-  "Zendesk",
-  "Glassbox",
-  "Sprinklr",
-  "Forsta",
-  // EX
-  "Culture Amp",
-  "Perceptyx",
-  "Leapsome",
-  "Workday Peakon",
-  "Microsoft Viva Glint",
-  "Alchemer",
-  "AskNicely",
-  // Market research / Strategy & Research
-  "Kantar",
-  "Ipsos",
-  "Nielsen NIQ",
-  "Dynata",
-  "YouGov",
-  "System1 Research",
-  "Zappi",
-  "Attest",
-  "GWI GlobalWebIndex",
-  "UserTesting",
-  "Tracksuit",
-]
+export { VENDOR_WATCHLIST }
 
 // The account queries are derived from the AE territory book
 // (api/_lib/accountRegistry.js) rather than hand-written. The previous

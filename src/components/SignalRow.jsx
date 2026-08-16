@@ -72,7 +72,7 @@ function SignalRow({
 
   // The category mark: one tinted glyph tile per row, coloured by signal
   // group. It is the only colour on the row that has to be learned, and
-  // it means the same thing here, in the account tabs and on the Magic
+  // it means the same thing here, in the account tabs and on the Radar
   // page.
   const GroupIcon = iconForSignal(item)
   const groupTone = toneClassesForSignal(item)

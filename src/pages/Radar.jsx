@@ -1,6 +1,7 @@
 import { useMemo } from "react"
 import { linkProps, navigate } from "../lib/router.js"
 import { deriveAccounts } from "../lib/accountModel.js"
+import { deriveCompetitors } from "../lib/competitorModel.js"
 import { iconForSignal, toneClassesForSignal } from "../lib/signalGroups.js"
 import { pillClassForSignalType } from "../lib/colors.js"
 import { HIGH_RELEVANCE_THRESHOLD } from "../lib/relevance.js"
@@ -20,7 +21,7 @@ import {
   LiveDot,
   StatTile,
 } from "../components/ui.jsx"
-import { SparklesIcon, ChartIcon, LightbulbIcon, PersonPlusIcon, ChevronRightIcon } from "../components/icons.jsx"
+import { RadarIcon, ChartIcon, LightbulbIcon, PersonPlusIcon, ChevronRightIcon, TargetIcon } from "../components/icons.jsx"
 
 const MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
 
@@ -39,11 +40,11 @@ function relativeHours(timestamp) {
   return `${Math.floor(hours / 24)} days ago`
 }
 
-// The three-agent framing the reference product leads with, mapped onto
-// what this pipeline actually runs. Two of the three are real and
-// running; the third is not built, and says so rather than showing a
-// fake "active" light — a status pill is only worth having if it can
-// read false.
+// What actually runs behind this dashboard, described as what it does
+// rather than dressed up as a product feature. Two of the three stages
+// are real and running; the third isn't built, and says so rather than
+// showing a fake "active" light — a status pill is only worth having if
+// it can read false.
 const AGENT_TONES = {
   live: { badge: "bg-emerald-100 text-emerald-700 dark:bg-emerald-500/15 dark:text-emerald-300" },
   partial: { badge: "bg-amber-100 text-amber-700 dark:bg-amber-500/15 dark:text-amber-300", pill: "amber", label: "Partial" },
@@ -63,7 +64,7 @@ function AgentCard({ icon: Icon, name, role, status, detail, tone }) {
         </div>
         {/* "Running" is the one state that earns a pulsing dot rather than
             a static pill: it is a claim about right now. */}
-        {tone === "live" ? <LiveDot label="Running" title="This agent runs on the daily cron" /> : (
+        {tone === "live" ? <LiveDot label="Running" title="This stage runs on the daily cron" /> : (
           <Pill tone={config.pill}>{config.label}</Pill>
         )}
       </div>
@@ -73,8 +74,9 @@ function AgentCard({ icon: Icon, name, role, status, detail, tone }) {
   )
 }
 
-function Magic({ signals, syncStatus, onOpenSignal, loading }) {
+function Radar({ signals, syncStatus, onOpenSignal, loading }) {
   const accounts = useMemo(() => deriveAccounts(signals), [signals])
+  const competitors = useMemo(() => deriveCompetitors(signals), [signals])
 
   const priorities = useMemo(() => accounts.filter((a) => a.highRelevanceCount > 0).slice(0, 8), [accounts])
 
@@ -87,6 +89,15 @@ function Magic({ signals, syncStatus, onOpenSignal, loading }) {
 
   const highThisWeek = thisWeek.filter((s) => (s.outreachRelevance ?? 0) >= HIGH_RELEVANCE_THRESHOLD)
   const unreviewed = signals.filter((s) => !s.reviewed).length
+  const competitorMovesThisWeek = useMemo(() => {
+    const cutoff = new Date()
+    cutoff.setHours(0, 0, 0, 0)
+    cutoff.setDate(cutoff.getDate() - 7)
+    return competitors.reduce(
+      (sum, c) => sum + c.signals.filter((s) => new Date(`${s.date}T00:00:00`) >= cutoff).length,
+      0,
+    )
+  }, [competitors])
 
   const lastRun = syncStatus?.finishedAt ?? syncStatus?.startedAt ?? syncStatus?.createdAt ?? null
   const runAgo = relativeHours(lastRun)
@@ -94,13 +105,13 @@ function Magic({ signals, syncStatus, onOpenSignal, loading }) {
   return (
     <>
       <PageHeader
-        eyebrow={<Eyebrow>What the pipeline did</Eyebrow>}
+        eyebrow={<Eyebrow>What the pipeline found</Eyebrow>}
         title={
           <>
-            The <GradientText>Magic</GradientText>
+            Your <GradientText>Radar</GradientText>
           </>
         }
-        subtitle="Everything on this page is a claim about work that already ran — the agents below, the signals they scored, and the accounts that came out on top."
+        subtitle="A running read on what already happened — the pipeline stages below, the signals they scored, and the accounts that came out on top."
       />
 
       <div className="mb-8 grid grid-cols-2 gap-4 lg:grid-cols-4">
@@ -114,13 +125,13 @@ function Magic({ signals, syncStatus, onOpenSignal, loading }) {
         ))}
       </div>
 
-      <SectionTitle hint="The pipeline behind this dashboard, described as the agents it actually runs.">
-        Agents
+      <SectionTitle hint="The pipeline stages behind this dashboard, described as what they actually do.">
+        Pipeline
       </SectionTitle>
       <div className="mb-8 grid grid-cols-1 gap-4 lg:grid-cols-3">
         <AgentCard
-          icon={SparklesIcon}
-          name="Signal Agent"
+          icon={RadarIcon}
+          name="Scan"
           role="Detects buying signals"
           tone="live"
           detail="Queries ~107 sources per run — 72 standing thematic queries plus a rotating slice of named territory accounts — dedupes against existing rows, and inserts what's new. Runs daily on cron."
@@ -128,7 +139,7 @@ function Magic({ signals, syncStatus, onOpenSignal, loading }) {
         />
         <AgentCard
           icon={ChartIcon}
-          name="Research Agent"
+          name="Score"
           role="Scores and attributes"
           tone="live"
           detail="Normalizes each new item into the schema via Claude, scores it 1–5 on the outreach-relevance rubric, and attributes it to AE patches and named accounts from the territory book."
@@ -136,15 +147,34 @@ function Magic({ signals, syncStatus, onOpenSignal, loading }) {
         />
         <AgentCard
           icon={PersonPlusIcon}
-          name="Outreach Agent"
+          name="Draft"
           role="Drafts personalized outreach"
           tone="planned"
-          detail="The reference product drafts emails and LinkedIn messages from signal context. Nothing in this deployment does that — the account brief and discovery questions are as far as it goes. Wiring it up means an endpoint that takes a signal plus a persona and returns a draft."
+          detail="Nothing in this deployment drafts outreach yet — the account brief and discovery questions are as far as it goes. Wiring this up means an endpoint that takes a signal plus a persona and returns a draft."
         />
       </div>
 
+      <SectionTitle hint="Vendors you compete with — a quick pointer to the full Competitor Intelligence page.">
+        On Your Radar
+      </SectionTitle>
+      <Card className="mb-8 flex flex-wrap items-center gap-4 p-5">
+        <IconBadge icon={TargetIcon} tone="bg-slate-100 text-slate-600 dark:bg-zinc-800 dark:text-zinc-400" size="lg" />
+        <div className="min-w-0 flex-1">
+          <p className="text-[14px] font-bold text-ink-900 dark:text-zinc-50">
+            {competitorMovesThisWeek} competitor {competitorMovesThisWeek === 1 ? "move" : "moves"} this week
+          </p>
+          <p className="mt-0.5 text-[12.5px] text-body-500 dark:text-zinc-400">
+            What the CX, EX and market-research vendors you compete with have been up to — for keeping your positioning current, not for outreach.
+          </p>
+        </div>
+        <Button variant="outline" onClick={() => navigate("/competitors")}>
+          Open Competitor Intelligence
+          <ChevronRightIcon className="h-4 w-4" />
+        </Button>
+      </Card>
+
       <SectionTitle hint="Accounts with at least one high-relevance signal, ranked by account score.">
-        Start Here
+        Top Priorities
       </SectionTitle>
 
       {loading ? (
@@ -249,4 +279,4 @@ function Magic({ signals, syncStatus, onOpenSignal, loading }) {
   )
 }
 
-export default Magic
+export default Radar
