@@ -11,7 +11,7 @@ import { matchesAccountCoverage } from "./accountCoverage.js"
 //
 // `tone` maps to the same governed accent families used everywhere else
 // (see lib/colors.js): rose = highest urgency, emerald/amber = a named
-// customer/prospect in the book, indigo = relevance or claimable whitespace,
+// customer/prospect in the book, accent blue = relevance or claimable whitespace,
 // slate = background context.
 export function buildSignalReason(item) {
   const rel = item.outreachRelevance ?? 0
@@ -78,7 +78,7 @@ export const REASON_TONE_STYLES = {
   urgent: { dot: "bg-rose-500", text: "text-rose-600 dark:text-rose-400" },
   customer: { dot: "bg-emerald-500", text: "text-emerald-600 dark:text-emerald-400" },
   prospect: { dot: "bg-amber-500", text: "text-amber-600 dark:text-amber-400" },
-  whitespace: { dot: "bg-indigo-500", text: "text-indigo-600 dark:text-indigo-400" },
-  relevant: { dot: "bg-indigo-500", text: "text-indigo-600 dark:text-indigo-400" },
+  whitespace: { dot: "bg-brand-500", text: "text-brand-600 dark:text-brand-400" },
+  relevant: { dot: "bg-brand-500", text: "text-brand-600 dark:text-brand-400" },
   neutral: { dot: "bg-slate-400 dark:bg-zinc-600", text: "text-slate-500 dark:text-zinc-400" },
 }

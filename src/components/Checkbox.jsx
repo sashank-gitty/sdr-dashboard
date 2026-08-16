@@ -19,7 +19,7 @@ function Checkbox({ checked, indeterminate, onChange, label, className = "" }) {
         </svg>
       ) : (
         <svg viewBox="0 0 16 16" fill="none" className="h-3.5 w-3.5">
-          <rect width="16" height="16" rx="3.5" className="fill-indigo-600" />
+          <rect width="16" height="16" rx="3.5" className="fill-brand-600" />
           {state === "checked" ? (
             <path d="M4.5 8.2 6.8 10.5 11.5 5.5" stroke="white" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
           ) : (

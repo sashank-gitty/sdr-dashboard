@@ -59,19 +59,19 @@ function Header({
           title={sidebarOpen ? "Hide filters" : "Show filters"}
           className={`hidden h-8 w-8 flex-shrink-0 items-center justify-center rounded-md border transition-colors lg:inline-flex ${
             sidebarOpen
-              ? "border-indigo-500/30 bg-indigo-500/10 text-indigo-600 dark:text-indigo-400"
-              : "border-slate-200 text-slate-500 hover:border-slate-300 hover:text-slate-900 dark:border-zinc-800 dark:text-zinc-400 dark:hover:border-zinc-700 dark:hover:text-zinc-100"
+              ? "border-brand-500/30 bg-brand-500/10 text-brand-600 dark:text-brand-400"
+              : "border-slate-200 text-slate-500 hover:border-slate-300 hover:text-ink-900 dark:border-zinc-800 dark:text-zinc-400 dark:hover:border-zinc-700 dark:hover:text-zinc-100"
           }`}
         >
           <SidebarIcon className="h-4 w-4" />
         </button>
 
         <div className="flex items-center gap-2.5">
-          <div className="flex h-8 w-8 items-center justify-center rounded-md bg-indigo-600 text-sm font-bold text-white">
+          <div className="flex h-8 w-8 items-center justify-center rounded-md bg-brand-600 text-sm font-bold text-white">
             SC
           </div>
           <div className="leading-tight">
-            <p className="text-sm font-semibold text-slate-900 dark:text-zinc-50">SDR Command Center</p>
+            <p className="text-sm font-semibold text-ink-900 dark:text-zinc-50">SDR Command Center</p>
             <p className="text-[11px] font-medium text-slate-400 dark:text-zinc-500">Qualtrics ANZ &middot; Signal Intelligence</p>
           </div>
         </div>
@@ -102,7 +102,7 @@ function Header({
                 }
               }}
               placeholder="Search headlines, summaries, entities..."
-              className="w-full rounded-md border border-slate-200 bg-slate-50 py-1.5 pl-8 pr-16 text-sm text-slate-900 outline-none transition-all placeholder:text-slate-400 focus:border-indigo-400 focus:bg-white focus:ring-2 focus:ring-indigo-500/20 dark:border-zinc-800 dark:bg-zinc-900 dark:text-zinc-100 dark:placeholder:text-zinc-500 dark:focus:border-indigo-500 dark:focus:bg-zinc-950"
+              className="w-full rounded-md border border-slate-200 bg-slate-50 py-1.5 pl-8 pr-16 text-sm text-ink-900 outline-none transition-all placeholder:text-slate-400 focus:border-brand-400 focus:bg-white focus:ring-2 focus:ring-brand-500/20 dark:border-zinc-800 dark:bg-zinc-900 dark:text-zinc-100 dark:placeholder:text-zinc-500 dark:focus:border-brand-500 dark:focus:bg-zinc-950"
             />
             {search ? (
               <button
@@ -123,7 +123,7 @@ function Header({
           <button
             type="button"
             onClick={onOpenPalette}
-            className="hidden shrink-0 items-center gap-2 rounded-md border border-slate-200 px-2.5 py-1.5 text-xs font-medium text-slate-500 transition-all hover:border-slate-300 hover:text-slate-900 lg:inline-flex dark:border-zinc-800 dark:text-zinc-400 dark:hover:border-zinc-700 dark:hover:text-zinc-100"
+            className="hidden shrink-0 items-center gap-2 rounded-md border border-slate-200 px-2.5 py-1.5 text-xs font-medium text-slate-500 transition-all hover:border-slate-300 hover:text-ink-900 lg:inline-flex dark:border-zinc-800 dark:text-zinc-400 dark:hover:border-zinc-700 dark:hover:text-zinc-100"
           >
             Jump to
             <kbd className="rounded border border-slate-300 bg-white px-1.5 py-0.5 font-mono text-[10px] font-semibold text-slate-500 dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-400">
@@ -138,12 +138,12 @@ function Header({
           type="button"
           onClick={onOpenMobileFilters}
           aria-label={`Open filters${activeFilterCount > 0 ? ` (${activeFilterCount} active)` : ""}`}
-          className="inline-flex shrink-0 items-center gap-1.5 rounded-md border border-slate-200 px-2.5 py-1.5 text-xs font-medium text-slate-500 transition-colors hover:border-slate-300 hover:text-slate-900 lg:hidden dark:border-zinc-800 dark:text-zinc-400 dark:hover:border-zinc-700 dark:hover:text-zinc-100"
+          className="inline-flex shrink-0 items-center gap-1.5 rounded-md border border-slate-200 px-2.5 py-1.5 text-xs font-medium text-slate-500 transition-colors hover:border-slate-300 hover:text-ink-900 lg:hidden dark:border-zinc-800 dark:text-zinc-400 dark:hover:border-zinc-700 dark:hover:text-zinc-100"
         >
           <FilterIcon className="h-3.5 w-3.5" />
           Filters
           {activeFilterCount > 0 && (
-            <span className="inline-flex h-4 min-w-4 items-center justify-center rounded-full bg-indigo-500/10 px-1 text-[10px] font-semibold text-indigo-600 dark:text-indigo-400">
+            <span className="inline-flex h-4 min-w-4 items-center justify-center rounded-full bg-brand-500/10 px-1 text-[10px] font-semibold text-brand-600 dark:text-brand-400">
               {activeFilterCount}
             </span>
           )}

@@ -9,6 +9,8 @@ import {
 import { REGULATORY_SIGNAL_TYPES, HIGH_RELEVANCE_THRESHOLD } from "../lib/relevance.js"
 import { matchesAccountCoverage } from "../lib/accountCoverage.js"
 import { buildSignalReason, REASON_TONE_STYLES } from "../lib/signalReason.js"
+import { iconForSignal, toneClassesForSignal } from "../lib/signalGroups.js"
+import { IconBadge } from "./ui.jsx"
 import Checkbox from "./Checkbox.jsx"
 
 const MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
@@ -39,7 +41,7 @@ function domainFromUrl(url) {
 // provenance, not a priority signal, and doesn't earn a third color.
 function accentFor({ isRegulatory, isHighRelevance }) {
   if (isRegulatory) return { swatch: REGULATORY_ACCENT.swatch, title: "Regulatory / pain-point signal" }
-  if (isHighRelevance) return { swatch: "bg-indigo-500", title: "High outreach relevance" }
+  if (isHighRelevance) return { swatch: "bg-brand-500", title: "High outreach relevance" }
   return null
 }
 
@@ -68,6 +70,13 @@ function SignalRow({
   const toneStyles = REASON_TONE_STYLES[reason.tone] ?? REASON_TONE_STYLES.neutral
   const accent = accentFor({ isRegulatory, isHighRelevance })
 
+  // The category mark: one tinted glyph tile per row, coloured by signal
+  // group. It is the only colour on the row that has to be learned, and
+  // it means the same thing here, in the account tabs and on the Magic
+  // page.
+  const GroupIcon = iconForSignal(item)
+  const groupTone = toneClassesForSignal(item)
+
   const handleCopy = async () => {
     try {
       await navigator.clipboard.writeText(`${item.headline}\n\n${item.summary}\n${item.sourceUrl}`)
@@ -88,18 +97,23 @@ function SignalRow({
         className={`group flex items-center gap-3 rounded-md border bg-white/60 px-3 py-2 backdrop-blur-sm transition-colors dark:bg-zinc-900/60 ${
           reviewed
             ? "border-slate-200 opacity-60 dark:border-zinc-800"
-            : "border-slate-200 hover:border-slate-300 dark:border-zinc-800 dark:hover:border-zinc-700"
-        } ${selected ? "ring-2 ring-indigo-500/40" : ""}`}
+            : "border-slate-200 hover:bg-slate-50 dark:border-zinc-800 dark:hover:bg-zinc-800/40"
+        } ${selected ? "ring-2 ring-brand-500/40" : ""}`}
       >
         {showCheckbox && (
           <Checkbox checked={selected} onChange={() => onToggleSelect(item.id)} label={`Select ${item.headline}`} />
         )}
-        <span
-          className={`h-2 w-2 flex-shrink-0 rounded-full ${accent ? accent.swatch : toneStyles.dot}`}
-          title={reason.label}
-          aria-hidden="true"
-        />
-        <time className="hidden w-16 flex-shrink-0 font-mono text-xs font-semibold tabular-nums text-slate-500 dark:text-zinc-400 sm:block">
+        <span title={reason.label} className="relative inline-flex flex-shrink-0">
+          <IconBadge icon={GroupIcon} tone={groupTone.badge} size="sm" />
+          {accent && (
+            <span
+              aria-hidden="true"
+              title={accent.title}
+              className={`absolute -right-0.5 -top-0.5 h-2 w-2 rounded-full ring-2 ring-white dark:ring-zinc-900 ${accent.swatch}`}
+            />
+          )}
+        </span>
+        <time className="hidden w-16 flex-shrink-0 font-mono text-xs font-semibold tabular-nums text-body-500 dark:text-zinc-400 sm:block">
           {formatShortDate(item.date)}
         </time>
         <span
@@ -110,17 +124,17 @@ function SignalRow({
         <button
           type="button"
           onClick={() => onOpen(item.id)}
-          className="min-w-0 flex-1 truncate text-left text-sm font-medium text-slate-800 transition-colors hover:text-indigo-600 dark:text-zinc-200 dark:hover:text-indigo-400"
+          className="min-w-0 flex-1 truncate text-left text-sm font-medium text-body-600 transition-colors hover:text-brand-600 dark:text-zinc-200 dark:hover:text-brand-400"
           title={item.headline}
         >
-          <span className="font-semibold text-slate-900 dark:text-zinc-50">{item.entity}</span>
+          <span className="font-bold text-ink-900 dark:text-zinc-50">{item.entity}</span>
           {" — "}
           {item.headline}
         </button>
         <span
           title={`Outreach relevance ${item.outreachRelevance ?? "—"} / 5`}
           className={`flex-shrink-0 font-mono text-xs font-semibold tabular-nums ${
-            isHighRelevance ? "text-indigo-600 dark:text-indigo-400" : "text-slate-400 dark:text-zinc-500"
+            isHighRelevance ? "text-brand-600 dark:text-brand-400" : "text-slate-400 dark:text-zinc-500"
           }`}
         >
           R{item.outreachRelevance ?? "—"}
@@ -129,7 +143,7 @@ function SignalRow({
           href={item.sourceUrl}
           target="_blank"
           rel="noopener noreferrer"
-          className="hidden flex-shrink-0 text-xs font-medium text-slate-400 hover:text-indigo-600 dark:text-zinc-500 dark:hover:text-indigo-400 lg:block"
+          className="hidden flex-shrink-0 text-xs font-medium text-slate-400 hover:text-brand-600 dark:text-zinc-500 dark:hover:text-brand-400 lg:block"
         >
           {domainFromUrl(item.sourceUrl)} &#8599;
         </a>
@@ -137,10 +151,10 @@ function SignalRow({
           type="button"
           onClick={() => onToggleReviewed(item.id)}
           title={reviewed ? "Mark as not yet reviewed" : "Mark as reviewed"}
-          className={`flex-shrink-0 rounded-md border px-2 py-1 text-xs font-medium transition-colors ${
+          className={`flex-shrink-0 rounded-full border px-2.5 py-1 text-xs font-semibold transition-colors ${
             reviewed
               ? "border-emerald-500/30 text-emerald-600 dark:text-emerald-400"
-              : "border-slate-200 text-slate-500 hover:border-slate-300 hover:text-slate-900 dark:border-zinc-800 dark:text-zinc-400 dark:hover:border-zinc-700 dark:hover:text-zinc-100"
+              : "border-slate-200 text-slate-500 hover:border-slate-300 hover:text-ink-900 dark:border-zinc-800 dark:text-zinc-400 dark:hover:border-zinc-700 dark:hover:text-zinc-100"
           }`}
         >
           {reviewed ? "Reviewed" : "Review"}
@@ -159,7 +173,7 @@ function SignalRow({
         reviewed
           ? "border-slate-200 opacity-60 dark:border-zinc-800"
           : "border-slate-200 hover:border-slate-300 hover:shadow-md dark:border-zinc-800 dark:hover:border-zinc-700"
-      } ${selected ? "ring-2 ring-indigo-500/40" : ""}`}
+      } ${selected ? "ring-2 ring-brand-500/40" : ""}`}
     >
       {accent && (
         <span
@@ -175,15 +189,17 @@ function SignalRow({
         </div>
       )}
 
+      <IconBadge icon={GroupIcon} tone={groupTone.badge} className="mt-0.5" />
+
       <div className="min-w-0 flex-1">
         <div className="mb-2 flex flex-wrap items-center gap-x-3 gap-y-1">
-          <time className="font-mono text-xs font-semibold tabular-nums text-slate-500 dark:text-zinc-400">
+          <time className="font-mono text-xs font-semibold tabular-nums text-body-500 dark:text-zinc-400">
             {formatDate(item.date)}
           </time>
           {isCommunity && (
             <span
               title="Sourced from community research (last30days), not the news pipeline"
-              className="rounded-full border border-slate-200 px-2 py-0.5 text-[11px] font-semibold text-slate-500 dark:border-zinc-700 dark:text-zinc-400"
+              className="rounded-full bg-slate-100 px-2 py-0.5 text-[11px] font-semibold text-slate-600 dark:bg-zinc-800 dark:text-zinc-300"
             >
               Community
             </span>
@@ -198,7 +214,7 @@ function SignalRow({
             href={item.sourceUrl}
             target="_blank"
             rel="noopener noreferrer"
-            className="ml-auto text-xs font-medium text-slate-400 hover:text-indigo-600 dark:text-zinc-500 dark:hover:text-indigo-400"
+            className="ml-auto text-xs font-medium text-slate-400 hover:text-brand-600 dark:text-zinc-500 dark:hover:text-brand-400"
           >
             {domainFromUrl(item.sourceUrl)} &#8599;
           </a>
@@ -207,7 +223,7 @@ function SignalRow({
         <button
           type="button"
           onClick={() => onOpen(item.id)}
-          className="mb-1.5 block text-left text-[15px] font-semibold leading-snug text-slate-900 transition-colors hover:text-indigo-600 dark:text-zinc-50 dark:hover:text-indigo-400"
+          className="mb-1.5 block text-left text-[15px] font-bold leading-snug text-ink-900 transition-colors hover:text-brand-600 dark:text-zinc-50 dark:hover:text-brand-400"
         >
           {item.headline}
         </button>
@@ -219,10 +235,10 @@ function SignalRow({
           {reason.label}
         </p>
 
-        <p className="mb-3 line-clamp-2 text-sm leading-relaxed text-slate-600 dark:text-zinc-400">{item.summary}</p>
+        <p className="mb-3 line-clamp-2 text-sm leading-relaxed text-body-600 dark:text-zinc-400">{item.summary}</p>
 
         <div className="flex flex-wrap items-center gap-2">
-          <span className="rounded-full border border-violet-500/20 bg-violet-500/10 px-2 py-0.5 text-[11px] font-semibold text-violet-600 dark:text-violet-400">
+          <span className="rounded-full bg-slate-100 px-2 py-0.5 text-[11px] font-semibold text-ink-900 dark:bg-zinc-800 dark:text-zinc-200">
             {item.entity}
           </span>
 
@@ -243,7 +259,7 @@ function SignalRow({
           {isUnassigned && (
             <span
               title="Unassigned — this company matched no account in the territory book"
-              className="rounded-full border border-indigo-500/20 bg-indigo-500/10 px-2 py-0.5 text-[11px] font-semibold text-indigo-600 dark:text-indigo-400"
+              className="rounded-full bg-brand-100 px-2 py-0.5 text-[11px] font-semibold text-brand-800 dark:bg-brand-500/15 dark:text-brand-300"
             >
               Unassigned
             </span>
@@ -264,7 +280,7 @@ function SignalRow({
                 .slice(MAX_INLINE_PATCHES)
                 .map((p) => PATCH_LABELS[p] ?? p)
                 .join(", ")}`}
-              className="rounded-full border border-slate-200 px-2 py-0.5 text-[11px] font-semibold text-slate-500 dark:border-zinc-700 dark:text-zinc-400"
+              className="rounded-full bg-slate-100 px-2 py-0.5 text-[11px] font-semibold text-slate-600 dark:bg-zinc-800 dark:text-zinc-300"
             >
               +{patches.length - MAX_INLINE_PATCHES}
             </span>
@@ -275,7 +291,7 @@ function SignalRow({
               type="button"
               onClick={handleCopy}
               title="Copy headline, summary, and source link"
-              className="rounded-md border border-slate-200 px-2 py-1 text-xs font-medium text-slate-500 transition-colors hover:border-slate-300 hover:text-slate-900 dark:border-zinc-800 dark:text-zinc-400 dark:hover:border-zinc-700 dark:hover:text-zinc-100"
+              className="rounded-full border border-slate-200 px-2.5 py-1 text-xs font-semibold text-slate-500 transition-colors hover:border-slate-300 hover:text-ink-900 dark:border-zinc-800 dark:text-zinc-400 dark:hover:border-zinc-700 dark:hover:text-zinc-100"
             >
               {copied ? "Copied" : "Copy"}
             </button>
@@ -283,10 +299,10 @@ function SignalRow({
               type="button"
               onClick={() => onToggleReviewed(item.id)}
               title={reviewed ? "Mark as not yet reviewed" : "Mark as reviewed"}
-              className={`rounded-md border px-2 py-1 text-xs font-medium transition-colors ${
+              className={`rounded-full border px-2.5 py-1 text-xs font-semibold transition-colors ${
                 reviewed
                   ? "border-emerald-500/30 text-emerald-600 dark:text-emerald-400"
-                  : "border-slate-200 text-slate-500 hover:border-slate-300 hover:text-slate-900 dark:border-zinc-800 dark:text-zinc-400 dark:hover:border-zinc-700 dark:hover:text-zinc-100"
+                  : "border-slate-200 text-slate-500 hover:border-slate-300 hover:text-ink-900 dark:border-zinc-800 dark:text-zinc-400 dark:hover:border-zinc-700 dark:hover:text-zinc-100"
               }`}
             >
               {reviewed ? "Reviewed" : "Mark Reviewed"}

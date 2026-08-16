@@ -103,6 +103,14 @@ export function ChevronDownIcon(props) {
   )
 }
 
+export function ChevronUpIcon(props) {
+  return (
+    <Icon {...props}>
+      <path d="m6 15 6-6 6 6" />
+    </Icon>
+  )
+}
+
 export function ChevronRightIcon(props) {
   return (
     <Icon {...props}>
@@ -115,6 +123,14 @@ export function ChevronLeftIcon(props) {
   return (
     <Icon {...props}>
       <path d="m15 6-6 6 6 6" />
+    </Icon>
+  )
+}
+
+export function DashIcon(props) {
+  return (
+    <Icon {...props}>
+      <path d="M6 12h12" />
     </Icon>
   )
 }
@@ -229,6 +245,24 @@ export function UsersIcon(props) {
       <circle cx="9" cy="8" r="3.2" />
       <path d="M3.5 19a5.5 5.5 0 0 1 11 0" />
       <path d="M16 5.2a3.2 3.2 0 0 1 0 5.6M17.5 19a5.5 5.5 0 0 0-2-4.3" />
+    </Icon>
+  )
+}
+
+export function QuoteIcon(props) {
+  return (
+    <Icon {...props}>
+      <path d="M9.5 7A4.5 4.5 0 0 0 5 11.5V17h5v-5.5H7.5A2 2 0 0 1 9.5 9.5z" />
+      <path d="M18.5 7A4.5 4.5 0 0 0 14 11.5V17h5v-5.5h-2.5a2 2 0 0 1 2-2z" />
+    </Icon>
+  )
+}
+
+export function TrendUpIcon(props) {
+  return (
+    <Icon {...props}>
+      <path d="m3 16 5.5-5.5 3.5 3.5L21 5" />
+      <path d="M15 5h6v6" />
     </Icon>
   )
 }

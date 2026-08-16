@@ -26,11 +26,26 @@ const SCOPE_OPTIONS = [
   { id: "micro", label: "Micro", value: ["micro"] },
 ]
 
+// Pulls the swatch for a filter row out of the same pill class the pill
+// itself uses, so the dot beside a checkbox can never drift from the chip
+// that option produces in the feed. Pills are light tints (-100), which
+// is invisible as an 8px dot, so the hue is mapped up to its -500 shade
+// through a literal table — Tailwind scans source text and would never
+// emit a class name assembled at runtime.
+const SWATCH_BY_HUE = {
+  slate: "bg-slate-400",
+  rose: "bg-rose-500",
+  emerald: "bg-emerald-500",
+  amber: "bg-amber-500",
+  sky: "bg-sky-500",
+  violet: "bg-violet-500",
+  brand: "bg-brand-500",
+}
+
 function swatchClassFor(colorFor, option) {
   if (!colorFor) return null
-  const classes = colorFor(option)
-  const bgMatch = classes.match(/(?:^|\s)(bg-\S+)/)
-  return bgMatch ? bgMatch[1].replace("/10", "") : "bg-slate-400"
+  const hue = colorFor(option).match(/(?:^|\s)bg-([a-z]+)-\d/)?.[1]
+  return SWATCH_BY_HUE[hue] ?? SWATCH_BY_HUE.slate
 }
 
 const SEARCHABLE_THRESHOLD = 8
@@ -55,14 +70,14 @@ function FilterSection({ title, options, selected, onToggle, colorFor, labelFor 
         type="button"
         onClick={() => setOpen((v) => !v)}
         aria-expanded={open}
-        className="flex w-full items-center gap-2 text-left text-sm font-semibold text-slate-700 dark:text-zinc-200"
+        className="flex w-full items-center gap-2 text-left text-sm font-semibold text-body-600 dark:text-zinc-200"
       >
         <span className={`inline-block text-[10px] text-slate-400 transition-transform duration-200 ease-spring dark:text-zinc-500 ${open ? "rotate-90" : ""}`}>
           &#9656;
         </span>
         <span className="flex-1">{title}</span>
         {selected.length > 0 && (
-          <span className="rounded-full bg-indigo-500/10 px-1.5 py-0.5 text-[11px] font-semibold text-indigo-600 dark:text-indigo-400">
+          <span className="rounded-full bg-brand-500/10 px-1.5 py-0.5 text-[11px] font-semibold text-brand-600 dark:text-brand-400">
             {selected.length}
           </span>
         )}
@@ -76,7 +91,7 @@ function FilterSection({ title, options, selected, onToggle, colorFor, labelFor 
               value={query}
               onChange={(e) => setQuery(e.target.value)}
               placeholder={`Filter ${title.toLowerCase()}...`}
-              className="mb-1.5 w-full rounded-md border border-slate-200 bg-white px-2 py-1 text-xs text-slate-700 outline-none placeholder:text-slate-400 focus:border-indigo-400 dark:border-zinc-800 dark:bg-zinc-900 dark:text-zinc-200 dark:placeholder:text-zinc-500 dark:focus:border-indigo-500"
+              className="mb-1.5 w-full rounded-md border border-slate-200 bg-white px-2 py-1 text-xs text-slate-700 outline-none placeholder:text-slate-400 focus:border-brand-400 dark:border-zinc-800 dark:bg-zinc-900 dark:text-zinc-200 dark:placeholder:text-zinc-500 dark:focus:border-brand-500"
             />
           )}
           <div className="flex max-h-56 flex-col gap-0.5 overflow-y-auto scrollbar-thin">
@@ -92,7 +107,7 @@ function FilterSection({ title, options, selected, onToggle, colorFor, labelFor 
                     type="checkbox"
                     checked={selected.includes(option)}
                     onChange={() => onToggle(option)}
-                    className="h-3.5 w-3.5 flex-shrink-0 accent-indigo-600"
+                    className="h-3.5 w-3.5 flex-shrink-0 accent-brand-600"
                   />
                   {colorFor && (
                     <span className={`h-2 w-2 flex-shrink-0 rounded-full ${swatchClassFor(colorFor, option)}`} />
@@ -119,7 +134,7 @@ function ScopeControl({ scopeFilter, scopeCounts, onScopeChange }) {
 
   return (
     <div className="border-b border-slate-200 pb-3 dark:border-zinc-800">
-      <p className="mb-2 text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-zinc-400">Scope</p>
+      <p className="mb-2 text-xs font-semibold uppercase tracking-wider text-body-500 dark:text-zinc-400">Scope</p>
       <div className="flex overflow-hidden rounded-md border border-slate-200 dark:border-zinc-800">
         {SCOPE_OPTIONS.map((option) => (
           <button
@@ -128,7 +143,7 @@ function ScopeControl({ scopeFilter, scopeCounts, onScopeChange }) {
             onClick={() => onScopeChange(option.value)}
             className={`flex-1 py-1.5 text-xs font-semibold transition-colors ${
               current === option.id
-                ? "bg-indigo-500/10 text-indigo-600 dark:text-indigo-400"
+                ? "bg-brand-500/10 text-brand-600 dark:text-brand-400"
                 : "text-slate-500 hover:bg-slate-100 dark:text-zinc-400 dark:hover:bg-zinc-800"
             }`}
           >
@@ -154,7 +169,7 @@ function ScopeControl({ scopeFilter, scopeCounts, onScopeChange }) {
 function AccountCoverageControl({ accountCoverage, onAccountCoverageChange }) {
   return (
     <div className="border-b border-slate-200 py-3 dark:border-zinc-800">
-      <p className="mb-2 text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-zinc-400">
+      <p className="mb-2 text-xs font-semibold uppercase tracking-wider text-body-500 dark:text-zinc-400">
         Account Coverage
       </p>
       {/* The explanation of what each mode means lives in the button's
@@ -172,7 +187,7 @@ function AccountCoverageControl({ accountCoverage, onAccountCoverageChange }) {
             title={ACCOUNT_COVERAGE_HINTS[mode]}
             className={`flex-1 py-1.5 text-xs font-semibold transition-colors ${
               accountCoverage === mode
-                ? "bg-indigo-500/10 text-indigo-600 dark:text-indigo-400"
+                ? "bg-brand-500/10 text-brand-600 dark:text-brand-400"
                 : "text-slate-500 hover:bg-slate-100 dark:text-zinc-400 dark:hover:bg-zinc-800"
             }`}
           >
@@ -191,7 +206,7 @@ function AccountCoverageControl({ accountCoverage, onAccountCoverageChange }) {
 function QuickFilters({ urlState, onToggleQuickFilter }) {
   return (
     <div className="border-b border-slate-200 py-3 dark:border-zinc-800">
-      <p className="mb-2 text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-zinc-400">
+      <p className="mb-2 text-xs font-semibold uppercase tracking-wider text-body-500 dark:text-zinc-400">
         Quick Filters
       </p>
       <div className="flex flex-wrap gap-1.5">
@@ -205,8 +220,8 @@ function QuickFilters({ urlState, onToggleQuickFilter }) {
               aria-pressed={active}
               className={`rounded-full border px-2.5 py-1 text-xs font-medium transition-all duration-200 ease-spring ${
                 active
-                  ? "border-indigo-500/30 bg-indigo-500/10 text-indigo-600 dark:text-indigo-400"
-                  : "border-slate-200 text-slate-500 hover:border-slate-300 hover:text-slate-900 dark:border-zinc-800 dark:text-zinc-400 dark:hover:border-zinc-700 dark:hover:text-zinc-100"
+                  ? "border-brand-500/30 bg-brand-500/10 text-brand-600 dark:text-brand-400"
+                  : "border-slate-200 text-slate-500 hover:border-slate-300 hover:text-ink-900 dark:border-zinc-800 dark:text-zinc-400 dark:hover:border-zinc-700 dark:hover:text-zinc-100"
               }`}
             >
               {quickFilter.label}
@@ -256,9 +271,9 @@ function Sidebar({
           whole view is URL-backed, so this one click hands the rep who
           owns it a link rather than a list of checkboxes to re-tick. */}
       <div className="mb-1 flex items-center gap-2 pb-3">
-        <span className="text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-zinc-400">Filters</span>
+        <span className="text-xs font-semibold uppercase tracking-wider text-body-500 dark:text-zinc-400">Filters</span>
         {activeFilterCount > 0 && (
-          <span className="rounded-full bg-indigo-500/10 px-1.5 py-0.5 text-[11px] font-semibold text-indigo-600 dark:text-indigo-400">
+          <span className="rounded-full bg-brand-500/10 px-1.5 py-0.5 text-[11px] font-semibold text-brand-600 dark:text-brand-400">
             {activeFilterCount}
           </span>
         )}
@@ -266,7 +281,7 @@ function Sidebar({
           type="button"
           onClick={onCopyViewLink}
           title="Copy link to this view"
-          className="ml-auto rounded-md border border-slate-200 px-2 py-1 text-xs font-medium text-slate-500 transition-colors hover:border-slate-300 hover:text-slate-900 dark:border-zinc-800 dark:text-zinc-400 dark:hover:border-zinc-700 dark:hover:text-zinc-100"
+          className="ml-auto rounded-md border border-slate-200 px-2 py-1 text-xs font-medium text-slate-500 transition-colors hover:border-slate-300 hover:text-ink-900 dark:border-zinc-800 dark:text-zinc-400 dark:hover:border-zinc-700 dark:hover:text-zinc-100"
         >
           {viewLinkCopied ? "Copied" : "Share"}
         </button>
@@ -274,7 +289,7 @@ function Sidebar({
           type="button"
           onClick={onClearAll}
           disabled={activeFilterCount === 0}
-          className="rounded-md border border-slate-200 px-2 py-1 text-xs font-medium text-slate-500 transition-colors hover:border-slate-300 hover:text-slate-900 disabled:cursor-default disabled:opacity-40 dark:border-zinc-800 dark:text-zinc-400 dark:hover:border-zinc-700 dark:hover:text-zinc-100"
+          className="rounded-md border border-slate-200 px-2 py-1 text-xs font-medium text-slate-500 transition-colors hover:border-slate-300 hover:text-ink-900 disabled:cursor-default disabled:opacity-40 dark:border-zinc-800 dark:text-zinc-400 dark:hover:border-zinc-700 dark:hover:text-zinc-100"
         >
           Clear
         </button>
@@ -283,7 +298,7 @@ function Sidebar({
       <QuickFilters urlState={urlState} onToggleQuickFilter={onToggleQuickFilter} />
 
       <div className="border-b border-slate-200 pb-3 dark:border-zinc-800">
-        <p className="mb-2 text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-zinc-400">Date Range</p>
+        <p className="mb-2 text-xs font-semibold uppercase tracking-wider text-body-500 dark:text-zinc-400">Date Range</p>
         <div className="flex overflow-hidden rounded-md border border-slate-200 dark:border-zinc-800">
           {DATE_RANGES.map((range) => (
             <button
@@ -292,7 +307,7 @@ function Sidebar({
               onClick={() => onDateRangeChange(range.value)}
               className={`flex-1 py-1.5 text-xs font-semibold transition-colors ${
                 dateRange === range.value
-                  ? "bg-indigo-500/10 text-indigo-600 dark:text-indigo-400"
+                  ? "bg-brand-500/10 text-brand-600 dark:text-brand-400"
                   : "text-slate-500 hover:bg-slate-100 dark:text-zinc-400 dark:hover:bg-zinc-800"
               }`}
             >
