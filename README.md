@@ -190,6 +190,42 @@ The registry is server-side only. It is not imported anywhere under
 `src/`, so the account book never ships in the browser bundle — the
 derived tags travel to the client on each signal row instead.
 
+#### Loading the commercial detail (`/territory`)
+
+`accountRegistry.js` above carries only the four safe fields. The spend,
+pipeline and win/loss figures behind the `/territory` page live in the
+`territory_accounts` table instead, loaded from the same workbooks by
+`db/load-territory.mjs` — which reads them from a local path and writes
+only to Postgres, so the spreadsheets never enter git:
+
+```
+node db/load-territory.mjs /path/to/territory-files/ --dry-run   # parse and print totals
+node --env-file=.env.local db/load-territory.mjs /path/to/territory-files/
+```
+
+Re-running is safe; every row upserts on `account_key`.
+
+`--sql` writes the whole load to stdout as a pasteable script instead of
+connecting, for when the machine parsing the spreadsheets can't reach
+Postgres (locked-down network, no connection string to hand):
+
+```
+node db/load-territory.mjs /path/to/territory-files/ --sql > territory-load.sql
+```
+
+Paste that into the Neon SQL Editor on the production branch and run it.
+It's one transaction — a partial load is worse than none, since the page
+would show confident totals off half a book — batched 250 rows at a
+time because browser SQL consoles handle a sequence of moderate
+statements better than one enormous one, and it ends with a count query
+that should echo the totals the parse printed.
+
+Note that `lines_held` is only populated for the two books that split
+ARR by product line. Jared's and James's carry a single combined figure,
+so their customers land with an empty `lines_held` and are correctly
+absent from the cross-sell worklist rather than appearing in it as
+holding nothing.
+
 ### Whitespace: finding unassigned accounts
 
 Patch views answer "what's happening to accounts we own". The **Unassigned**
