@@ -30,17 +30,60 @@ from xml.etree import ElementTree
 NS = {"m": "http://schemas.openxmlformats.org/spreadsheetml/2006/main",
       "r": "http://schemas.openxmlformats.org/officeDocument/2006/relationships"}
 
+# Sentinel for customer_values: read customer_col as a spend figure and
+# treat any amount above zero as "customer". Its own object rather than a
+# string so it can never collide with a real cell value.
+POSITIVE_SPEND = object()
+
+
+def spend_above_zero(raw):
+    """True when a spend cell holds an amount greater than zero.
+
+    The books write these as display strings ("$159K", "$1.2M", "$0"),
+    not bare numbers, so the suffix has to be honoured — float("$159K")
+    raises, and treating a parse failure as zero would silently demote
+    every customer in those two territories to a prospect.
+    """
+    if raw is None:
+        return False
+    t = str(raw).strip().replace("$", "").replace(",", "").replace(" ", "")
+    if not t:
+        return False
+    negative = t.startswith("(") and t.endswith(")")  # ($1K) = -1000
+    t = t.strip("()").lstrip("-")
+    multiplier = {"K": 1e3, "M": 1e6, "B": 1e9}.get(t[-1:].upper())
+    if multiplier:
+        t = t[:-1]
+    try:
+        value = float(t) * (multiplier or 1)
+    except ValueError:
+        return False
+    return not negative and value > 0
+
+
 # Which sheet/columns to read out of each territory file. Columns are
 # 1-indexed to match what you see in Excel.
 #
 #   customer_col: column holding customer-vs-prospect status, or the
 #                 literal "ALL_CUSTOMERS" for sheets that are by
 #                 definition a customer list.
-#   customer_values: cell values in customer_col that mean "customer".
+#   customer_values: cell values in customer_col that mean "customer", or
+#                 the POSITIVE_SPEND sentinel for books that carry no
+#                 status column and record spend instead (see below).
 #
 # Tristan's territory is read from three sheets because his granular
 # industry labels live on "Prospects" while "Updated List May26" has the
 # wider account coverage — the merge below prefers the granular label.
+#
+# James's and Jared's books have no customer-status column at all; their
+# main sheets record a spend figure per account instead, and an account
+# they spend nothing with is a prospect. Reading that column with
+# POSITIVE_SPEND is what gives those two territories a status — before
+# it, every row on those two sheets was written out with no status, so
+# 543 accounts (32% of the book, and effectively all of James's and
+# Jared's prospects) were skipped by the named-account watchlist
+# rotation, which filters on status. Their patch attribution still
+# worked; they were simply never searched for by name.
 SHEETS = [
     # file glob,               sheet,                  name, vertical, customer_col,     customer_values,  AE
     ("*Tristan*.xlsx",         "Prospects",               4,  5,       8,                {"Customer"},     "Tristan"),
@@ -48,8 +91,8 @@ SHEETS = [
     ("*Tristan*.xlsx",         "Customers",               1,  None,    4,                {"Customer"},     "Tristan"),
     ("*Terence_Fong*.xlsx",    "Full Account List",       2,  9,       7,                {"Yes"},          "Terence Fong"),
     ("*Terence_Fong*.xlsx",    "Current Customers",       1,  3,       "ALL_CUSTOMERS",  None,             "Terence Fong"),
-    ("*James_Locke*.xlsx",     "Sheet1",                  1,  2,       None,             None,             "James Locke"),
-    ("*Jared_Dries*.xlsx",     "Mastercopy",              1,  3,       None,             None,             "Jared Dries"),
+    ("*James_Locke*.xlsx",     "Sheet1",                  1,  2,       6,                POSITIVE_SPEND,   "James Locke"),
+    ("*Jared_Dries*.xlsx",     "Mastercopy",              1,  3,       7,                POSITIVE_SPEND,   "Jared Dries"),
     ("*Jared_Dries*.xlsx",     "Current Customers",       1, 10,       "ALL_CUSTOMERS",  None,             "Jared Dries"),
 ]
 
@@ -235,9 +278,13 @@ def main():
             if cust_col == "ALL_CUSTOMERS":
                 acc["status"].add("customer")
             elif cust_col:
-                acc["status"].add(
-                    "customer" if row.get(cust_col) in cust_vals else "prospect"
+                cell = row.get(cust_col)
+                customer = (
+                    spend_above_zero(cell)
+                    if cust_vals is POSITIVE_SPEND
+                    else cell in cust_vals
                 )
+                acc["status"].add("customer" if customer else "prospect")
         print(f"  {path.name} / {sheet}: {len(rows) - 1} rows")
 
     ae_primary = {
