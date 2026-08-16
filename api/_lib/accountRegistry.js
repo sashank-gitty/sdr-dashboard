@@ -61,7 +61,8 @@ export const ACCOUNT_REGISTRY = [
    "Jared Dries"
   ],
   "confidence": "mapped",
-  "subVertical": "Goods & Services"
+  "subVertical": "Goods & Services",
+  "status": "prospect"
  },
  {
   "key": "5g networks",
@@ -82,7 +83,8 @@ export const ACCOUNT_REGISTRY = [
    "Jared Dries"
   ],
   "confidence": "mapped",
-  "subVertical": "TMT"
+  "subVertical": "TMT",
+  "status": "prospect"
  },
  {
   "key": "a c n 007 901 359",
@@ -125,7 +127,8 @@ export const ACCOUNT_REGISTRY = [
    "James Locke"
   ],
   "confidence": "mapped",
-  "subVertical": "Goods & Services"
+  "subVertical": "Goods & Services",
+  "status": "prospect"
  },
  {
   "key": "a h bremer park",
@@ -179,7 +182,8 @@ export const ACCOUNT_REGISTRY = [
    "James Locke"
   ],
   "confidence": "mapped",
-  "subVertical": "Goods & Services"
+  "subVertical": "Goods & Services",
+  "status": "prospect"
  },
  {
   "key": "a2 milk",
@@ -277,7 +281,8 @@ export const ACCOUNT_REGISTRY = [
    "Jared Dries"
   ],
   "confidence": "mapped",
-  "subVertical": "Goods & Services"
+  "subVertical": "Goods & Services",
+  "status": "prospect"
  },
  {
   "key": "able services",
@@ -287,7 +292,8 @@ export const ACCOUNT_REGISTRY = [
    "Jared Dries"
   ],
   "confidence": "mapped",
-  "subVertical": "Goods & Services"
+  "subVertical": "Goods & Services",
+  "status": "prospect"
  },
  {
   "key": "abt associates",
@@ -297,7 +303,8 @@ export const ACCOUNT_REGISTRY = [
    "Jared Dries"
   ],
   "confidence": "mapped",
-  "subVertical": "Goods & Services"
+  "subVertical": "Goods & Services",
+  "status": "prospect"
  },
  {
   "key": "ac distribution",
@@ -307,7 +314,8 @@ export const ACCOUNT_REGISTRY = [
    "James Locke"
   ],
   "confidence": "mapped",
-  "subVertical": "Goods & Services"
+  "subVertical": "Goods & Services",
+  "status": "prospect"
  },
  {
   "key": "access workspace",
@@ -338,7 +346,8 @@ export const ACCOUNT_REGISTRY = [
   "aes": [
    "James Locke"
   ],
-  "confidence": "inferred"
+  "confidence": "inferred",
+  "status": "prospect"
  },
  {
   "key": "achmea",
@@ -358,7 +367,8 @@ export const ACCOUNT_REGISTRY = [
    "Jared Dries"
   ],
   "confidence": "mapped",
-  "subVertical": "TMT"
+  "subVertical": "TMT",
+  "status": "prospect"
  },
  {
   "key": "aci world",
@@ -368,7 +378,8 @@ export const ACCOUNT_REGISTRY = [
    "Jared Dries"
   ],
   "confidence": "mapped",
-  "subVertical": "Goods & Services"
+  "subVertical": "Goods & Services",
+  "status": "prospect"
  },
  {
   "key": "acit",
@@ -433,7 +444,8 @@ export const ACCOUNT_REGISTRY = [
    "Jared Dries"
   ],
   "confidence": "mapped",
-  "subVertical": "Goods & Services"
+  "subVertical": "Goods & Services",
+  "status": "prospect"
  },
  {
   "key": "act xm",
@@ -497,7 +509,8 @@ export const ACCOUNT_REGISTRY = [
    "Jared Dries"
   ],
   "confidence": "mapped",
-  "subVertical": "Goods & Services"
+  "subVertical": "Goods & Services",
+  "status": "prospect"
  },
  {
   "key": "adatree",
@@ -518,7 +531,8 @@ export const ACCOUNT_REGISTRY = [
    "Jared Dries"
   ],
   "confidence": "mapped",
-  "subVertical": "Goods & Services"
+  "subVertical": "Goods & Services",
+  "status": "prospect"
  },
  {
   "key": "adept business systems",
@@ -594,7 +608,8 @@ export const ACCOUNT_REGISTRY = [
    "Jared Dries"
   ],
   "confidence": "mapped",
-  "subVertical": "TMT"
+  "subVertical": "TMT",
+  "status": "prospect"
  },
  {
   "key": "aegon insights",
@@ -626,7 +641,8 @@ export const ACCOUNT_REGISTRY = [
    "James Locke"
   ],
   "confidence": "mapped",
-  "subVertical": "Goods & Services"
+  "subVertical": "Goods & Services",
+  "status": "prospect"
  },
  {
   "key": "agrana fruit",
@@ -636,7 +652,8 @@ export const ACCOUNT_REGISTRY = [
    "Jared Dries"
   ],
   "confidence": "mapped",
-  "subVertical": "Goods & Services"
+  "subVertical": "Goods & Services",
+  "status": "prospect"
  },
  {
   "key": "ainsworth game technology",
@@ -646,7 +663,8 @@ export const ACCOUNT_REGISTRY = [
    "Jared Dries"
   ],
   "confidence": "mapped",
-  "subVertical": "Goods & Services"
+  "subVertical": "Goods & Services",
+  "status": "prospect"
  },
  {
   "key": "air diffusion agencies",
@@ -656,7 +674,8 @@ export const ACCOUNT_REGISTRY = [
    "James Locke"
   ],
   "confidence": "mapped",
-  "subVertical": "Goods & Services"
+  "subVertical": "Goods & Services",
+  "status": "prospect"
  },
  {
   "key": "airtrunk",
@@ -699,7 +718,8 @@ export const ACCOUNT_REGISTRY = [
    "James Locke"
   ],
   "confidence": "mapped",
-  "subVertical": "Goods & Services"
+  "subVertical": "Goods & Services",
+  "status": "prospect"
  },
  {
   "key": "alceon gt",
@@ -741,7 +761,8 @@ export const ACCOUNT_REGISTRY = [
    "Jared Dries"
   ],
   "confidence": "mapped",
-  "subVertical": "Goods & Services"
+  "subVertical": "Goods & Services",
+  "status": "prospect"
  },
  {
   "key": "allens nominees",
@@ -751,7 +772,8 @@ export const ACCOUNT_REGISTRY = [
    "James Locke"
   ],
   "confidence": "mapped",
-  "subVertical": "Goods & Services"
+  "subVertical": "Goods & Services",
+  "status": "customer"
  },
  {
   "key": "allergy anaphylaxis",
@@ -761,7 +783,8 @@ export const ACCOUNT_REGISTRY = [
    "James Locke"
   ],
   "confidence": "mapped",
-  "subVertical": "Goods & Services"
+  "subVertical": "Goods & Services",
+  "status": "prospect"
  },
  {
   "key": "alliance data fhc",
@@ -793,7 +816,8 @@ export const ACCOUNT_REGISTRY = [
    "Jared Dries"
   ],
   "confidence": "mapped",
-  "subVertical": "Goods & Services"
+  "subVertical": "Goods & Services",
+  "status": "prospect"
  },
  {
   "key": "alray investments",
@@ -836,7 +860,8 @@ export const ACCOUNT_REGISTRY = [
    "Jared Dries"
   ],
   "confidence": "mapped",
-  "subVertical": "TMT"
+  "subVertical": "TMT",
+  "status": "prospect"
  },
  {
   "key": "altomonte nominees",
@@ -868,7 +893,8 @@ export const ACCOUNT_REGISTRY = [
    "Jared Dries"
   ],
   "confidence": "mapped",
-  "subVertical": "Goods & Services"
+  "subVertical": "Goods & Services",
+  "status": "prospect"
  },
  {
   "key": "american compliance",
@@ -878,7 +904,8 @@ export const ACCOUNT_REGISTRY = [
    "Jared Dries"
   ],
   "confidence": "mapped",
-  "subVertical": "Locations"
+  "subVertical": "Locations",
+  "status": "prospect"
  },
  {
   "key": "ameropa",
@@ -888,7 +915,8 @@ export const ACCOUNT_REGISTRY = [
    "Jared Dries"
   ],
   "confidence": "mapped",
-  "subVertical": "Goods & Services"
+  "subVertical": "Goods & Services",
+  "status": "prospect"
  },
  {
   "key": "ampcontrol",
@@ -898,7 +926,8 @@ export const ACCOUNT_REGISTRY = [
    "Jared Dries"
   ],
   "confidence": "mapped",
-  "subVertical": "Goods & Services"
+  "subVertical": "Goods & Services",
+  "status": "prospect"
  },
  {
   "key": "amy gillett foundation",
@@ -908,7 +937,8 @@ export const ACCOUNT_REGISTRY = [
    "Jared Dries"
   ],
   "confidence": "mapped",
-  "subVertical": "Goods & Services"
+  "subVertical": "Goods & Services",
+  "status": "prospect"
  },
  {
   "key": "anca",
@@ -951,7 +981,8 @@ export const ACCOUNT_REGISTRY = [
    "James Locke"
   ],
   "confidence": "mapped",
-  "subVertical": "HCLS"
+  "subVertical": "HCLS",
+  "status": "customer"
  },
  {
   "key": "animeer",
@@ -961,7 +992,8 @@ export const ACCOUNT_REGISTRY = [
    "Jared Dries"
   ],
   "confidence": "mapped",
-  "subVertical": "Goods & Services"
+  "subVertical": "Goods & Services",
+  "status": "prospect"
  },
  {
   "key": "anmar",
@@ -1004,7 +1036,8 @@ export const ACCOUNT_REGISTRY = [
    "James Locke"
   ],
   "confidence": "mapped",
-  "subVertical": "Goods & Services"
+  "subVertical": "Goods & Services",
+  "status": "prospect"
  },
  {
   "key": "aon",
@@ -1025,7 +1058,8 @@ export const ACCOUNT_REGISTRY = [
    "James Locke"
   ],
   "confidence": "mapped",
-  "subVertical": "Goods & Services"
+  "subVertical": "Goods & Services",
+  "status": "prospect"
  },
  {
   "key": "apco",
@@ -1057,7 +1091,8 @@ export const ACCOUNT_REGISTRY = [
    "Jared Dries"
   ],
   "confidence": "mapped",
-  "subVertical": "Locations"
+  "subVertical": "Locations",
+  "status": "prospect"
  },
  {
   "key": "appen",
@@ -1099,7 +1134,8 @@ export const ACCOUNT_REGISTRY = [
    "Jared Dries"
   ],
   "confidence": "mapped",
-  "subVertical": "Goods & Services"
+  "subVertical": "Goods & Services",
+  "status": "prospect"
  },
  {
   "key": "aqueo import distribution",
@@ -1109,7 +1145,8 @@ export const ACCOUNT_REGISTRY = [
    "Jared Dries"
   ],
   "confidence": "mapped",
-  "subVertical": "Goods & Services"
+  "subVertical": "Goods & Services",
+  "status": "prospect"
  },
  {
   "key": "ara",
@@ -1119,7 +1156,8 @@ export const ACCOUNT_REGISTRY = [
    "James Locke"
   ],
   "confidence": "mapped",
-  "subVertical": "Goods & Services"
+  "subVertical": "Goods & Services",
+  "status": "prospect"
  },
  {
   "key": "arakoon enterprises",
@@ -1129,7 +1167,8 @@ export const ACCOUNT_REGISTRY = [
    "Jared Dries"
   ],
   "confidence": "mapped",
-  "subVertical": "Locations"
+  "subVertical": "Locations",
+  "status": "prospect"
  },
  {
   "key": "aramex fastway",
@@ -1139,7 +1178,8 @@ export const ACCOUNT_REGISTRY = [
    "Jared Dries"
   ],
   "confidence": "mapped",
-  "subVertical": "Goods & Services"
+  "subVertical": "Goods & Services",
+  "status": "prospect"
  },
  {
   "key": "arch investments",
@@ -1171,7 +1211,8 @@ export const ACCOUNT_REGISTRY = [
    "James Locke"
   ],
   "confidence": "mapped",
-  "subVertical": "Goods & Services"
+  "subVertical": "Goods & Services",
+  "status": "prospect"
  },
  {
   "key": "ardent insurance solutions",
@@ -1236,7 +1277,8 @@ export const ACCOUNT_REGISTRY = [
    "Jared Dries"
   ],
   "confidence": "mapped",
-  "subVertical": "Goods & Services"
+  "subVertical": "Goods & Services",
+  "status": "prospect"
  },
  {
   "key": "artemis partners",
@@ -1268,7 +1310,8 @@ export const ACCOUNT_REGISTRY = [
    "James Locke"
   ],
   "confidence": "mapped",
-  "subVertical": "Goods & Services"
+  "subVertical": "Goods & Services",
+  "status": "prospect"
  },
  {
   "key": "askable",
@@ -1289,7 +1332,8 @@ export const ACCOUNT_REGISTRY = [
    "Jared Dries"
   ],
   "confidence": "mapped",
-  "subVertical": "Goods & Services"
+  "subVertical": "Goods & Services",
+  "status": "prospect"
  },
  {
   "key": "asm global asia pacific",
@@ -1321,7 +1365,8 @@ export const ACCOUNT_REGISTRY = [
    "Jared Dries"
   ],
   "confidence": "mapped",
-  "subVertical": "Goods & Services"
+  "subVertical": "Goods & Services",
+  "status": "prospect"
  },
  {
   "key": "at t global network services",
@@ -1342,7 +1387,8 @@ export const ACCOUNT_REGISTRY = [
    "Jared Dries"
   ],
   "confidence": "mapped",
-  "subVertical": "Goods & Services"
+  "subVertical": "Goods & Services",
+  "status": "prospect"
  },
  {
   "key": "athena financial",
@@ -1363,7 +1409,8 @@ export const ACCOUNT_REGISTRY = [
    "James Locke"
   ],
   "confidence": "mapped",
-  "subVertical": "Goods & Services"
+  "subVertical": "Goods & Services",
+  "status": "prospect"
  },
  {
   "key": "atlex",
@@ -1373,7 +1420,8 @@ export const ACCOUNT_REGISTRY = [
    "Jared Dries"
   ],
   "confidence": "mapped",
-  "subVertical": "Goods & Services"
+  "subVertical": "Goods & Services",
+  "status": "prospect"
  },
  {
   "key": "atomic io",
@@ -1405,7 +1453,8 @@ export const ACCOUNT_REGISTRY = [
    "Jared Dries"
   ],
   "confidence": "mapped",
-  "subVertical": "Goods & Services"
+  "subVertical": "Goods & Services",
+  "status": "prospect"
  },
  {
   "key": "attachmate",
@@ -1459,7 +1508,8 @@ export const ACCOUNT_REGISTRY = [
    "Jared Dries"
   ],
   "confidence": "mapped",
-  "subVertical": "Goods & Services"
+  "subVertical": "Goods & Services",
+  "status": "prospect"
  },
  {
   "key": "auscoal superannuation",
@@ -1502,7 +1552,8 @@ export const ACCOUNT_REGISTRY = [
    "Jared Dries"
   ],
   "confidence": "mapped",
-  "subVertical": "Goods & Services"
+  "subVertical": "Goods & Services",
+  "status": "prospect"
  },
  {
   "key": "aussie broadband",
@@ -1545,7 +1596,8 @@ export const ACCOUNT_REGISTRY = [
    "James Locke"
   ],
   "confidence": "mapped",
-  "subVertical": "Goods & Services"
+  "subVertical": "Goods & Services",
+  "status": "prospect"
  },
  {
   "key": "australux led",
@@ -1555,7 +1607,8 @@ export const ACCOUNT_REGISTRY = [
    "Jared Dries"
   ],
   "confidence": "mapped",
-  "subVertical": "Goods & Services"
+  "subVertical": "Goods & Services",
+  "status": "prospect"
  },
  {
   "key": "autism crc",
@@ -1565,7 +1618,8 @@ export const ACCOUNT_REGISTRY = [
    "James Locke"
   ],
   "confidence": "mapped",
-  "subVertical": "Goods & Services"
+  "subVertical": "Goods & Services",
+  "status": "customer"
  },
  {
   "key": "avaya",
@@ -1575,7 +1629,8 @@ export const ACCOUNT_REGISTRY = [
    "Jared Dries"
   ],
   "confidence": "mapped",
-  "subVertical": "Goods & Services"
+  "subVertical": "Goods & Services",
+  "status": "prospect"
  },
  {
   "key": "avc management",
@@ -1596,7 +1651,8 @@ export const ACCOUNT_REGISTRY = [
    "Jared Dries"
   ],
   "confidence": "mapped",
-  "subVertical": "Goods & Services"
+  "subVertical": "Goods & Services",
+  "status": "prospect"
  },
  {
   "key": "avid property",
@@ -1606,7 +1662,8 @@ export const ACCOUNT_REGISTRY = [
    "Jared Dries"
   ],
   "confidence": "mapped",
-  "subVertical": "Goods & Services"
+  "subVertical": "Goods & Services",
+  "status": "prospect"
  },
  {
   "key": "avivo live life",
@@ -1616,7 +1673,8 @@ export const ACCOUNT_REGISTRY = [
    "Jared Dries"
   ],
   "confidence": "mapped",
-  "subVertical": "Goods & Services"
+  "subVertical": "Goods & Services",
+  "status": "prospect"
  },
  {
   "key": "avolution",
@@ -1648,7 +1706,8 @@ export const ACCOUNT_REGISTRY = [
    "Jared Dries"
   ],
   "confidence": "mapped",
-  "subVertical": "Goods & Services"
+  "subVertical": "Goods & Services",
+  "status": "prospect"
  },
  {
   "key": "axenic",
@@ -1757,7 +1816,8 @@ export const ACCOUNT_REGISTRY = [
    "James Locke"
   ],
   "confidence": "mapped",
-  "subVertical": "Goods & Services"
+  "subVertical": "Goods & Services",
+  "status": "prospect"
  },
  {
   "key": "ballantyne",
@@ -1767,7 +1827,8 @@ export const ACCOUNT_REGISTRY = [
    "Jared Dries"
   ],
   "confidence": "mapped",
-  "subVertical": "Goods & Services"
+  "subVertical": "Goods & Services",
+  "status": "prospect"
  },
  {
   "key": "ballyglisheen",
@@ -1832,7 +1893,8 @@ export const ACCOUNT_REGISTRY = [
    "Jared Dries"
   ],
   "confidence": "mapped",
-  "subVertical": "Goods & Services"
+  "subVertical": "Goods & Services",
+  "status": "prospect"
  },
  {
   "key": "bank of baroda",
@@ -1886,7 +1948,8 @@ export const ACCOUNT_REGISTRY = [
    "James Locke"
   ],
   "confidence": "mapped",
-  "subVertical": "Goods & Services"
+  "subVertical": "Goods & Services",
+  "status": "prospect"
  },
  {
   "key": "bapsh",
@@ -1929,7 +1992,8 @@ export const ACCOUNT_REGISTRY = [
    "Jared Dries"
   ],
   "confidence": "mapped",
-  "subVertical": "Goods & Services"
+  "subVertical": "Goods & Services",
+  "status": "prospect"
  },
  {
   "key": "bazmark film ii",
@@ -1961,7 +2025,8 @@ export const ACCOUNT_REGISTRY = [
    "James Locke"
   ],
   "confidence": "mapped",
-  "subVertical": "Goods & Services"
+  "subVertical": "Goods & Services",
+  "status": "prospect"
  },
  {
   "key": "bbrc property management",
@@ -2125,7 +2190,8 @@ export const ACCOUNT_REGISTRY = [
    "Jared Dries"
   ],
   "confidence": "mapped",
-  "subVertical": "Goods & Services"
+  "subVertical": "Goods & Services",
+  "status": "prospect"
  },
  {
   "key": "berkopy nominees",
@@ -2168,7 +2234,8 @@ export const ACCOUNT_REGISTRY = [
    "Jared Dries"
   ],
   "confidence": "mapped",
-  "subVertical": "TMT"
+  "subVertical": "TMT",
+  "status": "prospect"
  },
  {
   "key": "beston parks management",
@@ -2189,7 +2256,8 @@ export const ACCOUNT_REGISTRY = [
    "Jared Dries"
   ],
   "confidence": "mapped",
-  "subVertical": "TMT"
+  "subVertical": "TMT",
+  "status": "prospect"
  },
  {
   "key": "betashares capital",
@@ -2220,7 +2288,8 @@ export const ACCOUNT_REGISTRY = [
    "James Locke"
   ],
   "confidence": "mapped",
-  "subVertical": "Goods & Services"
+  "subVertical": "Goods & Services",
+  "status": "customer"
  },
  {
   "key": "beyond blue",
@@ -2274,7 +2343,8 @@ export const ACCOUNT_REGISTRY = [
    "Jared Dries"
   ],
   "confidence": "mapped",
-  "subVertical": "Goods & Services"
+  "subVertical": "Goods & Services",
+  "status": "prospect"
  },
  {
   "key": "bhw trustee 2017",
@@ -2317,7 +2387,8 @@ export const ACCOUNT_REGISTRY = [
    "Jared Dries"
   ],
   "confidence": "mapped",
-  "subVertical": "TMT"
+  "subVertical": "TMT",
+  "status": "prospect"
  },
  {
   "key": "bingo industries",
@@ -2327,7 +2398,8 @@ export const ACCOUNT_REGISTRY = [
    "James Locke"
   ],
   "confidence": "mapped",
-  "subVertical": "Goods & Services"
+  "subVertical": "Goods & Services",
+  "status": "prospect"
  },
  {
   "key": "bitech",
@@ -2348,7 +2420,8 @@ export const ACCOUNT_REGISTRY = [
    "Jared Dries"
   ],
   "confidence": "mapped",
-  "subVertical": "Goods & Services"
+  "subVertical": "Goods & Services",
+  "status": "prospect"
  },
  {
   "key": "bizwear",
@@ -2380,7 +2453,8 @@ export const ACCOUNT_REGISTRY = [
    "James Locke"
   ],
   "confidence": "mapped",
-  "subVertical": "Goods & Services"
+  "subVertical": "Goods & Services",
+  "status": "prospect"
  },
  {
   "key": "blackhawk network",
@@ -2434,7 +2508,8 @@ export const ACCOUNT_REGISTRY = [
    "James Locke"
   ],
   "confidence": "mapped",
-  "subVertical": "Goods & Services"
+  "subVertical": "Goods & Services",
+  "status": "prospect"
  },
  {
   "key": "bloom learning tech",
@@ -2488,7 +2563,8 @@ export const ACCOUNT_REGISTRY = [
    "James Locke"
   ],
   "confidence": "mapped",
-  "subVertical": "Goods & Services"
+  "subVertical": "Goods & Services",
+  "status": "customer"
  },
  {
   "key": "bmt eastern",
@@ -2553,7 +2629,8 @@ export const ACCOUNT_REGISTRY = [
    "Jared Dries"
   ],
   "confidence": "mapped",
-  "subVertical": "Goods & Services"
+  "subVertical": "Goods & Services",
+  "status": "prospect"
  },
  {
   "key": "boom logistics",
@@ -2563,7 +2640,8 @@ export const ACCOUNT_REGISTRY = [
    "Jared Dries"
   ],
   "confidence": "mapped",
-  "subVertical": "Goods & Services"
+  "subVertical": "Goods & Services",
+  "status": "prospect"
  },
  {
   "key": "boston consulting",
@@ -2573,7 +2651,8 @@ export const ACCOUNT_REGISTRY = [
    "Jared Dries"
   ],
   "confidence": "mapped",
-  "subVertical": "Goods & Services"
+  "subVertical": "Goods & Services",
+  "status": "prospect"
  },
  {
   "key": "bowling centres catering services",
@@ -2627,7 +2706,8 @@ export const ACCOUNT_REGISTRY = [
    "James Locke"
   ],
   "confidence": "mapped",
-  "subVertical": "Goods & Services"
+  "subVertical": "Goods & Services",
+  "status": "prospect"
  },
  {
   "key": "bravo holdco",
@@ -2637,7 +2717,8 @@ export const ACCOUNT_REGISTRY = [
    "James Locke"
   ],
   "confidence": "mapped",
-  "subVertical": "Goods & Services"
+  "subVertical": "Goods & Services",
+  "status": "prospect"
  },
  {
   "key": "brcp",
@@ -2647,7 +2728,8 @@ export const ACCOUNT_REGISTRY = [
    "James Locke"
   ],
   "confidence": "mapped",
-  "subVertical": "Goods & Services"
+  "subVertical": "Goods & Services",
+  "status": "prospect"
  },
  {
   "key": "brenntag",
@@ -2668,7 +2750,8 @@ export const ACCOUNT_REGISTRY = [
    "James Locke"
   ],
   "confidence": "mapped",
-  "subVertical": "Goods & Services"
+  "subVertical": "Goods & Services",
+  "status": "prospect"
  },
  {
   "key": "bri d t",
@@ -2678,7 +2761,8 @@ export const ACCOUNT_REGISTRY = [
    "Jared Dries"
   ],
   "confidence": "mapped",
-  "subVertical": "Goods & Services"
+  "subVertical": "Goods & Services",
+  "status": "prospect"
  },
  {
   "key": "bridges capital ventures",
@@ -2776,7 +2860,8 @@ export const ACCOUNT_REGISTRY = [
    "James Locke"
   ],
   "confidence": "mapped",
-  "subVertical": "Goods & Services"
+  "subVertical": "Goods & Services",
+  "status": "prospect"
  },
  {
   "key": "brysten",
@@ -2786,7 +2871,8 @@ export const ACCOUNT_REGISTRY = [
    "Jared Dries"
   ],
   "confidence": "mapped",
-  "subVertical": "TMT"
+  "subVertical": "TMT",
+  "status": "prospect"
  },
  {
   "key": "bt institutional global share fund",
@@ -2806,7 +2892,8 @@ export const ACCOUNT_REGISTRY = [
    "Jared Dries"
   ],
   "confidence": "mapped",
-  "subVertical": "Goods & Services"
+  "subVertical": "Goods & Services",
+  "status": "prospect"
  },
  {
   "key": "budget rent a car",
@@ -2816,7 +2903,8 @@ export const ACCOUNT_REGISTRY = [
    "James Locke"
   ],
   "confidence": "mapped",
-  "subVertical": "Goods & Services"
+  "subVertical": "Goods & Services",
+  "status": "prospect"
  },
  {
   "key": "bunzl",
@@ -2858,7 +2946,8 @@ export const ACCOUNT_REGISTRY = [
    "James Locke"
   ],
   "confidence": "mapped",
-  "subVertical": "Goods & Services"
+  "subVertical": "Goods & Services",
+  "status": "prospect"
  },
  {
   "key": "bytecraft",
@@ -2890,7 +2979,8 @@ export const ACCOUNT_REGISTRY = [
    "Jared Dries"
   ],
   "confidence": "mapped",
-  "subVertical": "Goods & Services"
+  "subVertical": "Goods & Services",
+  "status": "prospect"
  },
  {
   "key": "c e aitken",
@@ -2933,7 +3023,8 @@ export const ACCOUNT_REGISTRY = [
    "Jared Dries"
   ],
   "confidence": "mapped",
-  "subVertical": "Goods & Services"
+  "subVertical": "Goods & Services",
+  "status": "prospect"
  },
  {
   "key": "cairns hardware",
@@ -2954,7 +3045,8 @@ export const ACCOUNT_REGISTRY = [
    "James Locke"
   ],
   "confidence": "mapped",
-  "subVertical": "Goods & Services"
+  "subVertical": "Goods & Services",
+  "status": "prospect"
  },
  {
   "key": "calliden",
@@ -2975,7 +3067,8 @@ export const ACCOUNT_REGISTRY = [
    "Jared Dries"
   ],
   "confidence": "mapped",
-  "subVertical": "TMT"
+  "subVertical": "TMT",
+  "status": "prospect"
  },
  {
   "key": "camcorp services",
@@ -3029,7 +3122,8 @@ export const ACCOUNT_REGISTRY = [
    "Jared Dries"
   ],
   "confidence": "mapped",
-  "subVertical": "Goods & Services"
+  "subVertical": "Goods & Services",
+  "status": "prospect"
  },
  {
   "key": "campbell wallis moule",
@@ -3050,7 +3144,8 @@ export const ACCOUNT_REGISTRY = [
    "Jared Dries"
   ],
   "confidence": "mapped",
-  "subVertical": "Goods & Services"
+  "subVertical": "Goods & Services",
+  "status": "prospect"
  },
  {
   "key": "campus living flemington road",
@@ -3082,7 +3177,8 @@ export const ACCOUNT_REGISTRY = [
    "James Locke"
   ],
   "confidence": "mapped",
-  "subVertical": "Goods & Services"
+  "subVertical": "Goods & Services",
+  "status": "prospect"
  },
  {
   "key": "cap xx",
@@ -3092,7 +3188,8 @@ export const ACCOUNT_REGISTRY = [
    "Jared Dries"
   ],
   "confidence": "mapped",
-  "subVertical": "FSI"
+  "subVertical": "FSI",
+  "status": "prospect"
  },
  {
   "key": "capgemini business services",
@@ -3124,7 +3221,8 @@ export const ACCOUNT_REGISTRY = [
    "James Locke"
   ],
   "confidence": "mapped",
-  "subVertical": "Goods & Services"
+  "subVertical": "Goods & Services",
+  "status": "prospect"
  },
  {
   "key": "caprice",
@@ -3134,7 +3232,8 @@ export const ACCOUNT_REGISTRY = [
    "James Locke"
   ],
   "confidence": "mapped",
-  "subVertical": "Goods & Services"
+  "subVertical": "Goods & Services",
+  "status": "prospect"
  },
  {
   "key": "capricorn society",
@@ -3144,7 +3243,8 @@ export const ACCOUNT_REGISTRY = [
    "James Locke"
   ],
   "confidence": "mapped",
-  "subVertical": "Goods & Services"
+  "subVertical": "Goods & Services",
+  "status": "customer"
  },
  {
   "key": "carbon revolution",
@@ -3154,7 +3254,8 @@ export const ACCOUNT_REGISTRY = [
    "James Locke"
   ],
   "confidence": "mapped",
-  "subVertical": "Goods & Services"
+  "subVertical": "Goods & Services",
+  "status": "prospect"
  },
  {
   "key": "cashflow manager",
@@ -3186,7 +3287,8 @@ export const ACCOUNT_REGISTRY = [
    "James Locke"
   ],
   "confidence": "mapped",
-  "subVertical": "Goods & Services"
+  "subVertical": "Goods & Services",
+  "status": "prospect"
  },
  {
   "key": "cba new digital businesses",
@@ -3284,7 +3386,8 @@ export const ACCOUNT_REGISTRY = [
    "Jared Dries"
   ],
   "confidence": "mapped",
-  "subVertical": "Goods & Services"
+  "subVertical": "Goods & Services",
+  "status": "prospect"
  },
  {
   "key": "certaldo investments",
@@ -3360,7 +3463,8 @@ export const ACCOUNT_REGISTRY = [
    "James Locke"
   ],
   "confidence": "mapped",
-  "subVertical": "Goods & Services"
+  "subVertical": "Goods & Services",
+  "status": "prospect"
  },
  {
   "key": "chandra enterprises",
@@ -3370,7 +3474,8 @@ export const ACCOUNT_REGISTRY = [
    "Jared Dries"
   ],
   "confidence": "mapped",
-  "subVertical": "Goods & Services"
+  "subVertical": "Goods & Services",
+  "status": "prospect"
  },
  {
   "key": "chanel",
@@ -3380,7 +3485,8 @@ export const ACCOUNT_REGISTRY = [
    "James Locke"
   ],
   "confidence": "mapped",
-  "subVertical": "Goods & Services"
+  "subVertical": "Goods & Services",
+  "status": "prospect"
  },
  {
   "key": "charbon coal",
@@ -3401,7 +3507,8 @@ export const ACCOUNT_REGISTRY = [
    "Jared Dries"
   ],
   "confidence": "mapped",
-  "subVertical": "Goods & Services"
+  "subVertical": "Goods & Services",
+  "status": "prospect"
  },
  {
   "key": "charter hall",
@@ -3422,7 +3529,8 @@ export const ACCOUNT_REGISTRY = [
    "James Locke"
   ],
   "confidence": "mapped",
-  "subVertical": "Goods & Services"
+  "subVertical": "Goods & Services",
+  "status": "customer"
  },
  {
   "key": "chemco",
@@ -3432,7 +3540,8 @@ export const ACCOUNT_REGISTRY = [
    "James Locke"
   ],
   "confidence": "mapped",
-  "subVertical": "Goods & Services"
+  "subVertical": "Goods & Services",
+  "status": "prospect"
  },
  {
   "key": "chep",
@@ -3442,7 +3551,8 @@ export const ACCOUNT_REGISTRY = [
    "Jared Dries"
   ],
   "confidence": "mapped",
-  "subVertical": "Goods & Services"
+  "subVertical": "Goods & Services",
+  "status": "prospect"
  },
  {
   "key": "chevron glass investments",
@@ -3452,7 +3562,8 @@ export const ACCOUNT_REGISTRY = [
    "Jared Dries"
   ],
   "confidence": "mapped",
-  "subVertical": "Goods & Services"
+  "subVertical": "Goods & Services",
+  "status": "prospect"
  },
  {
   "key": "chg meridian",
@@ -3472,7 +3583,8 @@ export const ACCOUNT_REGISTRY = [
    "Jared Dries"
   ],
   "confidence": "mapped",
-  "subVertical": "Goods & Services"
+  "subVertical": "Goods & Services",
+  "status": "prospect"
  },
  {
   "key": "china construction bank",
@@ -3504,7 +3616,8 @@ export const ACCOUNT_REGISTRY = [
    "James Locke"
   ],
   "confidence": "mapped",
-  "subVertical": "Goods & Services"
+  "subVertical": "Goods & Services",
+  "status": "customer"
  },
  {
   "key": "chorus",
@@ -3536,7 +3649,8 @@ export const ACCOUNT_REGISTRY = [
    "Jared Dries"
   ],
   "confidence": "mapped",
-  "subVertical": "Goods & Services"
+  "subVertical": "Goods & Services",
+  "status": "prospect"
  },
  {
   "key": "cinematographers society",
@@ -3601,7 +3715,8 @@ export const ACCOUNT_REGISTRY = [
    "Jared Dries"
   ],
   "confidence": "mapped",
-  "subVertical": "Goods & Services"
+  "subVertical": "Goods & Services",
+  "status": "prospect"
  },
  {
   "key": "cj nutracon",
@@ -3611,7 +3726,8 @@ export const ACCOUNT_REGISTRY = [
    "Jared Dries"
   ],
   "confidence": "mapped",
-  "subVertical": "Goods & Services"
+  "subVertical": "Goods & Services",
+  "status": "prospect"
  },
  {
   "key": "claim central consolidated",
@@ -3643,7 +3759,8 @@ export const ACCOUNT_REGISTRY = [
    "Jared Dries"
   ],
   "confidence": "mapped",
-  "subVertical": "Locations"
+  "subVertical": "Locations",
+  "status": "prospect"
  },
  {
   "key": "class",
@@ -3675,7 +3792,8 @@ export const ACCOUNT_REGISTRY = [
    "Jared Dries"
   ],
   "confidence": "mapped",
-  "subVertical": "Goods & Services"
+  "subVertical": "Goods & Services",
+  "status": "prospect"
  },
  {
   "key": "clear dynamics",
@@ -3696,7 +3814,8 @@ export const ACCOUNT_REGISTRY = [
    "Jared Dries"
   ],
   "confidence": "mapped",
-  "subVertical": "Goods & Services"
+  "subVertical": "Goods & Services",
+  "status": "prospect"
  },
  {
   "key": "click loans",
@@ -3772,7 +3891,8 @@ export const ACCOUNT_REGISTRY = [
    "Jared Dries"
   ],
   "confidence": "mapped",
-  "subVertical": "Goods & Services"
+  "subVertical": "Goods & Services",
+  "status": "prospect"
  },
  {
   "key": "coalex",
@@ -3814,7 +3934,8 @@ export const ACCOUNT_REGISTRY = [
    "James Locke"
   ],
   "confidence": "mapped",
-  "subVertical": "Goods & Services"
+  "subVertical": "Goods & Services",
+  "status": "prospect"
  },
  {
   "key": "collier miller",
@@ -3912,7 +4033,8 @@ export const ACCOUNT_REGISTRY = [
    "Jared Dries"
   ],
   "confidence": "mapped",
-  "subVertical": "Goods & Services"
+  "subVertical": "Goods & Services",
+  "status": "prospect"
  },
  {
   "key": "community media",
@@ -3955,7 +4077,8 @@ export const ACCOUNT_REGISTRY = [
    "Jared Dries"
   ],
   "confidence": "mapped",
-  "subVertical": "Goods & Services"
+  "subVertical": "Goods & Services",
+  "status": "prospect"
  },
  {
   "key": "connell bros",
@@ -3965,7 +4088,8 @@ export const ACCOUNT_REGISTRY = [
    "James Locke"
   ],
   "confidence": "mapped",
-  "subVertical": "Goods & Services"
+  "subVertical": "Goods & Services",
+  "status": "prospect"
  },
  {
   "key": "conquest equipment technologies",
@@ -3975,7 +4099,8 @@ export const ACCOUNT_REGISTRY = [
    "Jared Dries"
   ],
   "confidence": "mapped",
-  "subVertical": "TMT"
+  "subVertical": "TMT",
+  "status": "prospect"
  },
  {
   "key": "consolidated press finance",
@@ -3996,7 +4121,8 @@ export const ACCOUNT_REGISTRY = [
    "Jared Dries"
   ],
   "confidence": "mapped",
-  "subVertical": "Goods & Services"
+  "subVertical": "Goods & Services",
+  "status": "prospect"
  },
  {
   "key": "consultants network international",
@@ -4017,7 +4143,8 @@ export const ACCOUNT_REGISTRY = [
    "James Locke"
   ],
   "confidence": "mapped",
-  "subVertical": "Goods & Services"
+  "subVertical": "Goods & Services",
+  "status": "prospect"
  },
  {
   "key": "contour education vic",
@@ -4027,7 +4154,8 @@ export const ACCOUNT_REGISTRY = [
    "James Locke"
   ],
   "confidence": "mapped",
-  "subVertical": "Public Sector"
+  "subVertical": "Public Sector",
+  "status": "prospect"
  },
  {
   "key": "convoy international",
@@ -4092,7 +4220,8 @@ export const ACCOUNT_REGISTRY = [
    "Jared Dries"
   ],
   "confidence": "mapped",
-  "subVertical": "Locations"
+  "subVertical": "Locations",
+  "status": "prospect"
  },
  {
   "key": "corporate travel management",
@@ -4102,7 +4231,8 @@ export const ACCOUNT_REGISTRY = [
    "Jared Dries"
   ],
   "confidence": "mapped",
-  "subVertical": "Goods & Services"
+  "subVertical": "Goods & Services",
+  "status": "prospect"
  },
  {
   "key": "corporate wellbeing hub",
@@ -4123,7 +4253,8 @@ export const ACCOUNT_REGISTRY = [
    "James Locke"
   ],
   "confidence": "mapped",
-  "subVertical": "Goods & Services"
+  "subVertical": "Goods & Services",
+  "status": "prospect"
  },
  {
   "key": "costing logistics systems",
@@ -4155,7 +4286,8 @@ export const ACCOUNT_REGISTRY = [
    "Jared Dries"
   ],
   "confidence": "mapped",
-  "subVertical": "Goods & Services"
+  "subVertical": "Goods & Services",
+  "status": "prospect"
  },
  {
   "key": "create media",
@@ -4241,7 +4373,8 @@ export const ACCOUNT_REGISTRY = [
    "James Locke"
   ],
   "confidence": "mapped",
-  "subVertical": "Goods & Services"
+  "subVertical": "Goods & Services",
+  "status": "prospect"
  },
  {
   "key": "crystallize consulting",
@@ -4251,7 +4384,8 @@ export const ACCOUNT_REGISTRY = [
    "Jared Dries"
   ],
   "confidence": "mapped",
-  "subVertical": "Goods & Services"
+  "subVertical": "Goods & Services",
+  "status": "prospect"
  },
  {
   "key": "ct",
@@ -4271,7 +4405,8 @@ export const ACCOUNT_REGISTRY = [
    "Jared Dries"
   ],
   "confidence": "mapped",
-  "subVertical": "Goods & Services"
+  "subVertical": "Goods & Services",
+  "status": "prospect"
  },
  {
   "key": "cua management",
@@ -4302,7 +4437,8 @@ export const ACCOUNT_REGISTRY = [
   "aes": [
    "James Locke"
   ],
-  "confidence": "inferred"
+  "confidence": "inferred",
+  "status": "prospect"
  },
  {
   "key": "cuscal",
@@ -4366,7 +4502,8 @@ export const ACCOUNT_REGISTRY = [
    "James Locke"
   ],
   "confidence": "mapped",
-  "subVertical": "Goods & Services"
+  "subVertical": "Goods & Services",
+  "status": "prospect"
  },
  {
   "key": "d orsogna",
@@ -4376,7 +4513,8 @@ export const ACCOUNT_REGISTRY = [
    "Jared Dries"
   ],
   "confidence": "mapped",
-  "subVertical": "Goods & Services"
+  "subVertical": "Goods & Services",
+  "status": "prospect"
  },
  {
   "key": "dabble sports",
@@ -4419,7 +4557,8 @@ export const ACCOUNT_REGISTRY = [
    "James Locke"
   ],
   "confidence": "mapped",
-  "subVertical": "Goods & Services"
+  "subVertical": "Goods & Services",
+  "status": "prospect"
  },
  {
   "key": "dandy premix concrete",
@@ -4429,7 +4568,8 @@ export const ACCOUNT_REGISTRY = [
    "James Locke"
   ],
   "confidence": "mapped",
-  "subVertical": "Goods & Services"
+  "subVertical": "Goods & Services",
+  "status": "prospect"
  },
  {
   "key": "data agility",
@@ -4450,7 +4590,8 @@ export const ACCOUNT_REGISTRY = [
    "Jared Dries"
   ],
   "confidence": "mapped",
-  "subVertical": "Locations"
+  "subVertical": "Locations",
+  "status": "prospect"
  },
  {
   "key": "david cowley real estate",
@@ -4471,7 +4612,8 @@ export const ACCOUNT_REGISTRY = [
    "Jared Dries"
   ],
   "confidence": "mapped",
-  "subVertical": "Goods & Services"
+  "subVertical": "Goods & Services",
+  "status": "prospect"
  },
  {
   "key": "dck",
@@ -4579,7 +4721,8 @@ export const ACCOUNT_REGISTRY = [
    "Jared Dries"
   ],
   "confidence": "mapped",
-  "subVertical": "Goods & Services"
+  "subVertical": "Goods & Services",
+  "status": "prospect"
  },
  {
   "key": "deluxe",
@@ -4600,7 +4743,8 @@ export const ACCOUNT_REGISTRY = [
    "Jared Dries"
   ],
   "confidence": "mapped",
-  "subVertical": "Goods & Services"
+  "subVertical": "Goods & Services",
+  "status": "prospect"
  },
  {
   "key": "deputy",
@@ -4631,7 +4775,8 @@ export const ACCOUNT_REGISTRY = [
   "aes": [
    "James Locke"
   ],
-  "confidence": "inferred"
+  "confidence": "inferred",
+  "status": "prospect"
  },
  {
   "key": "dexus funds management",
@@ -4663,7 +4808,8 @@ export const ACCOUNT_REGISTRY = [
    "Jared Dries"
   ],
   "confidence": "mapped",
-  "subVertical": "Goods & Services"
+  "subVertical": "Goods & Services",
+  "status": "prospect"
  },
  {
   "key": "diabetes",
@@ -4673,7 +4819,8 @@ export const ACCOUNT_REGISTRY = [
    "James Locke"
   ],
   "confidence": "mapped",
-  "subVertical": "Goods & Services"
+  "subVertical": "Goods & Services",
+  "status": "customer"
  },
  {
   "key": "diakrob investments",
@@ -4694,7 +4841,8 @@ export const ACCOUNT_REGISTRY = [
    "Jared Dries"
   ],
   "confidence": "mapped",
-  "subVertical": "Goods & Services"
+  "subVertical": "Goods & Services",
+  "status": "prospect"
  },
  {
   "key": "dickson dickson healthcare",
@@ -4747,7 +4895,8 @@ export const ACCOUNT_REGISTRY = [
   "aes": [
    "James Locke"
   ],
-  "confidence": "inferred"
+  "confidence": "inferred",
+  "status": "prospect"
  },
  {
   "key": "disability services",
@@ -4757,7 +4906,8 @@ export const ACCOUNT_REGISTRY = [
    "Jared Dries"
   ],
   "confidence": "mapped",
-  "subVertical": "Goods & Services"
+  "subVertical": "Goods & Services",
+  "status": "prospect"
  },
  {
   "key": "diva international",
@@ -4789,7 +4939,8 @@ export const ACCOUNT_REGISTRY = [
    "Jared Dries"
   ],
   "confidence": "mapped",
-  "subVertical": "TMT"
+  "subVertical": "TMT",
+  "status": "prospect"
  },
  {
   "key": "dolby",
@@ -4865,7 +5016,8 @@ export const ACCOUNT_REGISTRY = [
    "Jared Dries"
   ],
   "confidence": "mapped",
-  "subVertical": "Goods & Services"
+  "subVertical": "Goods & Services",
+  "status": "prospect"
  },
  {
   "key": "dreamscape networks",
@@ -4996,7 +5148,8 @@ export const ACCOUNT_REGISTRY = [
    "Jared Dries"
   ],
   "confidence": "mapped",
-  "subVertical": "Goods & Services"
+  "subVertical": "Goods & Services",
+  "status": "prospect"
  },
  {
   "key": "dyduk investments",
@@ -5017,7 +5170,8 @@ export const ACCOUNT_REGISTRY = [
    "Jared Dries"
   ],
   "confidence": "mapped",
-  "subVertical": "Goods & Services"
+  "subVertical": "Goods & Services",
+  "status": "prospect"
  },
  {
   "key": "e a",
@@ -5071,7 +5225,8 @@ export const ACCOUNT_REGISTRY = [
    "Jared Dries"
   ],
   "confidence": "mapped",
-  "subVertical": "Locations"
+  "subVertical": "Locations",
+  "status": "prospect"
  },
  {
   "key": "east yarra friendly society",
@@ -5125,7 +5280,8 @@ export const ACCOUNT_REGISTRY = [
    "Jared Dries"
   ],
   "confidence": "mapped",
-  "subVertical": "Goods & Services"
+  "subVertical": "Goods & Services",
+  "status": "prospect"
  },
  {
   "key": "ecl",
@@ -5146,7 +5302,8 @@ export const ACCOUNT_REGISTRY = [
    "Jared Dries"
   ],
   "confidence": "mapped",
-  "subVertical": "Goods & Services"
+  "subVertical": "Goods & Services",
+  "status": "prospect"
  },
  {
   "key": "edapp",
@@ -5222,7 +5379,8 @@ export const ACCOUNT_REGISTRY = [
    "Jared Dries"
   ],
   "confidence": "mapped",
-  "subVertical": "Goods & Services"
+  "subVertical": "Goods & Services",
+  "status": "prospect"
  },
  {
   "key": "electranet",
@@ -5232,7 +5390,8 @@ export const ACCOUNT_REGISTRY = [
    "Jared Dries"
   ],
   "confidence": "mapped",
-  "subVertical": "Goods & Services"
+  "subVertical": "Goods & Services",
+  "status": "prospect"
  },
  {
   "key": "electric power development",
@@ -5253,7 +5412,8 @@ export const ACCOUNT_REGISTRY = [
    "Jared Dries"
   ],
   "confidence": "mapped",
-  "subVertical": "Goods & Services"
+  "subVertical": "Goods & Services",
+  "status": "prospect"
  },
  {
   "key": "electronic arts",
@@ -5318,7 +5478,8 @@ export const ACCOUNT_REGISTRY = [
    "Jared Dries"
   ],
   "confidence": "mapped",
-  "subVertical": "TMT"
+  "subVertical": "TMT",
+  "status": "prospect"
  },
  {
   "key": "emergency services health",
@@ -5372,7 +5533,8 @@ export const ACCOUNT_REGISTRY = [
    "Jared Dries"
   ],
   "confidence": "mapped",
-  "subVertical": "Goods & Services"
+  "subVertical": "Goods & Services",
+  "status": "prospect"
  },
  {
   "key": "emr capital",
@@ -5415,7 +5577,8 @@ export const ACCOUNT_REGISTRY = [
    "James Locke"
   ],
   "confidence": "mapped",
-  "subVertical": "Goods & Services"
+  "subVertical": "Goods & Services",
+  "status": "prospect"
  },
  {
   "key": "energy infrastructure investments",
@@ -5436,7 +5599,8 @@ export const ACCOUNT_REGISTRY = [
    "James Locke"
   ],
   "confidence": "mapped",
-  "subVertical": "Goods & Services"
+  "subVertical": "Goods & Services",
+  "status": "prospect"
  },
  {
   "key": "enero",
@@ -5446,7 +5610,8 @@ export const ACCOUNT_REGISTRY = [
    "Jared Dries"
   ],
   "confidence": "mapped",
-  "subVertical": "Goods & Services"
+  "subVertical": "Goods & Services",
+  "status": "prospect"
  },
  {
   "key": "envato",
@@ -5467,7 +5632,8 @@ export const ACCOUNT_REGISTRY = [
    "Jared Dries"
   ],
   "confidence": "mapped",
-  "subVertical": "Goods & Services"
+  "subVertical": "Goods & Services",
+  "status": "prospect"
  },
  {
   "key": "envirosuite",
@@ -5488,7 +5654,8 @@ export const ACCOUNT_REGISTRY = [
    "Jared Dries"
   ],
   "confidence": "mapped",
-  "subVertical": "Locations"
+  "subVertical": "Locations",
+  "status": "prospect"
  },
  {
   "key": "enware",
@@ -5498,7 +5665,8 @@ export const ACCOUNT_REGISTRY = [
    "Jared Dries"
   ],
   "confidence": "mapped",
-  "subVertical": "Goods & Services"
+  "subVertical": "Goods & Services",
+  "status": "prospect"
  },
  {
   "key": "epac",
@@ -5651,7 +5819,8 @@ export const ACCOUNT_REGISTRY = [
    "Jared Dries"
   ],
   "confidence": "mapped",
-  "subVertical": "Goods & Services"
+  "subVertical": "Goods & Services",
+  "status": "prospect"
  },
  {
   "key": "estar",
@@ -5694,7 +5863,8 @@ export const ACCOUNT_REGISTRY = [
    "Jared Dries"
   ],
   "confidence": "mapped",
-  "subVertical": "Goods & Services"
+  "subVertical": "Goods & Services",
+  "status": "prospect"
  },
  {
   "key": "evolution",
@@ -5704,7 +5874,8 @@ export const ACCOUNT_REGISTRY = [
    "James Locke"
   ],
   "confidence": "mapped",
-  "subVertical": "Goods & Services"
+  "subVertical": "Goods & Services",
+  "status": "prospect"
  },
  {
   "key": "evolution trustees",
@@ -5868,7 +6039,8 @@ export const ACCOUNT_REGISTRY = [
    "Jared Dries"
   ],
   "confidence": "mapped",
-  "subVertical": "Goods & Services"
+  "subVertical": "Goods & Services",
+  "status": "prospect"
  },
  {
   "key": "fg advisory",
@@ -5878,7 +6050,8 @@ export const ACCOUNT_REGISTRY = [
    "James Locke"
   ],
   "confidence": "mapped",
-  "subVertical": "Goods & Services"
+  "subVertical": "Goods & Services",
+  "status": "prospect"
  },
  {
   "key": "fidante partners",
@@ -6030,7 +6203,8 @@ export const ACCOUNT_REGISTRY = [
    "James Locke"
   ],
   "confidence": "mapped",
-  "subVertical": "Goods & Services"
+  "subVertical": "Goods & Services",
+  "status": "customer"
  },
  {
   "key": "finsure finance insurance",
@@ -6062,7 +6236,8 @@ export const ACCOUNT_REGISTRY = [
    "Jared Dries"
   ],
   "confidence": "mapped",
-  "subVertical": "Goods & Services"
+  "subVertical": "Goods & Services",
+  "status": "prospect"
  },
  {
   "key": "florey institute of neuroscience mental health",
@@ -6072,7 +6247,8 @@ export const ACCOUNT_REGISTRY = [
    "James Locke"
   ],
   "confidence": "mapped",
-  "subVertical": "HCLS"
+  "subVertical": "HCLS",
+  "status": "prospect"
  },
  {
   "key": "fluorine chemicals",
@@ -6104,7 +6280,8 @@ export const ACCOUNT_REGISTRY = [
    "Jared Dries"
   ],
   "confidence": "mapped",
-  "subVertical": "Goods & Services"
+  "subVertical": "Goods & Services",
+  "status": "prospect"
  },
  {
   "key": "fmr investments",
@@ -6157,7 +6334,8 @@ export const ACCOUNT_REGISTRY = [
   "aes": [
    "Jared Dries"
   ],
-  "confidence": "inferred"
+  "confidence": "inferred",
+  "status": "prospect"
  },
  {
   "key": "foodbank victoria",
@@ -6167,7 +6345,8 @@ export const ACCOUNT_REGISTRY = [
    "James Locke"
   ],
   "confidence": "mapped",
-  "subVertical": "Goods & Services"
+  "subVertical": "Goods & Services",
+  "status": "prospect"
  },
  {
   "key": "forex management",
@@ -6210,7 +6389,8 @@ export const ACCOUNT_REGISTRY = [
    "Jared Dries"
   ],
   "confidence": "mapped",
-  "subVertical": "Goods & Services"
+  "subVertical": "Goods & Services",
+  "status": "prospect"
  },
  {
   "key": "forum finance",
@@ -6231,7 +6411,8 @@ export const ACCOUNT_REGISTRY = [
    "James Locke"
   ],
   "confidence": "mapped",
-  "subVertical": "Goods & Services"
+  "subVertical": "Goods & Services",
+  "status": "customer"
  },
  {
   "key": "foundation investment",
@@ -6274,7 +6455,8 @@ export const ACCOUNT_REGISTRY = [
    "James Locke"
   ],
   "confidence": "mapped",
-  "subVertical": "Goods & Services"
+  "subVertical": "Goods & Services",
+  "status": "prospect"
  },
  {
   "key": "fox",
@@ -6306,7 +6488,8 @@ export const ACCOUNT_REGISTRY = [
    "James Locke"
   ],
   "confidence": "mapped",
-  "subVertical": "Goods & Services"
+  "subVertical": "Goods & Services",
+  "status": "customer"
  },
  {
   "key": "fqm",
@@ -6349,7 +6532,8 @@ export const ACCOUNT_REGISTRY = [
    "Jared Dries"
   ],
   "confidence": "mapped",
-  "subVertical": "Goods & Services"
+  "subVertical": "Goods & Services",
+  "status": "prospect"
  },
  {
   "key": "ftr i",
@@ -6425,7 +6609,8 @@ export const ACCOUNT_REGISTRY = [
    "Jared Dries"
   ],
   "confidence": "mapped",
-  "subVertical": "Goods & Services"
+  "subVertical": "Goods & Services",
+  "status": "prospect"
  },
  {
   "key": "gallagher benefit services",
@@ -6445,7 +6630,8 @@ export const ACCOUNT_REGISTRY = [
   "aes": [
    "James Locke"
   ],
-  "confidence": "inferred"
+  "confidence": "inferred",
+  "status": "prospect"
  },
  {
   "key": "garden city planters",
@@ -6477,7 +6663,8 @@ export const ACCOUNT_REGISTRY = [
    "Jared Dries"
   ],
   "confidence": "mapped",
-  "subVertical": "Goods & Services"
+  "subVertical": "Goods & Services",
+  "status": "prospect"
  },
  {
   "key": "gas motors",
@@ -6608,7 +6795,8 @@ export const ACCOUNT_REGISTRY = [
    "James Locke"
   ],
   "confidence": "mapped",
-  "subVertical": "Goods & Services"
+  "subVertical": "Goods & Services",
+  "status": "prospect"
  },
  {
   "key": "gfc thuringowa",
@@ -6629,7 +6817,8 @@ export const ACCOUNT_REGISTRY = [
    "Jared Dries"
   ],
   "confidence": "mapped",
-  "subVertical": "Goods & Services"
+  "subVertical": "Goods & Services",
+  "status": "prospect"
  },
  {
   "key": "gigacomm",
@@ -6650,7 +6839,8 @@ export const ACCOUNT_REGISTRY = [
    "Jared Dries"
   ],
   "confidence": "mapped",
-  "subVertical": "Goods & Services"
+  "subVertical": "Goods & Services",
+  "status": "prospect"
  },
  {
   "key": "glass supplies",
@@ -6660,7 +6850,8 @@ export const ACCOUNT_REGISTRY = [
    "James Locke"
   ],
   "confidence": "mapped",
-  "subVertical": "Goods & Services"
+  "subVertical": "Goods & Services",
+  "status": "prospect"
  },
  {
   "key": "glassworks",
@@ -6681,7 +6872,8 @@ export const ACCOUNT_REGISTRY = [
    "James Locke"
   ],
   "confidence": "mapped",
-  "subVertical": "Goods & Services"
+  "subVertical": "Goods & Services",
+  "status": "prospect"
  },
  {
   "key": "glentel amt",
@@ -6702,7 +6894,8 @@ export const ACCOUNT_REGISTRY = [
    "Jared Dries"
   ],
   "confidence": "mapped",
-  "subVertical": "Goods & Services"
+  "subVertical": "Goods & Services",
+  "status": "prospect"
  },
  {
   "key": "global contractor management solutions",
@@ -6712,7 +6905,8 @@ export const ACCOUNT_REGISTRY = [
    "Jared Dries"
   ],
   "confidence": "mapped",
-  "subVertical": "Goods & Services"
+  "subVertical": "Goods & Services",
+  "status": "prospect"
  },
  {
   "key": "global health",
@@ -6776,7 +6970,8 @@ export const ACCOUNT_REGISTRY = [
    "James Locke"
   ],
   "confidence": "mapped",
-  "subVertical": "Goods & Services"
+  "subVertical": "Goods & Services",
+  "status": "prospect"
  },
  {
   "key": "golden cockerel",
@@ -6786,7 +6981,8 @@ export const ACCOUNT_REGISTRY = [
    "Jared Dries"
   ],
   "confidence": "mapped",
-  "subVertical": "Goods & Services"
+  "subVertical": "Goods & Services",
+  "status": "prospect"
  },
  {
   "key": "goldman sachs",
@@ -6873,7 +7069,8 @@ export const ACCOUNT_REGISTRY = [
    "James Locke"
   ],
   "confidence": "mapped",
-  "subVertical": "Goods & Services"
+  "subVertical": "Goods & Services",
+  "status": "prospect"
  },
  {
   "key": "grabba technologies",
@@ -6894,7 +7091,8 @@ export const ACCOUNT_REGISTRY = [
    "Jared Dries"
   ],
   "confidence": "mapped",
-  "subVertical": "Goods & Services"
+  "subVertical": "Goods & Services",
+  "status": "prospect"
  },
  {
   "key": "grange resources",
@@ -6904,7 +7102,8 @@ export const ACCOUNT_REGISTRY = [
    "James Locke"
   ],
   "confidence": "mapped",
-  "subVertical": "Goods & Services"
+  "subVertical": "Goods & Services",
+  "status": "prospect"
  },
  {
   "key": "grant broadcasters",
@@ -6958,7 +7157,8 @@ export const ACCOUNT_REGISTRY = [
    "Jared Dries"
   ],
   "confidence": "mapped",
-  "subVertical": "Goods & Services"
+  "subVertical": "Goods & Services",
+  "status": "prospect"
  },
  {
   "key": "grocon investments",
@@ -7012,7 +7212,8 @@ export const ACCOUNT_REGISTRY = [
    "James Locke"
   ],
   "confidence": "mapped",
-  "subVertical": "Goods & Services"
+  "subVertical": "Goods & Services",
+  "status": "prospect"
  },
  {
   "key": "gsa insurance brokers",
@@ -7088,7 +7289,8 @@ export const ACCOUNT_REGISTRY = [
    "Jared Dries"
   ],
   "confidence": "mapped",
-  "subVertical": "Goods & Services"
+  "subVertical": "Goods & Services",
+  "status": "prospect"
  },
  {
   "key": "h r block",
@@ -7109,7 +7311,8 @@ export const ACCOUNT_REGISTRY = [
    "Jared Dries"
   ],
   "confidence": "mapped",
-  "subVertical": "Goods & Services"
+  "subVertical": "Goods & Services",
+  "status": "prospect"
  },
  {
   "key": "haighs manufacturing",
@@ -7119,7 +7322,8 @@ export const ACCOUNT_REGISTRY = [
    "Jared Dries"
   ],
   "confidence": "mapped",
-  "subVertical": "Goods & Services"
+  "subVertical": "Goods & Services",
+  "status": "prospect"
  },
  {
   "key": "halfbrick",
@@ -7195,7 +7399,8 @@ export const ACCOUNT_REGISTRY = [
    "James Locke"
   ],
   "confidence": "mapped",
-  "subVertical": "Goods & Services"
+  "subVertical": "Goods & Services",
+  "status": "prospect"
  },
  {
   "key": "hanover welfare services",
@@ -7227,7 +7432,8 @@ export const ACCOUNT_REGISTRY = [
    "James Locke"
   ],
   "confidence": "mapped",
-  "subVertical": "Goods & Services"
+  "subVertical": "Goods & Services",
+  "status": "prospect"
  },
  {
   "key": "hardboards",
@@ -7259,7 +7465,8 @@ export const ACCOUNT_REGISTRY = [
    "Jared Dries"
   ],
   "confidence": "mapped",
-  "subVertical": "Goods & Services"
+  "subVertical": "Goods & Services",
+  "status": "prospect"
  },
  {
   "key": "harvey industries",
@@ -7313,7 +7520,8 @@ export const ACCOUNT_REGISTRY = [
    "James Locke"
   ],
   "confidence": "mapped",
-  "subVertical": "HCLS"
+  "subVertical": "HCLS",
+  "status": "customer"
  },
  {
   "key": "healthcare associates",
@@ -7334,7 +7542,8 @@ export const ACCOUNT_REGISTRY = [
    "James Locke"
   ],
   "confidence": "mapped",
-  "subVertical": "Goods & Services"
+  "subVertical": "Goods & Services",
+  "status": "customer"
  },
  {
   "key": "heartland",
@@ -7366,7 +7575,8 @@ export const ACCOUNT_REGISTRY = [
    "James Locke"
   ],
   "confidence": "mapped",
-  "subVertical": "Goods & Services"
+  "subVertical": "Goods & Services",
+  "status": "prospect"
  },
  {
   "key": "henderson global investors",
@@ -7420,7 +7630,8 @@ export const ACCOUNT_REGISTRY = [
    "James Locke"
   ],
   "confidence": "mapped",
-  "subVertical": "Goods & Services"
+  "subVertical": "Goods & Services",
+  "status": "prospect"
  },
  {
   "key": "high profile enterprises",
@@ -7441,7 +7652,8 @@ export const ACCOUNT_REGISTRY = [
    "James Locke"
   ],
   "confidence": "mapped",
-  "subVertical": "Goods & Services"
+  "subVertical": "Goods & Services",
+  "status": "prospect"
  },
  {
   "key": "highland pine products",
@@ -7451,7 +7663,8 @@ export const ACCOUNT_REGISTRY = [
    "Jared Dries"
   ],
   "confidence": "mapped",
-  "subVertical": "Goods & Services"
+  "subVertical": "Goods & Services",
+  "status": "prospect"
  },
  {
   "key": "hills motorway",
@@ -7505,7 +7718,8 @@ export const ACCOUNT_REGISTRY = [
    "James Locke"
   ],
   "confidence": "mapped",
-  "subVertical": "Goods & Services"
+  "subVertical": "Goods & Services",
+  "status": "prospect"
  },
  {
   "key": "hse",
@@ -7515,7 +7729,8 @@ export const ACCOUNT_REGISTRY = [
    "Jared Dries"
   ],
   "confidence": "mapped",
-  "subVertical": "Goods & Services"
+  "subVertical": "Goods & Services",
+  "status": "prospect"
  },
  {
   "key": "hudson corporate",
@@ -7547,7 +7762,8 @@ export const ACCOUNT_REGISTRY = [
    "Jared Dries"
   ],
   "confidence": "mapped",
-  "subVertical": "Goods & Services"
+  "subVertical": "Goods & Services",
+  "status": "prospect"
  },
  {
   "key": "hunter douglas",
@@ -7557,7 +7773,8 @@ export const ACCOUNT_REGISTRY = [
    "James Locke"
   ],
   "confidence": "mapped",
-  "subVertical": "Goods & Services"
+  "subVertical": "Goods & Services",
+  "status": "prospect"
  },
  {
   "key": "husqvarna",
@@ -7567,7 +7784,8 @@ export const ACCOUNT_REGISTRY = [
    "Jared Dries"
   ],
   "confidence": "mapped",
-  "subVertical": "Goods & Services"
+  "subVertical": "Goods & Services",
+  "status": "prospect"
  },
  {
   "key": "hwl ebsworth lawyers",
@@ -7588,7 +7806,8 @@ export const ACCOUNT_REGISTRY = [
    "James Locke"
   ],
   "confidence": "mapped",
-  "subVertical": "Goods & Services"
+  "subVertical": "Goods & Services",
+  "status": "prospect"
  },
  {
   "key": "hydro chem",
@@ -7598,7 +7817,8 @@ export const ACCOUNT_REGISTRY = [
    "Jared Dries"
   ],
   "confidence": "mapped",
-  "subVertical": "Goods & Services"
+  "subVertical": "Goods & Services",
+  "status": "prospect"
  },
  {
   "key": "i d g communications",
@@ -7618,7 +7838,8 @@ export const ACCOUNT_REGISTRY = [
   "aes": [
    "James Locke"
   ],
-  "confidence": "inferred"
+  "confidence": "inferred",
+  "status": "prospect"
  },
  {
   "key": "icandy interactive",
@@ -7661,7 +7882,8 @@ export const ACCOUNT_REGISTRY = [
    "James Locke"
   ],
   "confidence": "mapped",
-  "subVertical": "Goods & Services"
+  "subVertical": "Goods & Services",
+  "status": "prospect"
  },
  {
   "key": "icoa",
@@ -7671,7 +7893,8 @@ export const ACCOUNT_REGISTRY = [
    "Jared Dries"
   ],
   "confidence": "mapped",
-  "subVertical": "Goods & Services"
+  "subVertical": "Goods & Services",
+  "status": "prospect"
  },
  {
   "key": "idealcars",
@@ -7703,7 +7926,8 @@ export const ACCOUNT_REGISTRY = [
    "Jared Dries"
   ],
   "confidence": "mapped",
-  "subVertical": "Goods & Services"
+  "subVertical": "Goods & Services",
+  "status": "prospect"
  },
  {
   "key": "iinet",
@@ -7735,7 +7959,8 @@ export const ACCOUNT_REGISTRY = [
    "Jared Dries"
   ],
   "confidence": "mapped",
-  "subVertical": "Goods & Services"
+  "subVertical": "Goods & Services",
+  "status": "prospect"
  },
  {
   "key": "immij",
@@ -7745,7 +7970,8 @@ export const ACCOUNT_REGISTRY = [
    "Jared Dries"
   ],
   "confidence": "mapped",
-  "subVertical": "Goods & Services"
+  "subVertical": "Goods & Services",
+  "status": "prospect"
  },
  {
   "key": "imperial film distributors",
@@ -7766,7 +7992,8 @@ export const ACCOUNT_REGISTRY = [
    "James Locke"
   ],
   "confidence": "mapped",
-  "subVertical": "Goods & Services"
+  "subVertical": "Goods & Services",
+  "status": "prospect"
  },
  {
   "key": "imperium home solutions",
@@ -7809,7 +8036,8 @@ export const ACCOUNT_REGISTRY = [
    "Jared Dries"
   ],
   "confidence": "mapped",
-  "subVertical": "HCLS"
+  "subVertical": "HCLS",
+  "status": "prospect"
  },
  {
   "key": "independence nl",
@@ -7852,7 +8080,8 @@ export const ACCOUNT_REGISTRY = [
    "James Locke"
   ],
   "confidence": "mapped",
-  "subVertical": "Goods & Services"
+  "subVertical": "Goods & Services",
+  "status": "prospect"
  },
  {
   "key": "informatix",
@@ -7950,7 +8179,8 @@ export const ACCOUNT_REGISTRY = [
    "Jared Dries"
   ],
   "confidence": "mapped",
-  "subVertical": "Goods & Services"
+  "subVertical": "Goods & Services",
+  "status": "prospect"
  },
  {
   "key": "insights exchange",
@@ -7960,7 +8190,8 @@ export const ACCOUNT_REGISTRY = [
    "Jared Dries"
   ],
   "confidence": "mapped",
-  "subVertical": "Goods & Services"
+  "subVertical": "Goods & Services",
+  "status": "prospect"
  },
  {
   "key": "instinct reason",
@@ -7970,7 +8201,8 @@ export const ACCOUNT_REGISTRY = [
    "James Locke"
   ],
   "confidence": "mapped",
-  "subVertical": "Goods & Services"
+  "subVertical": "Goods & Services",
+  "status": "prospect"
  },
  {
   "key": "insurance house",
@@ -8024,7 +8256,8 @@ export const ACCOUNT_REGISTRY = [
    "James Locke"
   ],
   "confidence": "mapped",
-  "subVertical": "Goods & Services"
+  "subVertical": "Goods & Services",
+  "status": "prospect"
  },
  {
   "key": "interiorco",
@@ -8034,7 +8267,8 @@ export const ACCOUNT_REGISTRY = [
    "Jared Dries"
   ],
   "confidence": "mapped",
-  "subVertical": "Goods & Services"
+  "subVertical": "Goods & Services",
+  "status": "prospect"
  },
  {
   "key": "interlinc solutions",
@@ -8055,7 +8289,8 @@ export const ACCOUNT_REGISTRY = [
    "Jared Dries"
   ],
   "confidence": "mapped",
-  "subVertical": "Goods & Services"
+  "subVertical": "Goods & Services",
+  "status": "prospect"
  },
  {
   "key": "interstate enterprises",
@@ -8065,7 +8300,8 @@ export const ACCOUNT_REGISTRY = [
    "Jared Dries"
   ],
   "confidence": "mapped",
-  "subVertical": "Goods & Services"
+  "subVertical": "Goods & Services",
+  "status": "prospect"
  },
  {
   "key": "intertek",
@@ -8075,7 +8311,8 @@ export const ACCOUNT_REGISTRY = [
    "Jared Dries"
   ],
   "confidence": "mapped",
-  "subVertical": "Goods & Services"
+  "subVertical": "Goods & Services",
+  "status": "prospect"
  },
  {
   "key": "intrepica",
@@ -8162,7 +8399,8 @@ export const ACCOUNT_REGISTRY = [
    "Jared Dries"
   ],
   "confidence": "mapped",
-  "subVertical": "Goods & Services"
+  "subVertical": "Goods & Services",
+  "status": "prospect"
  },
  {
   "key": "iph",
@@ -8172,7 +8410,8 @@ export const ACCOUNT_REGISTRY = [
    "Jared Dries"
   ],
   "confidence": "mapped",
-  "subVertical": "Goods & Services"
+  "subVertical": "Goods & Services",
+  "status": "prospect"
  },
  {
   "key": "ipscape",
@@ -8235,7 +8474,8 @@ export const ACCOUNT_REGISTRY = [
    "James Locke"
   ],
   "confidence": "mapped",
-  "subVertical": "Goods & Services"
+  "subVertical": "Goods & Services",
+  "status": "customer"
  },
  {
   "key": "itron",
@@ -8245,7 +8485,8 @@ export const ACCOUNT_REGISTRY = [
    "James Locke"
   ],
   "confidence": "mapped",
-  "subVertical": "Goods & Services"
+  "subVertical": "Goods & Services",
+  "status": "prospect"
  },
  {
   "key": "itv studios",
@@ -8299,7 +8540,8 @@ export const ACCOUNT_REGISTRY = [
    "James Locke"
   ],
   "confidence": "mapped",
-  "subVertical": "Goods & Services"
+  "subVertical": "Goods & Services",
+  "status": "customer"
  },
  {
   "key": "j c dahlsen",
@@ -8320,7 +8562,8 @@ export const ACCOUNT_REGISTRY = [
    "Jared Dries"
   ],
   "confidence": "mapped",
-  "subVertical": "Goods & Services"
+  "subVertical": "Goods & Services",
+  "status": "prospect"
  },
  {
   "key": "j h kilroy",
@@ -8330,7 +8573,8 @@ export const ACCOUNT_REGISTRY = [
    "Jared Dries"
   ],
   "confidence": "mapped",
-  "subVertical": "Locations"
+  "subVertical": "Locations",
+  "status": "prospect"
  },
  {
   "key": "j j abela m a alexander w basford k m batcheldor g s choong s m coulton p v dwyer i k fergusson p e foley r e foster n j gangemi j s gavljak r k gillan d p goman others",
@@ -8351,7 +8595,8 @@ export const ACCOUNT_REGISTRY = [
    "James Locke"
   ],
   "confidence": "mapped",
-  "subVertical": "Goods & Services"
+  "subVertical": "Goods & Services",
+  "status": "prospect"
  },
  {
   "key": "jacobi carbons",
@@ -8361,7 +8606,8 @@ export const ACCOUNT_REGISTRY = [
    "Jared Dries"
   ],
   "confidence": "mapped",
-  "subVertical": "Goods & Services"
+  "subVertical": "Goods & Services",
+  "status": "prospect"
  },
  {
   "key": "jacqueline eve fashions",
@@ -8382,7 +8628,8 @@ export const ACCOUNT_REGISTRY = [
    "Jared Dries"
   ],
   "confidence": "mapped",
-  "subVertical": "Goods & Services"
+  "subVertical": "Goods & Services",
+  "status": "prospect"
  },
  {
   "key": "james pascoe",
@@ -8392,7 +8639,8 @@ export const ACCOUNT_REGISTRY = [
    "James Locke"
   ],
   "confidence": "mapped",
-  "subVertical": "Locations"
+  "subVertical": "Locations",
+  "status": "prospect"
  },
  {
   "key": "jampion",
@@ -8402,7 +8650,8 @@ export const ACCOUNT_REGISTRY = [
    "Jared Dries"
   ],
   "confidence": "mapped",
-  "subVertical": "Goods & Services"
+  "subVertical": "Goods & Services",
+  "status": "prospect"
  },
  {
   "key": "janison education",
@@ -8434,7 +8683,8 @@ export const ACCOUNT_REGISTRY = [
    "James Locke"
   ],
   "confidence": "mapped",
-  "subVertical": "Goods & Services"
+  "subVertical": "Goods & Services",
+  "status": "prospect"
  },
  {
   "key": "jay jays trademark",
@@ -8455,7 +8705,8 @@ export const ACCOUNT_REGISTRY = [
    "James Locke"
   ],
   "confidence": "mapped",
-  "subVertical": "Goods & Services"
+  "subVertical": "Goods & Services",
+  "status": "prospect"
  },
  {
   "key": "jcurve solutions",
@@ -8487,7 +8738,8 @@ export const ACCOUNT_REGISTRY = [
    "James Locke"
   ],
   "confidence": "mapped",
-  "subVertical": "Goods & Services"
+  "subVertical": "Goods & Services",
+  "status": "prospect"
  },
  {
   "key": "jfe mineral",
@@ -8497,7 +8749,8 @@ export const ACCOUNT_REGISTRY = [
    "Jared Dries"
   ],
   "confidence": "mapped",
-  "subVertical": "Goods & Services"
+  "subVertical": "Goods & Services",
+  "status": "prospect"
  },
  {
   "key": "jfk engineering",
@@ -8518,7 +8771,8 @@ export const ACCOUNT_REGISTRY = [
    "Jared Dries"
   ],
   "confidence": "mapped",
-  "subVertical": "Goods & Services"
+  "subVertical": "Goods & Services",
+  "status": "prospect"
  },
  {
   "key": "john dahlsen investments",
@@ -8539,7 +8793,8 @@ export const ACCOUNT_REGISTRY = [
    "James Locke"
   ],
   "confidence": "mapped",
-  "subVertical": "Goods & Services"
+  "subVertical": "Goods & Services",
+  "status": "prospect"
  },
  {
   "key": "johnson controls",
@@ -8592,7 +8847,8 @@ export const ACCOUNT_REGISTRY = [
   "aes": [
    "Jared Dries"
   ],
-  "confidence": "inferred"
+  "confidence": "inferred",
+  "status": "prospect"
  },
  {
   "key": "just shop",
@@ -8624,7 +8880,8 @@ export const ACCOUNT_REGISTRY = [
    "James Locke"
   ],
   "confidence": "mapped",
-  "subVertical": "Goods & Services"
+  "subVertical": "Goods & Services",
+  "status": "customer"
  },
  {
   "key": "kab seating",
@@ -8634,7 +8891,8 @@ export const ACCOUNT_REGISTRY = [
    "Jared Dries"
   ],
   "confidence": "mapped",
-  "subVertical": "Goods & Services"
+  "subVertical": "Goods & Services",
+  "status": "prospect"
  },
  {
   "key": "kantfield",
@@ -8644,7 +8902,8 @@ export const ACCOUNT_REGISTRY = [
    "Jared Dries"
   ],
   "confidence": "mapped",
-  "subVertical": "Goods & Services"
+  "subVertical": "Goods & Services",
+  "status": "prospect"
  },
  {
   "key": "kapiche",
@@ -8687,7 +8946,8 @@ export const ACCOUNT_REGISTRY = [
    "James Locke"
   ],
   "confidence": "mapped",
-  "subVertical": "Goods & Services"
+  "subVertical": "Goods & Services",
+  "status": "prospect"
  },
  {
   "key": "keech",
@@ -8697,7 +8957,8 @@ export const ACCOUNT_REGISTRY = [
    "Jared Dries"
   ],
   "confidence": "mapped",
-  "subVertical": "Goods & Services"
+  "subVertical": "Goods & Services",
+  "status": "prospect"
  },
  {
   "key": "keepcup",
@@ -8707,7 +8968,8 @@ export const ACCOUNT_REGISTRY = [
    "James Locke"
   ],
   "confidence": "mapped",
-  "subVertical": "Goods & Services"
+  "subVertical": "Goods & Services",
+  "status": "prospect"
  },
  {
   "key": "kellogg",
@@ -8717,7 +8979,8 @@ export const ACCOUNT_REGISTRY = [
    "Jared Dries"
   ],
   "confidence": "mapped",
-  "subVertical": "Goods & Services"
+  "subVertical": "Goods & Services",
+  "status": "prospect"
  },
  {
   "key": "kellvista",
@@ -8727,7 +8990,8 @@ export const ACCOUNT_REGISTRY = [
    "Jared Dries"
   ],
   "confidence": "mapped",
-  "subVertical": "Locations"
+  "subVertical": "Locations",
+  "status": "prospect"
  },
  {
   "key": "kellyco",
@@ -8737,7 +9001,8 @@ export const ACCOUNT_REGISTRY = [
    "Jared Dries"
   ],
   "confidence": "mapped",
-  "subVertical": "Locations"
+  "subVertical": "Locations",
+  "status": "prospect"
  },
  {
   "key": "kennards hire",
@@ -8758,7 +9023,8 @@ export const ACCOUNT_REGISTRY = [
    "Jared Dries"
   ],
   "confidence": "mapped",
-  "subVertical": "Goods & Services"
+  "subVertical": "Goods & Services",
+  "status": "prospect"
  },
  {
   "key": "kfoong services",
@@ -8768,7 +9034,8 @@ export const ACCOUNT_REGISTRY = [
    "Jared Dries"
   ],
   "confidence": "mapped",
-  "subVertical": "TMT"
+  "subVertical": "TMT",
+  "status": "prospect"
  },
  {
   "key": "kiandra it",
@@ -8789,7 +9056,8 @@ export const ACCOUNT_REGISTRY = [
    "James Locke"
   ],
   "confidence": "mapped",
-  "subVertical": "Goods & Services"
+  "subVertical": "Goods & Services",
+  "status": "prospect"
  },
  {
   "key": "kimbyr investments",
@@ -8821,7 +9089,8 @@ export const ACCOUNT_REGISTRY = [
    "James Locke"
   ],
   "confidence": "mapped",
-  "subVertical": "Goods & Services"
+  "subVertical": "Goods & Services",
+  "status": "prospect"
  },
  {
   "key": "kingspan water energy",
@@ -8842,7 +9111,8 @@ export const ACCOUNT_REGISTRY = [
    "Jared Dries"
   ],
   "confidence": "mapped",
-  "subVertical": "Goods & Services"
+  "subVertical": "Goods & Services",
+  "status": "prospect"
  },
  {
   "key": "kk ftt",
@@ -8896,7 +9166,8 @@ export const ACCOUNT_REGISTRY = [
    "James Locke"
   ],
   "confidence": "mapped",
-  "subVertical": "Goods & Services"
+  "subVertical": "Goods & Services",
+  "status": "prospect"
  },
  {
   "key": "kobelco construction machinery",
@@ -8906,7 +9177,8 @@ export const ACCOUNT_REGISTRY = [
    "Jared Dries"
   ],
   "confidence": "mapped",
-  "subVertical": "Goods & Services"
+  "subVertical": "Goods & Services",
+  "status": "prospect"
  },
  {
   "key": "konami",
@@ -8927,7 +9199,8 @@ export const ACCOUNT_REGISTRY = [
    "Jared Dries"
   ],
   "confidence": "mapped",
-  "subVertical": "Goods & Services"
+  "subVertical": "Goods & Services",
+  "status": "prospect"
  },
  {
   "key": "koornang investments",
@@ -8948,7 +9221,8 @@ export const ACCOUNT_REGISTRY = [
    "Jared Dries"
   ],
   "confidence": "mapped",
-  "subVertical": "Goods & Services"
+  "subVertical": "Goods & Services",
+  "status": "prospect"
  },
  {
   "key": "kordia",
@@ -8969,7 +9243,8 @@ export const ACCOUNT_REGISTRY = [
    "Jared Dries"
   ],
   "confidence": "mapped",
-  "subVertical": "Goods & Services"
+  "subVertical": "Goods & Services",
+  "status": "prospect"
  },
  {
   "key": "krb",
@@ -8990,7 +9265,8 @@ export const ACCOUNT_REGISTRY = [
    "James Locke"
   ],
   "confidence": "mapped",
-  "subVertical": "Goods & Services"
+  "subVertical": "Goods & Services",
+  "status": "prospect"
  },
  {
   "key": "kura",
@@ -9000,7 +9276,8 @@ export const ACCOUNT_REGISTRY = [
    "James Locke"
   ],
   "confidence": "mapped",
-  "subVertical": "Goods & Services"
+  "subVertical": "Goods & Services",
+  "status": "prospect"
  },
  {
   "key": "kvam",
@@ -9021,7 +9298,8 @@ export const ACCOUNT_REGISTRY = [
    "Jared Dries"
   ],
   "confidence": "mapped",
-  "subVertical": "Goods & Services"
+  "subVertical": "Goods & Services",
+  "status": "prospect"
  },
  {
   "key": "l w reid",
@@ -9053,7 +9331,8 @@ export const ACCOUNT_REGISTRY = [
    "James Locke"
   ],
   "confidence": "mapped",
-  "subVertical": "Goods & Services"
+  "subVertical": "Goods & Services",
+  "status": "customer"
  },
  {
   "key": "lades",
@@ -9063,7 +9342,8 @@ export const ACCOUNT_REGISTRY = [
    "Jared Dries"
   ],
   "confidence": "mapped",
-  "subVertical": "Goods & Services"
+  "subVertical": "Goods & Services",
+  "status": "prospect"
  },
  {
   "key": "laken capital",
@@ -9073,7 +9353,8 @@ export const ACCOUNT_REGISTRY = [
    "Jared Dries"
   ],
   "confidence": "mapped",
-  "subVertical": "Locations"
+  "subVertical": "Locations",
+  "status": "prospect"
  },
  {
   "key": "lam systems",
@@ -9105,7 +9386,8 @@ export const ACCOUNT_REGISTRY = [
    "Jared Dries"
   ],
   "confidence": "mapped",
-  "subVertical": "Goods & Services"
+  "subVertical": "Goods & Services",
+  "status": "prospect"
  },
  {
   "key": "langs building supplies",
@@ -9115,7 +9397,8 @@ export const ACCOUNT_REGISTRY = [
    "James Locke"
   ],
   "confidence": "mapped",
-  "subVertical": "Goods & Services"
+  "subVertical": "Goods & Services",
+  "status": "prospect"
  },
  {
   "key": "larsen toubro infotech",
@@ -9136,7 +9419,8 @@ export const ACCOUNT_REGISTRY = [
    "Jared Dries"
   ],
   "confidence": "mapped",
-  "subVertical": "Locations"
+  "subVertical": "Locations",
+  "status": "prospect"
  },
  {
   "key": "latitude finance",
@@ -9167,7 +9451,8 @@ export const ACCOUNT_REGISTRY = [
    "Jared Dries"
   ],
   "confidence": "mapped",
-  "subVertical": "TMT"
+  "subVertical": "TMT",
+  "status": "prospect"
  },
  {
   "key": "lazy crab investments",
@@ -9243,7 +9528,8 @@ export const ACCOUNT_REGISTRY = [
    "Jared Dries"
   ],
   "confidence": "mapped",
-  "subVertical": "Goods & Services"
+  "subVertical": "Goods & Services",
+  "status": "prospect"
  },
  {
   "key": "legrand",
@@ -9253,7 +9539,8 @@ export const ACCOUNT_REGISTRY = [
    "Jared Dries"
   ],
   "confidence": "mapped",
-  "subVertical": "Goods & Services"
+  "subVertical": "Goods & Services",
+  "status": "prospect"
  },
  {
   "key": "lenovo",
@@ -9296,7 +9583,8 @@ export const ACCOUNT_REGISTRY = [
    "James Locke"
   ],
   "confidence": "mapped",
-  "subVertical": "Goods & Services"
+  "subVertical": "Goods & Services",
+  "status": "prospect"
  },
  {
   "key": "life central services",
@@ -9306,7 +9594,8 @@ export const ACCOUNT_REGISTRY = [
    "James Locke"
   ],
   "confidence": "mapped",
-  "subVertical": "Goods & Services"
+  "subVertical": "Goods & Services",
+  "status": "prospect"
  },
  {
   "key": "lifetime",
@@ -9327,7 +9616,8 @@ export const ACCOUNT_REGISTRY = [
    "Jared Dries"
   ],
   "confidence": "mapped",
-  "subVertical": "Goods & Services"
+  "subVertical": "Goods & Services",
+  "status": "prospect"
  },
  {
   "key": "lifx",
@@ -9337,7 +9627,8 @@ export const ACCOUNT_REGISTRY = [
    "Jared Dries"
   ],
   "confidence": "mapped",
-  "subVertical": "Goods & Services"
+  "subVertical": "Goods & Services",
+  "status": "prospect"
  },
  {
   "key": "lindt sprungli",
@@ -9347,7 +9638,8 @@ export const ACCOUNT_REGISTRY = [
    "James Locke"
   ],
   "confidence": "mapped",
-  "subVertical": "Goods & Services"
+  "subVertical": "Goods & Services",
+  "status": "prospect"
  },
  {
   "key": "liquid hr",
@@ -9456,7 +9748,8 @@ export const ACCOUNT_REGISTRY = [
    "James Locke"
   ],
   "confidence": "mapped",
-  "subVertical": "Goods & Services"
+  "subVertical": "Goods & Services",
+  "status": "prospect"
  },
  {
   "key": "love to dream",
@@ -9521,7 +9814,8 @@ export const ACCOUNT_REGISTRY = [
    "Jared Dries"
   ],
   "confidence": "mapped",
-  "subVertical": "Goods & Services"
+  "subVertical": "Goods & Services",
+  "status": "prospect"
  },
  {
   "key": "m c m wa",
@@ -9531,7 +9825,8 @@ export const ACCOUNT_REGISTRY = [
    "Jared Dries"
   ],
   "confidence": "mapped",
-  "subVertical": "TMT"
+  "subVertical": "TMT",
+  "status": "prospect"
  },
  {
   "key": "m strata",
@@ -9563,7 +9858,8 @@ export const ACCOUNT_REGISTRY = [
    "James Locke"
   ],
   "confidence": "mapped",
-  "subVertical": "Goods & Services"
+  "subVertical": "Goods & Services",
+  "status": "prospect"
  },
  {
   "key": "mable technologies",
@@ -9595,7 +9891,8 @@ export const ACCOUNT_REGISTRY = [
    "James Locke"
   ],
   "confidence": "mapped",
-  "subVertical": "Goods & Services"
+  "subVertical": "Goods & Services",
+  "status": "prospect"
  },
  {
   "key": "macmahon",
@@ -9605,7 +9902,8 @@ export const ACCOUNT_REGISTRY = [
    "James Locke"
   ],
   "confidence": "mapped",
-  "subVertical": "Goods & Services"
+  "subVertical": "Goods & Services",
+  "status": "prospect"
  },
  {
   "key": "macmillan distribution services",
@@ -9659,7 +9957,8 @@ export const ACCOUNT_REGISTRY = [
    "Jared Dries"
   ],
   "confidence": "mapped",
-  "subVertical": "Goods & Services"
+  "subVertical": "Goods & Services",
+  "status": "prospect"
  },
  {
   "key": "magellan financial",
@@ -9691,7 +9990,8 @@ export const ACCOUNT_REGISTRY = [
    "Jared Dries"
   ],
   "confidence": "mapped",
-  "subVertical": "Goods & Services"
+  "subVertical": "Goods & Services",
+  "status": "prospect"
  },
  {
   "key": "mail boxes etc",
@@ -9701,7 +10001,8 @@ export const ACCOUNT_REGISTRY = [
    "Jared Dries"
   ],
   "confidence": "mapped",
-  "subVertical": "Goods & Services"
+  "subVertical": "Goods & Services",
+  "status": "prospect"
  },
  {
   "key": "mainfreight distribution",
@@ -9711,7 +10012,8 @@ export const ACCOUNT_REGISTRY = [
    "Jared Dries"
   ],
   "confidence": "mapped",
-  "subVertical": "Goods & Services"
+  "subVertical": "Goods & Services",
+  "status": "prospect"
  },
  {
   "key": "malteurop",
@@ -9721,7 +10023,8 @@ export const ACCOUNT_REGISTRY = [
    "Jared Dries"
   ],
   "confidence": "mapped",
-  "subVertical": "Goods & Services"
+  "subVertical": "Goods & Services",
+  "status": "prospect"
  },
  {
   "key": "malvern share investments",
@@ -9742,7 +10045,8 @@ export const ACCOUNT_REGISTRY = [
    "James Locke"
   ],
   "confidence": "mapped",
-  "subVertical": "Goods & Services"
+  "subVertical": "Goods & Services",
+  "status": "prospect"
  },
  {
   "key": "manly fast ferry",
@@ -9774,7 +10078,8 @@ export const ACCOUNT_REGISTRY = [
    "Jared Dries"
   ],
   "confidence": "mapped",
-  "subVertical": "Goods & Services"
+  "subVertical": "Goods & Services",
+  "status": "prospect"
  },
  {
   "key": "maptek",
@@ -9806,7 +10111,8 @@ export const ACCOUNT_REGISTRY = [
    "Jared Dries"
   ],
   "confidence": "mapped",
-  "subVertical": "Goods & Services"
+  "subVertical": "Goods & Services",
+  "status": "prospect"
  },
  {
   "key": "marketing scientist",
@@ -9849,7 +10155,8 @@ export const ACCOUNT_REGISTRY = [
    "Jared Dries"
   ],
   "confidence": "mapped",
-  "subVertical": "Goods & Services"
+  "subVertical": "Goods & Services",
+  "status": "prospect"
  },
  {
   "key": "marron",
@@ -9870,7 +10177,8 @@ export const ACCOUNT_REGISTRY = [
    "James Locke"
   ],
   "confidence": "mapped",
-  "subVertical": "Goods & Services"
+  "subVertical": "Goods & Services",
+  "status": "prospect"
  },
  {
   "key": "master butchers operative",
@@ -9880,7 +10188,8 @@ export const ACCOUNT_REGISTRY = [
    "Jared Dries"
   ],
   "confidence": "mapped",
-  "subVertical": "Goods & Services"
+  "subVertical": "Goods & Services",
+  "status": "prospect"
  },
  {
   "key": "mastercard prepaid management services",
@@ -9967,7 +10276,8 @@ export const ACCOUNT_REGISTRY = [
    "James Locke"
   ],
   "confidence": "mapped",
-  "subVertical": "Goods & Services"
+  "subVertical": "Goods & Services",
+  "status": "prospect"
  },
  {
   "key": "maxitrans industries",
@@ -9977,7 +10287,8 @@ export const ACCOUNT_REGISTRY = [
    "James Locke"
   ],
   "confidence": "mapped",
-  "subVertical": "Goods & Services"
+  "subVertical": "Goods & Services",
+  "status": "prospect"
  },
  {
   "key": "mccain foods",
@@ -9987,7 +10298,8 @@ export const ACCOUNT_REGISTRY = [
    "James Locke"
   ],
   "confidence": "mapped",
-  "subVertical": "Goods & Services"
+  "subVertical": "Goods & Services",
+  "status": "prospect"
  },
  {
   "key": "mcconnell family investments",
@@ -10074,7 +10386,8 @@ export const ACCOUNT_REGISTRY = [
    "Jared Dries"
   ],
   "confidence": "mapped",
-  "subVertical": "Goods & Services"
+  "subVertical": "Goods & Services",
+  "status": "prospect"
  },
  {
   "key": "mee s bus lines",
@@ -10106,7 +10419,8 @@ export const ACCOUNT_REGISTRY = [
    "James Locke"
   ],
   "confidence": "mapped",
-  "subVertical": "Goods & Services"
+  "subVertical": "Goods & Services",
+  "status": "prospect"
  },
  {
   "key": "mehold",
@@ -10116,7 +10430,8 @@ export const ACCOUNT_REGISTRY = [
    "Jared Dries"
   ],
   "confidence": "mapped",
-  "subVertical": "Goods & Services"
+  "subVertical": "Goods & Services",
+  "status": "prospect"
  },
  {
   "key": "melbourne airport corporate",
@@ -10159,7 +10474,8 @@ export const ACCOUNT_REGISTRY = [
    "James Locke"
   ],
   "confidence": "mapped",
-  "subVertical": "Goods & Services"
+  "subVertical": "Goods & Services",
+  "status": "prospect"
  },
  {
   "key": "mentorloop",
@@ -10202,7 +10518,8 @@ export const ACCOUNT_REGISTRY = [
    "Jared Dries"
   ],
   "confidence": "mapped",
-  "subVertical": "Goods & Services"
+  "subVertical": "Goods & Services",
+  "status": "prospect"
  },
  {
   "key": "metlifecare",
@@ -10223,7 +10540,8 @@ export const ACCOUNT_REGISTRY = [
    "Jared Dries"
   ],
   "confidence": "mapped",
-  "subVertical": "Goods & Services"
+  "subVertical": "Goods & Services",
+  "status": "prospect"
  },
  {
   "key": "mettler toledo",
@@ -10233,7 +10551,8 @@ export const ACCOUNT_REGISTRY = [
    "James Locke"
   ],
   "confidence": "mapped",
-  "subVertical": "Goods & Services"
+  "subVertical": "Goods & Services",
+  "status": "prospect"
  },
  {
   "key": "mgh holdco",
@@ -10264,7 +10583,8 @@ export const ACCOUNT_REGISTRY = [
   "aes": [
    "James Locke"
   ],
-  "confidence": "inferred"
+  "confidence": "inferred",
+  "status": "prospect"
  },
  {
   "key": "michael hill healthcare consulting",
@@ -10274,7 +10594,8 @@ export const ACCOUNT_REGISTRY = [
    "Jared Dries"
   ],
   "confidence": "mapped",
-  "subVertical": "HCLS"
+  "subVertical": "HCLS",
+  "status": "prospect"
  },
  {
   "key": "micromine",
@@ -10295,7 +10616,8 @@ export const ACCOUNT_REGISTRY = [
    "Jared Dries"
   ],
   "confidence": "mapped",
-  "subVertical": "Goods & Services"
+  "subVertical": "Goods & Services",
+  "status": "prospect"
  },
  {
   "key": "midcoast timber centres",
@@ -10327,7 +10649,8 @@ export const ACCOUNT_REGISTRY = [
    "Jared Dries"
   ],
   "confidence": "mapped",
-  "subVertical": "Goods & Services"
+  "subVertical": "Goods & Services",
+  "status": "prospect"
  },
  {
   "key": "mike thompson investments",
@@ -10359,7 +10682,8 @@ export const ACCOUNT_REGISTRY = [
    "Jared Dries"
   ],
   "confidence": "mapped",
-  "subVertical": "Goods & Services"
+  "subVertical": "Goods & Services",
+  "status": "prospect"
  },
  {
   "key": "mind fields consulting",
@@ -10380,7 +10704,8 @@ export const ACCOUNT_REGISTRY = [
    "Jared Dries"
   ],
   "confidence": "mapped",
-  "subVertical": "Goods & Services"
+  "subVertical": "Goods & Services",
+  "status": "prospect"
  },
  {
   "key": "mine super services",
@@ -10510,7 +10835,8 @@ export const ACCOUNT_REGISTRY = [
    "Jared Dries"
   ],
   "confidence": "mapped",
-  "subVertical": "Goods & Services"
+  "subVertical": "Goods & Services",
+  "status": "prospect"
  },
  {
   "key": "modibodi",
@@ -10520,7 +10846,8 @@ export const ACCOUNT_REGISTRY = [
    "James Locke"
   ],
   "confidence": "mapped",
-  "subVertical": "Goods & Services"
+  "subVertical": "Goods & Services",
+  "status": "prospect"
  },
  {
   "key": "moi international",
@@ -10530,7 +10857,8 @@ export const ACCOUNT_REGISTRY = [
    "Jared Dries"
   ],
   "confidence": "mapped",
-  "subVertical": "Goods & Services"
+  "subVertical": "Goods & Services",
+  "status": "prospect"
  },
  {
   "key": "moneyme",
@@ -10562,7 +10890,8 @@ export const ACCOUNT_REGISTRY = [
    "Jared Dries"
   ],
   "confidence": "mapped",
-  "subVertical": "Goods & Services"
+  "subVertical": "Goods & Services",
+  "status": "prospect"
  },
  {
   "key": "moodle",
@@ -10616,7 +10945,8 @@ export const ACCOUNT_REGISTRY = [
    "Jared Dries"
   ],
   "confidence": "mapped",
-  "subVertical": "Goods & Services"
+  "subVertical": "Goods & Services",
+  "status": "prospect"
  },
  {
   "key": "morrow sodali",
@@ -10626,7 +10956,8 @@ export const ACCOUNT_REGISTRY = [
    "Jared Dries"
   ],
   "confidence": "mapped",
-  "subVertical": "Goods & Services"
+  "subVertical": "Goods & Services",
+  "status": "prospect"
  },
  {
   "key": "mortgage professionals",
@@ -10658,7 +10989,8 @@ export const ACCOUNT_REGISTRY = [
    "James Locke"
   ],
   "confidence": "mapped",
-  "subVertical": "Goods & Services"
+  "subVertical": "Goods & Services",
+  "status": "prospect"
  },
  {
   "key": "mosaic insights",
@@ -10668,7 +11000,8 @@ export const ACCOUNT_REGISTRY = [
    "James Locke"
   ],
   "confidence": "mapped",
-  "subVertical": "Goods & Services"
+  "subVertical": "Goods & Services",
+  "status": "customer"
  },
  {
   "key": "motoka rentals",
@@ -10689,7 +11022,8 @@ export const ACCOUNT_REGISTRY = [
    "Jared Dries"
   ],
   "confidence": "mapped",
-  "subVertical": "Goods & Services"
+  "subVertical": "Goods & Services",
+  "status": "prospect"
  },
  {
   "key": "motorola solutions",
@@ -10754,7 +11088,8 @@ export const ACCOUNT_REGISTRY = [
    "Jared Dries"
   ],
   "confidence": "mapped",
-  "subVertical": "Goods & Services"
+  "subVertical": "Goods & Services",
+  "status": "prospect"
  },
  {
   "key": "ms queensland",
@@ -10764,7 +11099,8 @@ export const ACCOUNT_REGISTRY = [
    "James Locke"
   ],
   "confidence": "mapped",
-  "subVertical": "Goods & Services"
+  "subVertical": "Goods & Services",
+  "status": "customer"
  },
  {
   "key": "msl solutions",
@@ -10785,7 +11121,8 @@ export const ACCOUNT_REGISTRY = [
    "Jared Dries"
   ],
   "confidence": "mapped",
-  "subVertical": "Goods & Services"
+  "subVertical": "Goods & Services",
+  "status": "prospect"
  },
  {
   "key": "muir",
@@ -10795,7 +11132,8 @@ export const ACCOUNT_REGISTRY = [
    "Jared Dries"
   ],
   "confidence": "mapped",
-  "subVertical": "Goods & Services"
+  "subVertical": "Goods & Services",
+  "status": "prospect"
  },
  {
   "key": "mumba",
@@ -10816,7 +11154,8 @@ export const ACCOUNT_REGISTRY = [
    "James Locke"
   ],
   "confidence": "mapped",
-  "subVertical": "Goods & Services"
+  "subVertical": "Goods & Services",
+  "status": "prospect"
  },
  {
   "key": "murray bridge bacon",
@@ -10826,7 +11165,8 @@ export const ACCOUNT_REGISTRY = [
    "Jared Dries"
   ],
   "confidence": "mapped",
-  "subVertical": "Goods & Services"
+  "subVertical": "Goods & Services",
+  "status": "prospect"
  },
  {
   "key": "murray leisure",
@@ -10891,7 +11231,8 @@ export const ACCOUNT_REGISTRY = [
    "James Locke"
   ],
   "confidence": "mapped",
-  "subVertical": "Goods & Services"
+  "subVertical": "Goods & Services",
+  "status": "prospect"
  },
  {
   "key": "my robo advice",
@@ -10956,7 +11297,8 @@ export const ACCOUNT_REGISTRY = [
    "Jared Dries"
   ],
   "confidence": "mapped",
-  "subVertical": "Goods & Services"
+  "subVertical": "Goods & Services",
+  "status": "prospect"
  },
  {
   "key": "namarong investments",
@@ -11032,7 +11374,8 @@ export const ACCOUNT_REGISTRY = [
    "James Locke"
   ],
   "confidence": "mapped",
-  "subVertical": "Goods & Services"
+  "subVertical": "Goods & Services",
+  "status": "prospect"
  },
  {
   "key": "nearmap",
@@ -11042,7 +11385,8 @@ export const ACCOUNT_REGISTRY = [
    "Jared Dries"
   ],
   "confidence": "mapped",
-  "subVertical": "Goods & Services"
+  "subVertical": "Goods & Services",
+  "status": "prospect"
  },
  {
   "key": "nec",
@@ -11063,7 +11407,8 @@ export const ACCOUNT_REGISTRY = [
    "James Locke"
   ],
   "confidence": "mapped",
-  "subVertical": "Goods & Services"
+  "subVertical": "Goods & Services",
+  "status": "prospect"
  },
  {
   "key": "nelson global products",
@@ -11073,7 +11418,8 @@ export const ACCOUNT_REGISTRY = [
    "Jared Dries"
   ],
   "confidence": "mapped",
-  "subVertical": "Goods & Services"
+  "subVertical": "Goods & Services",
+  "status": "prospect"
  },
  {
   "key": "neoproducts",
@@ -11094,7 +11440,8 @@ export const ACCOUNT_REGISTRY = [
    "Jared Dries"
   ],
   "confidence": "mapped",
-  "subVertical": "Goods & Services"
+  "subVertical": "Goods & Services",
+  "status": "prospect"
  },
  {
   "key": "netfx design",
@@ -11104,7 +11451,8 @@ export const ACCOUNT_REGISTRY = [
    "Jared Dries"
   ],
   "confidence": "mapped",
-  "subVertical": "TMT"
+  "subVertical": "TMT",
+  "status": "prospect"
  },
  {
   "key": "netsuite",
@@ -11169,7 +11517,8 @@ export const ACCOUNT_REGISTRY = [
    "James Locke"
   ],
   "confidence": "mapped",
-  "subVertical": "Goods & Services"
+  "subVertical": "Goods & Services",
+  "status": "customer"
  },
  {
   "key": "newman animal nutrition",
@@ -11311,7 +11660,8 @@ export const ACCOUNT_REGISTRY = [
    "Jared Dries"
   ],
   "confidence": "mapped",
-  "subVertical": "Goods & Services"
+  "subVertical": "Goods & Services",
+  "status": "prospect"
  },
  {
   "key": "northwestern roads",
@@ -11321,7 +11671,8 @@ export const ACCOUNT_REGISTRY = [
    "James Locke"
   ],
   "confidence": "mapped",
-  "subVertical": "Goods & Services"
+  "subVertical": "Goods & Services",
+  "status": "prospect"
  },
  {
   "key": "nortruss n t",
@@ -11342,7 +11693,8 @@ export const ACCOUNT_REGISTRY = [
    "Jared Dries"
   ],
   "confidence": "mapped",
-  "subVertical": "TMT"
+  "subVertical": "TMT",
+  "status": "prospect"
  },
  {
   "key": "noshu foods",
@@ -11352,7 +11704,8 @@ export const ACCOUNT_REGISTRY = [
    "Jared Dries"
   ],
   "confidence": "mapped",
-  "subVertical": "Goods & Services"
+  "subVertical": "Goods & Services",
+  "status": "prospect"
  },
  {
   "key": "nosworthy",
@@ -11373,7 +11726,8 @@ export const ACCOUNT_REGISTRY = [
    "Jared Dries"
   ],
   "confidence": "mapped",
-  "subVertical": "Goods & Services"
+  "subVertical": "Goods & Services",
+  "status": "prospect"
  },
  {
   "key": "nous international",
@@ -11383,7 +11737,8 @@ export const ACCOUNT_REGISTRY = [
    "James Locke"
   ],
   "confidence": "mapped",
-  "subVertical": "Goods & Services"
+  "subVertical": "Goods & Services",
+  "status": "customer"
  },
  {
   "key": "novatti",
@@ -11470,7 +11825,8 @@ export const ACCOUNT_REGISTRY = [
    "James Locke"
   ],
   "confidence": "mapped",
-  "subVertical": "Goods & Services"
+  "subVertical": "Goods & Services",
+  "status": "prospect"
  },
  {
   "key": "nuix",
@@ -11513,7 +11869,8 @@ export const ACCOUNT_REGISTRY = [
    "Jared Dries"
   ],
   "confidence": "mapped",
-  "subVertical": "Goods & Services"
+  "subVertical": "Goods & Services",
+  "status": "prospect"
  },
  {
   "key": "nyk",
@@ -11523,7 +11880,8 @@ export const ACCOUNT_REGISTRY = [
    "Jared Dries"
   ],
   "confidence": "mapped",
-  "subVertical": "Goods & Services"
+  "subVertical": "Goods & Services",
+  "status": "prospect"
  },
  {
   "key": "nzme educational media",
@@ -11544,7 +11902,8 @@ export const ACCOUNT_REGISTRY = [
    "James Locke"
   ],
   "confidence": "mapped",
-  "subVertical": "Goods & Services"
+  "subVertical": "Goods & Services",
+  "status": "prospect"
  },
  {
   "key": "objective",
@@ -11576,7 +11935,8 @@ export const ACCOUNT_REGISTRY = [
    "James Locke"
   ],
   "confidence": "mapped",
-  "subVertical": "Goods & Services"
+  "subVertical": "Goods & Services",
+  "status": "customer"
  },
  {
   "key": "oceania capital partners",
@@ -11663,7 +12023,8 @@ export const ACCOUNT_REGISTRY = [
    "Jared Dries"
   ],
   "confidence": "mapped",
-  "subVertical": "TMT"
+  "subVertical": "TMT",
+  "status": "prospect"
  },
  {
   "key": "omnitronics",
@@ -11684,7 +12045,8 @@ export const ACCOUNT_REGISTRY = [
    "Jared Dries"
   ],
   "confidence": "mapped",
-  "subVertical": "Goods & Services"
+  "subVertical": "Goods & Services",
+  "status": "prospect"
  },
  {
   "key": "oneqode",
@@ -11705,7 +12067,8 @@ export const ACCOUNT_REGISTRY = [
    "Jared Dries"
   ],
   "confidence": "mapped",
-  "subVertical": "Goods & Services"
+  "subVertical": "Goods & Services",
+  "status": "prospect"
  },
  {
   "key": "oobe",
@@ -11858,7 +12221,8 @@ export const ACCOUNT_REGISTRY = [
    "Jared Dries"
   ],
   "confidence": "mapped",
-  "subVertical": "Goods & Services"
+  "subVertical": "Goods & Services",
+  "status": "prospect"
  },
  {
   "key": "orion health",
@@ -11890,7 +12254,8 @@ export const ACCOUNT_REGISTRY = [
    "James Locke"
   ],
   "confidence": "mapped",
-  "subVertical": "Goods & Services"
+  "subVertical": "Goods & Services",
+  "status": "customer"
  },
  {
   "key": "orro",
@@ -11911,7 +12276,8 @@ export const ACCOUNT_REGISTRY = [
    "Jared Dries"
   ],
   "confidence": "mapped",
-  "subVertical": "Goods & Services"
+  "subVertical": "Goods & Services",
+  "status": "prospect"
  },
  {
   "key": "our deal",
@@ -11976,7 +12342,8 @@ export const ACCOUNT_REGISTRY = [
    "Jared Dries"
   ],
   "confidence": "mapped",
-  "subVertical": "Goods & Services"
+  "subVertical": "Goods & Services",
+  "status": "prospect"
  },
  {
   "key": "oxc",
@@ -11997,7 +12364,8 @@ export const ACCOUNT_REGISTRY = [
    "James Locke"
   ],
   "confidence": "mapped",
-  "subVertical": "Goods & Services"
+  "subVertical": "Goods & Services",
+  "status": "prospect"
  },
  {
   "key": "paccar",
@@ -12007,7 +12375,8 @@ export const ACCOUNT_REGISTRY = [
    "James Locke"
   ],
   "confidence": "mapped",
-  "subVertical": "Goods & Services"
+  "subVertical": "Goods & Services",
+  "status": "customer"
  },
  {
   "key": "pacific coast leisure",
@@ -12039,7 +12408,8 @@ export const ACCOUNT_REGISTRY = [
    "Jared Dries"
   ],
   "confidence": "mapped",
-  "subVertical": "Goods & Services"
+  "subVertical": "Goods & Services",
+  "status": "prospect"
  },
  {
   "key": "pacific life re",
@@ -12059,7 +12429,8 @@ export const ACCOUNT_REGISTRY = [
    "James Locke"
   ],
   "confidence": "mapped",
-  "subVertical": "Goods & Services"
+  "subVertical": "Goods & Services",
+  "status": "customer"
  },
  {
   "key": "paltronics",
@@ -12080,7 +12451,8 @@ export const ACCOUNT_REGISTRY = [
    "Jared Dries"
   ],
   "confidence": "mapped",
-  "subVertical": "Goods & Services"
+  "subVertical": "Goods & Services",
+  "status": "prospect"
  },
  {
   "key": "pangaea world",
@@ -12134,7 +12506,8 @@ export const ACCOUNT_REGISTRY = [
    "Jared Dries"
   ],
   "confidence": "mapped",
-  "subVertical": "Goods & Services"
+  "subVertical": "Goods & Services",
+  "status": "prospect"
  },
  {
   "key": "partners",
@@ -12165,7 +12538,8 @@ export const ACCOUNT_REGISTRY = [
    "Jared Dries"
   ],
   "confidence": "mapped",
-  "subVertical": "Goods & Services"
+  "subVertical": "Goods & Services",
+  "status": "prospect"
  },
  {
   "key": "payapps",
@@ -12219,7 +12593,8 @@ export const ACCOUNT_REGISTRY = [
    "James Locke"
   ],
   "confidence": "mapped",
-  "subVertical": "Goods & Services"
+  "subVertical": "Goods & Services",
+  "status": "prospect"
  },
  {
   "key": "peet",
@@ -12284,7 +12659,8 @@ export const ACCOUNT_REGISTRY = [
    "Jared Dries"
   ],
   "confidence": "mapped",
-  "subVertical": "Goods & Services"
+  "subVertical": "Goods & Services",
+  "status": "prospect"
  },
  {
   "key": "pentroth",
@@ -12294,7 +12670,8 @@ export const ACCOUNT_REGISTRY = [
    "Jared Dries"
   ],
   "confidence": "mapped",
-  "subVertical": "Locations"
+  "subVertical": "Locations",
+  "status": "prospect"
  },
  {
   "key": "people s choice credit union",
@@ -12381,7 +12758,8 @@ export const ACCOUNT_REGISTRY = [
    "Jared Dries"
   ],
   "confidence": "mapped",
-  "subVertical": "Locations"
+  "subVertical": "Locations",
+  "status": "prospect"
  },
  {
   "key": "peter pan s backpacker adventure travel",
@@ -12402,7 +12780,8 @@ export const ACCOUNT_REGISTRY = [
    "Jared Dries"
   ],
   "confidence": "mapped",
-  "subVertical": "Goods & Services"
+  "subVertical": "Goods & Services",
+  "status": "prospect"
  },
  {
   "key": "pfg topco1",
@@ -12412,7 +12791,8 @@ export const ACCOUNT_REGISTRY = [
    "Jared Dries"
   ],
   "confidence": "mapped",
-  "subVertical": "Goods & Services"
+  "subVertical": "Goods & Services",
+  "status": "prospect"
  },
  {
   "key": "pgl travel",
@@ -12422,7 +12802,8 @@ export const ACCOUNT_REGISTRY = [
    "James Locke"
   ],
   "confidence": "mapped",
-  "subVertical": "Goods & Services"
+  "subVertical": "Goods & Services",
+  "status": "customer"
  },
  {
   "key": "philp brodie grain",
@@ -12432,7 +12813,8 @@ export const ACCOUNT_REGISTRY = [
    "Jared Dries"
   ],
   "confidence": "mapped",
-  "subVertical": "Goods & Services"
+  "subVertical": "Goods & Services",
+  "status": "prospect"
  },
  {
   "key": "piacentini son",
@@ -12442,7 +12824,8 @@ export const ACCOUNT_REGISTRY = [
    "Jared Dries"
   ],
   "confidence": "mapped",
-  "subVertical": "Goods & Services"
+  "subVertical": "Goods & Services",
+  "status": "prospect"
  },
  {
   "key": "picnic customer intelligence",
@@ -12474,7 +12857,8 @@ export const ACCOUNT_REGISTRY = [
    "Jared Dries"
   ],
   "confidence": "mapped",
-  "subVertical": "Goods & Services"
+  "subVertical": "Goods & Services",
+  "status": "prospect"
  },
  {
   "key": "pioneer credit",
@@ -12495,7 +12879,8 @@ export const ACCOUNT_REGISTRY = [
    "James Locke"
   ],
   "confidence": "mapped",
-  "subVertical": "Goods & Services"
+  "subVertical": "Goods & Services",
+  "status": "prospect"
  },
  {
   "key": "pitcher partners",
@@ -12526,7 +12911,8 @@ export const ACCOUNT_REGISTRY = [
    "Jared Dries"
   ],
   "confidence": "mapped",
-  "subVertical": "TMT"
+  "subVertical": "TMT",
+  "status": "prospect"
  },
  {
   "key": "pks",
@@ -12547,7 +12933,8 @@ export const ACCOUNT_REGISTRY = [
    "James Locke"
   ],
   "confidence": "mapped",
-  "subVertical": "Goods & Services"
+  "subVertical": "Goods & Services",
+  "status": "prospect"
  },
  {
   "key": "platinum asset management",
@@ -12612,7 +12999,8 @@ export const ACCOUNT_REGISTRY = [
    "Jared Dries"
   ],
   "confidence": "mapped",
-  "subVertical": "Goods & Services"
+  "subVertical": "Goods & Services",
+  "status": "prospect"
  },
  {
   "key": "pm bartlett",
@@ -12622,7 +13010,8 @@ export const ACCOUNT_REGISTRY = [
    "Jared Dries"
   ],
   "confidence": "mapped",
-  "subVertical": "Goods & Services"
+  "subVertical": "Goods & Services",
+  "status": "prospect"
  },
  {
   "key": "pokitpal",
@@ -12654,7 +13043,8 @@ export const ACCOUNT_REGISTRY = [
    "James Locke"
   ],
   "confidence": "mapped",
-  "subVertical": "Goods & Services"
+  "subVertical": "Goods & Services",
+  "status": "customer"
  },
  {
   "key": "police bank",
@@ -12729,7 +13119,8 @@ export const ACCOUNT_REGISTRY = [
    "Jared Dries"
   ],
   "confidence": "mapped",
-  "subVertical": "Goods & Services"
+  "subVertical": "Goods & Services",
+  "status": "prospect"
  },
  {
   "key": "portalink",
@@ -12904,7 +13295,8 @@ export const ACCOUNT_REGISTRY = [
    "Jared Dries"
   ],
   "confidence": "mapped",
-  "subVertical": "Goods & Services"
+  "subVertical": "Goods & Services",
+  "status": "prospect"
  },
  {
   "key": "prius healthcare solutions",
@@ -13013,7 +13405,8 @@ export const ACCOUNT_REGISTRY = [
    "Jared Dries"
   ],
   "confidence": "mapped",
-  "subVertical": "Goods & Services"
+  "subVertical": "Goods & Services",
+  "status": "prospect"
  },
  {
   "key": "prospa",
@@ -13056,7 +13449,8 @@ export const ACCOUNT_REGISTRY = [
    "Jared Dries"
   ],
   "confidence": "mapped",
-  "subVertical": "Goods & Services"
+  "subVertical": "Goods & Services",
+  "status": "prospect"
  },
  {
   "key": "provet",
@@ -13110,7 +13504,8 @@ export const ACCOUNT_REGISTRY = [
    "Jared Dries"
   ],
   "confidence": "mapped",
-  "subVertical": "Goods & Services"
+  "subVertical": "Goods & Services",
+  "status": "prospect"
  },
  {
   "key": "purelylucid",
@@ -13119,7 +13514,8 @@ export const ACCOUNT_REGISTRY = [
   "aes": [
    "Jared Dries"
   ],
-  "confidence": "inferred"
+  "confidence": "inferred",
+  "status": "prospect"
  },
  {
   "key": "pureprofile",
@@ -13151,7 +13547,8 @@ export const ACCOUNT_REGISTRY = [
    "James Locke"
   ],
   "confidence": "mapped",
-  "subVertical": "Goods & Services"
+  "subVertical": "Goods & Services",
+  "status": "prospect"
  },
  {
   "key": "pwg king sons",
@@ -13172,7 +13569,8 @@ export const ACCOUNT_REGISTRY = [
    "Jared Dries"
   ],
   "confidence": "mapped",
-  "subVertical": "Goods & Services"
+  "subVertical": "Goods & Services",
+  "status": "prospect"
  },
  {
   "key": "q ctrl",
@@ -13204,7 +13602,8 @@ export const ACCOUNT_REGISTRY = [
    "James Locke"
   ],
   "confidence": "mapped",
-  "subVertical": "Goods & Services"
+  "subVertical": "Goods & Services",
+  "status": "prospect"
  },
  {
   "key": "quadrant private equity fund no 2 lp",
@@ -13269,7 +13668,8 @@ export const ACCOUNT_REGISTRY = [
    "Jared Dries"
   ],
   "confidence": "mapped",
-  "subVertical": "Goods & Services"
+  "subVertical": "Goods & Services",
+  "status": "prospect"
  },
  {
   "key": "queensland bulk terminals",
@@ -13290,7 +13690,8 @@ export const ACCOUNT_REGISTRY = [
    "James Locke"
   ],
   "confidence": "mapped",
-  "subVertical": "Goods & Services"
+  "subVertical": "Goods & Services",
+  "status": "prospect"
  },
  {
   "key": "quest software",
@@ -13311,7 +13712,8 @@ export const ACCOUNT_REGISTRY = [
    "James Locke"
   ],
   "confidence": "mapped",
-  "subVertical": "Goods & Services"
+  "subVertical": "Goods & Services",
+  "status": "customer"
  },
  {
   "key": "quotable value",
@@ -13419,7 +13821,8 @@ export const ACCOUNT_REGISTRY = [
    "Jared Dries"
   ],
   "confidence": "mapped",
-  "subVertical": "Goods & Services"
+  "subVertical": "Goods & Services",
+  "status": "prospect"
  },
  {
   "key": "ramelius resources",
@@ -13429,7 +13832,8 @@ export const ACCOUNT_REGISTRY = [
    "Jared Dries"
   ],
   "confidence": "mapped",
-  "subVertical": "Goods & Services"
+  "subVertical": "Goods & Services",
+  "status": "prospect"
  },
  {
   "key": "rapl",
@@ -13439,7 +13843,8 @@ export const ACCOUNT_REGISTRY = [
    "James Locke"
   ],
   "confidence": "mapped",
-  "subVertical": "Goods & Services"
+  "subVertical": "Goods & Services",
+  "status": "prospect"
  },
  {
   "key": "raritan",
@@ -13460,7 +13865,8 @@ export const ACCOUNT_REGISTRY = [
    "Jared Dries"
   ],
   "confidence": "mapped",
-  "subVertical": "Goods & Services"
+  "subVertical": "Goods & Services",
+  "status": "prospect"
  },
  {
   "key": "rauland",
@@ -13502,7 +13908,8 @@ export const ACCOUNT_REGISTRY = [
    "Jared Dries"
   ],
   "confidence": "mapped",
-  "subVertical": "Goods & Services"
+  "subVertical": "Goods & Services",
+  "status": "prospect"
  },
  {
   "key": "rea",
@@ -13523,7 +13930,8 @@ export const ACCOUNT_REGISTRY = [
    "Jared Dries"
   ],
   "confidence": "mapped",
-  "subVertical": "Goods & Services"
+  "subVertical": "Goods & Services",
+  "status": "prospect"
  },
  {
   "key": "readytech",
@@ -13555,7 +13963,8 @@ export const ACCOUNT_REGISTRY = [
    "Jared Dries"
   ],
   "confidence": "mapped",
-  "subVertical": "Goods & Services"
+  "subVertical": "Goods & Services",
+  "status": "prospect"
  },
  {
   "key": "recoveries",
@@ -13565,7 +13974,8 @@ export const ACCOUNT_REGISTRY = [
    "James Locke"
   ],
   "confidence": "mapped",
-  "subVertical": "Goods & Services"
+  "subVertical": "Goods & Services",
+  "status": "prospect"
  },
  {
   "key": "redback technologies",
@@ -13575,7 +13985,8 @@ export const ACCOUNT_REGISTRY = [
    "James Locke"
   ],
   "confidence": "mapped",
-  "subVertical": "Goods & Services"
+  "subVertical": "Goods & Services",
+  "status": "prospect"
  },
  {
   "key": "redbubble",
@@ -13640,7 +14051,8 @@ export const ACCOUNT_REGISTRY = [
    "Jared Dries"
   ],
   "confidence": "mapped",
-  "subVertical": "Goods & Services"
+  "subVertical": "Goods & Services",
+  "status": "prospect"
  },
  {
   "key": "rentokil",
@@ -13650,7 +14062,8 @@ export const ACCOUNT_REGISTRY = [
    "James Locke"
   ],
   "confidence": "mapped",
-  "subVertical": "Goods & Services"
+  "subVertical": "Goods & Services",
+  "status": "prospect"
  },
  {
   "key": "resi",
@@ -13704,7 +14117,8 @@ export const ACCOUNT_REGISTRY = [
    "Jared Dries"
   ],
   "confidence": "mapped",
-  "subVertical": "Goods & Services"
+  "subVertical": "Goods & Services",
+  "status": "prospect"
  },
  {
   "key": "returned services league of",
@@ -13714,7 +14128,8 @@ export const ACCOUNT_REGISTRY = [
    "James Locke"
   ],
   "confidence": "mapped",
-  "subVertical": "Goods & Services"
+  "subVertical": "Goods & Services",
+  "status": "prospect"
  },
  {
   "key": "revlake",
@@ -13757,7 +14172,8 @@ export const ACCOUNT_REGISTRY = [
    "Jared Dries"
   ],
   "confidence": "mapped",
-  "subVertical": "Locations"
+  "subVertical": "Locations",
+  "status": "prospect"
  },
  {
   "key": "rhomberg",
@@ -13767,7 +14183,8 @@ export const ACCOUNT_REGISTRY = [
    "Jared Dries"
   ],
   "confidence": "mapped",
-  "subVertical": "Goods & Services"
+  "subVertical": "Goods & Services",
+  "status": "prospect"
  },
  {
   "key": "rigby cooke lawyers",
@@ -13777,7 +14194,8 @@ export const ACCOUNT_REGISTRY = [
    "Jared Dries"
   ],
   "confidence": "mapped",
-  "subVertical": "Goods & Services"
+  "subVertical": "Goods & Services",
+  "status": "prospect"
  },
  {
   "key": "rindin enterprises",
@@ -13820,7 +14238,8 @@ export const ACCOUNT_REGISTRY = [
    "James Locke"
   ],
   "confidence": "mapped",
-  "subVertical": "Goods & Services"
+  "subVertical": "Goods & Services",
+  "status": "prospect"
  },
  {
   "key": "roam creative",
@@ -13885,7 +14304,8 @@ export const ACCOUNT_REGISTRY = [
    "James Locke"
   ],
   "confidence": "mapped",
-  "subVertical": "Goods & Services"
+  "subVertical": "Goods & Services",
+  "status": "prospect"
  },
  {
   "key": "rolling stock victoria",
@@ -13906,7 +14326,8 @@ export const ACCOUNT_REGISTRY = [
    "Jared Dries"
   ],
   "confidence": "mapped",
-  "subVertical": "Goods & Services"
+  "subVertical": "Goods & Services",
+  "status": "prospect"
  },
  {
   "key": "ross human directions",
@@ -13916,7 +14337,8 @@ export const ACCOUNT_REGISTRY = [
    "Jared Dries"
   ],
   "confidence": "mapped",
-  "subVertical": "Goods & Services"
+  "subVertical": "Goods & Services",
+  "status": "prospect"
  },
  {
   "key": "rotorua district council",
@@ -13937,7 +14359,8 @@ export const ACCOUNT_REGISTRY = [
    "James Locke"
   ],
   "confidence": "mapped",
-  "subVertical": "Goods & Services"
+  "subVertical": "Goods & Services",
+  "status": "prospect"
  },
  {
   "key": "royal automobile club of tasmania",
@@ -13967,7 +14390,8 @@ export const ACCOUNT_REGISTRY = [
    "Jared Dries"
   ],
   "confidence": "mapped",
-  "subVertical": "Goods & Services"
+  "subVertical": "Goods & Services",
+  "status": "prospect"
  },
  {
   "key": "royal freemasons benevolent institution of nsw",
@@ -13988,7 +14412,8 @@ export const ACCOUNT_REGISTRY = [
    "Jared Dries"
   ],
   "confidence": "mapped",
-  "subVertical": "Goods & Services"
+  "subVertical": "Goods & Services",
+  "status": "prospect"
  },
  {
   "key": "rsm acn 009 321 377 as trustee for atf birdanco practice trust abn 65 319 382 479 trading as rsm",
@@ -14075,7 +14500,8 @@ export const ACCOUNT_REGISTRY = [
    "Jared Dries"
   ],
   "confidence": "mapped",
-  "subVertical": "Goods & Services"
+  "subVertical": "Goods & Services",
+  "status": "prospect"
  },
  {
   "key": "s process equipment",
@@ -14107,7 +14533,8 @@ export const ACCOUNT_REGISTRY = [
    "Jared Dries"
   ],
   "confidence": "mapped",
-  "subVertical": "Goods & Services"
+  "subVertical": "Goods & Services",
+  "status": "prospect"
  },
  {
   "key": "saferme",
@@ -14139,7 +14566,8 @@ export const ACCOUNT_REGISTRY = [
    "Jared Dries"
   ],
   "confidence": "mapped",
-  "subVertical": "Goods & Services"
+  "subVertical": "Goods & Services",
+  "status": "prospect"
  },
  {
   "key": "saizeriya",
@@ -14149,7 +14577,8 @@ export const ACCOUNT_REGISTRY = [
    "Jared Dries"
   ],
   "confidence": "mapped",
-  "subVertical": "Goods & Services"
+  "subVertical": "Goods & Services",
+  "status": "prospect"
  },
  {
   "key": "sale 2",
@@ -14159,7 +14588,8 @@ export const ACCOUNT_REGISTRY = [
    "James Locke"
   ],
   "confidence": "mapped",
-  "subVertical": "Goods & Services"
+  "subVertical": "Goods & Services",
+  "status": "prospect"
  },
  {
   "key": "salter family",
@@ -14213,7 +14643,8 @@ export const ACCOUNT_REGISTRY = [
    "James Locke"
   ],
   "confidence": "mapped",
-  "subVertical": "TMT"
+  "subVertical": "TMT",
+  "status": "prospect"
  },
  {
   "key": "sapphireone",
@@ -14245,7 +14676,8 @@ export const ACCOUNT_REGISTRY = [
    "Jared Dries"
   ],
   "confidence": "mapped",
-  "subVertical": "Goods & Services"
+  "subVertical": "Goods & Services",
+  "status": "prospect"
  },
  {
   "key": "savills",
@@ -14277,7 +14709,8 @@ export const ACCOUNT_REGISTRY = [
    "James Locke"
   ],
   "confidence": "mapped",
-  "subVertical": "Goods & Services"
+  "subVertical": "Goods & Services",
+  "status": "prospect"
  },
  {
   "key": "scenic tours",
@@ -14374,7 +14807,8 @@ export const ACCOUNT_REGISTRY = [
    "Jared Dries"
   ],
   "confidence": "mapped",
-  "subVertical": "Goods & Services"
+  "subVertical": "Goods & Services",
+  "status": "prospect"
  },
  {
   "key": "sealed air",
@@ -14384,7 +14818,8 @@ export const ACCOUNT_REGISTRY = [
    "James Locke"
   ],
   "confidence": "mapped",
-  "subVertical": "Goods & Services"
+  "subVertical": "Goods & Services",
+  "status": "prospect"
  },
  {
   "key": "sealy of n s w",
@@ -14405,7 +14840,8 @@ export const ACCOUNT_REGISTRY = [
    "Jared Dries"
   ],
   "confidence": "mapped",
-  "subVertical": "Goods & Services"
+  "subVertical": "Goods & Services",
+  "status": "prospect"
  },
  {
   "key": "seeing machines",
@@ -14415,7 +14851,8 @@ export const ACCOUNT_REGISTRY = [
    "Jared Dries"
   ],
   "confidence": "mapped",
-  "subVertical": "Goods & Services"
+  "subVertical": "Goods & Services",
+  "status": "prospect"
  },
  {
   "key": "senex energy",
@@ -14425,7 +14862,8 @@ export const ACCOUNT_REGISTRY = [
    "Jared Dries"
   ],
   "confidence": "mapped",
-  "subVertical": "Goods & Services"
+  "subVertical": "Goods & Services",
+  "status": "prospect"
  },
  {
   "key": "sensormatic",
@@ -14545,7 +14983,8 @@ export const ACCOUNT_REGISTRY = [
    "Jared Dries"
   ],
   "confidence": "mapped",
-  "subVertical": "Goods & Services"
+  "subVertical": "Goods & Services",
+  "status": "prospect"
  },
  {
   "key": "shelley management",
@@ -14566,7 +15005,8 @@ export const ACCOUNT_REGISTRY = [
    "Jared Dries"
   ],
   "confidence": "mapped",
-  "subVertical": "Goods & Services"
+  "subVertical": "Goods & Services",
+  "status": "prospect"
  },
  {
   "key": "shi",
@@ -14587,7 +15027,8 @@ export const ACCOUNT_REGISTRY = [
    "James Locke"
   ],
   "confidence": "mapped",
-  "subVertical": "Goods & Services"
+  "subVertical": "Goods & Services",
+  "status": "customer"
  },
  {
   "key": "shiying agricultural production",
@@ -14597,7 +15038,8 @@ export const ACCOUNT_REGISTRY = [
    "Jared Dries"
   ],
   "confidence": "mapped",
-  "subVertical": "Goods & Services"
+  "subVertical": "Goods & Services",
+  "status": "prospect"
  },
  {
   "key": "silicon crafts",
@@ -14607,7 +15049,8 @@ export const ACCOUNT_REGISTRY = [
    "Jared Dries"
   ],
   "confidence": "mapped",
-  "subVertical": "TMT"
+  "subVertical": "TMT",
+  "status": "prospect"
  },
  {
   "key": "silicon metal of",
@@ -14617,7 +15060,8 @@ export const ACCOUNT_REGISTRY = [
    "James Locke"
   ],
   "confidence": "mapped",
-  "subVertical": "Goods & Services"
+  "subVertical": "Goods & Services",
+  "status": "prospect"
  },
  {
   "key": "silicon systems trademark",
@@ -14704,7 +15148,8 @@ export const ACCOUNT_REGISTRY = [
    "James Locke"
   ],
   "confidence": "mapped",
-  "subVertical": "Goods & Services"
+  "subVertical": "Goods & Services",
+  "status": "prospect"
  },
  {
   "key": "skills trades training",
@@ -14714,7 +15159,8 @@ export const ACCOUNT_REGISTRY = [
    "James Locke"
   ],
   "confidence": "mapped",
-  "subVertical": "Goods & Services"
+  "subVertical": "Goods & Services",
+  "status": "prospect"
  },
  {
   "key": "skillsoft asia pacific",
@@ -14768,7 +15214,8 @@ export const ACCOUNT_REGISTRY = [
    "James Locke"
   ],
   "confidence": "mapped",
-  "subVertical": "Goods & Services"
+  "subVertical": "Goods & Services",
+  "status": "prospect"
  },
  {
   "key": "sleepy s",
@@ -14778,7 +15225,8 @@ export const ACCOUNT_REGISTRY = [
    "James Locke"
   ],
   "confidence": "mapped",
-  "subVertical": "Goods & Services"
+  "subVertical": "Goods & Services",
+  "status": "prospect"
  },
  {
   "key": "smaply",
@@ -14799,7 +15247,8 @@ export const ACCOUNT_REGISTRY = [
    "Jared Dries"
   ],
   "confidence": "mapped",
-  "subVertical": "Goods & Services"
+  "subVertical": "Goods & Services",
+  "status": "prospect"
  },
  {
   "key": "smartpay",
@@ -14864,7 +15313,8 @@ export const ACCOUNT_REGISTRY = [
    "Jared Dries"
   ],
   "confidence": "mapped",
-  "subVertical": "Goods & Services"
+  "subVertical": "Goods & Services",
+  "status": "prospect"
  },
  {
   "key": "snapper services",
@@ -14885,7 +15335,8 @@ export const ACCOUNT_REGISTRY = [
    "Jared Dries"
   ],
   "confidence": "mapped",
-  "subVertical": "Goods & Services"
+  "subVertical": "Goods & Services",
+  "status": "prospect"
  },
  {
   "key": "snow brand",
@@ -14895,7 +15346,8 @@ export const ACCOUNT_REGISTRY = [
    "James Locke"
   ],
   "confidence": "mapped",
-  "subVertical": "Goods & Services"
+  "subVertical": "Goods & Services",
+  "status": "prospect"
  },
  {
   "key": "social ventures",
@@ -15059,7 +15511,8 @@ export const ACCOUNT_REGISTRY = [
    "Jared Dries"
   ],
   "confidence": "mapped",
-  "subVertical": "Goods & Services"
+  "subVertical": "Goods & Services",
+  "status": "prospect"
  },
  {
   "key": "spire",
@@ -15069,7 +15522,8 @@ export const ACCOUNT_REGISTRY = [
    "Jared Dries"
   ],
   "confidence": "mapped",
-  "subVertical": "Goods & Services"
+  "subVertical": "Goods & Services",
+  "status": "prospect"
  },
  {
   "key": "spirit technology solutions",
@@ -15145,7 +15599,8 @@ export const ACCOUNT_REGISTRY = [
    "Jared Dries"
   ],
   "confidence": "mapped",
-  "subVertical": "TMT"
+  "subVertical": "TMT",
+  "status": "prospect"
  },
  {
   "key": "st george community housing",
@@ -15155,7 +15610,8 @@ export const ACCOUNT_REGISTRY = [
    "Jared Dries"
   ],
   "confidence": "mapped",
-  "subVertical": "Goods & Services"
+  "subVertical": "Goods & Services",
+  "status": "prospect"
  },
  {
   "key": "st luke s medical hospital benefits association",
@@ -15198,7 +15654,8 @@ export const ACCOUNT_REGISTRY = [
    "Jared Dries"
   ],
   "confidence": "mapped",
-  "subVertical": "Locations"
+  "subVertical": "Locations",
+  "status": "prospect"
  },
  {
   "key": "star wholesale distribution",
@@ -15283,7 +15740,8 @@ export const ACCOUNT_REGISTRY = [
    "Jared Dries"
   ],
   "confidence": "mapped",
-  "subVertical": "Goods & Services"
+  "subVertical": "Goods & Services",
+  "status": "prospect"
  },
  {
   "key": "stella underwriting",
@@ -15304,7 +15762,8 @@ export const ACCOUNT_REGISTRY = [
    "Jared Dries"
   ],
   "confidence": "mapped",
-  "subVertical": "Goods & Services"
+  "subVertical": "Goods & Services",
+  "status": "prospect"
  },
  {
   "key": "stollznow research",
@@ -15314,7 +15773,8 @@ export const ACCOUNT_REGISTRY = [
    "James Locke"
   ],
   "confidence": "mapped",
-  "subVertical": "Goods & Services"
+  "subVertical": "Goods & Services",
+  "status": "prospect"
  },
  {
   "key": "storman software",
@@ -15335,7 +15795,8 @@ export const ACCOUNT_REGISTRY = [
    "James Locke"
   ],
   "confidence": "mapped",
-  "subVertical": "Goods & Services"
+  "subVertical": "Goods & Services",
+  "status": "prospect"
  },
  {
   "key": "strategic payments services",
@@ -15400,7 +15861,8 @@ export const ACCOUNT_REGISTRY = [
    "James Locke"
   ],
   "confidence": "mapped",
-  "subVertical": "Goods & Services"
+  "subVertical": "Goods & Services",
+  "status": "prospect"
  },
  {
   "key": "sunshades eyewear",
@@ -15410,7 +15872,8 @@ export const ACCOUNT_REGISTRY = [
    "Jared Dries"
   ],
   "confidence": "mapped",
-  "subVertical": "Goods & Services"
+  "subVertical": "Goods & Services",
+  "status": "prospect"
  },
  {
   "key": "sunup",
@@ -15419,7 +15882,8 @@ export const ACCOUNT_REGISTRY = [
   "aes": [
    "James Locke"
   ],
-  "confidence": "inferred"
+  "confidence": "inferred",
+  "status": "prospect"
  },
  {
   "key": "superior pak",
@@ -15429,7 +15893,8 @@ export const ACCOUNT_REGISTRY = [
    "Jared Dries"
   ],
   "confidence": "mapped",
-  "subVertical": "Goods & Services"
+  "subVertical": "Goods & Services",
+  "status": "prospect"
  },
  {
   "key": "surf hardware international",
@@ -15460,7 +15925,8 @@ export const ACCOUNT_REGISTRY = [
    "Jared Dries"
   ],
   "confidence": "mapped",
-  "subVertical": "Goods & Services"
+  "subVertical": "Goods & Services",
+  "status": "prospect"
  },
  {
   "key": "swicker s kingaroy bacon factory",
@@ -15547,7 +16013,8 @@ export const ACCOUNT_REGISTRY = [
    "James Locke"
   ],
   "confidence": "mapped",
-  "subVertical": "Goods & Services"
+  "subVertical": "Goods & Services",
+  "status": "prospect"
  },
  {
   "key": "tactix professional services",
@@ -15590,7 +16057,8 @@ export const ACCOUNT_REGISTRY = [
    "Jared Dries"
   ],
   "confidence": "mapped",
-  "subVertical": "TMT"
+  "subVertical": "TMT",
+  "status": "prospect"
  },
  {
   "key": "talyst consulting",
@@ -15644,7 +16112,8 @@ export const ACCOUNT_REGISTRY = [
    "James Locke"
   ],
   "confidence": "mapped",
-  "subVertical": "Goods & Services"
+  "subVertical": "Goods & Services",
+  "status": "prospect"
  },
  {
   "key": "tasman solutions",
@@ -15665,7 +16134,8 @@ export const ACCOUNT_REGISTRY = [
    "Jared Dries"
   ],
   "confidence": "mapped",
-  "subVertical": "Goods & Services"
+  "subVertical": "Goods & Services",
+  "status": "prospect"
  },
  {
   "key": "tattarang",
@@ -15708,7 +16178,8 @@ export const ACCOUNT_REGISTRY = [
    "Jared Dries"
   ],
   "confidence": "mapped",
-  "subVertical": "Goods & Services"
+  "subVertical": "Goods & Services",
+  "status": "prospect"
  },
  {
   "key": "tcl electronics",
@@ -15718,7 +16189,8 @@ export const ACCOUNT_REGISTRY = [
    "James Locke"
   ],
   "confidence": "mapped",
-  "subVertical": "Goods & Services"
+  "subVertical": "Goods & Services",
+  "status": "prospect"
  },
  {
   "key": "te whakakitenga o waikato",
@@ -15748,7 +16220,8 @@ export const ACCOUNT_REGISTRY = [
    "James Locke"
   ],
   "confidence": "mapped",
-  "subVertical": "Goods & Services"
+  "subVertical": "Goods & Services",
+  "status": "prospect"
  },
  {
   "key": "technogym",
@@ -15758,7 +16231,8 @@ export const ACCOUNT_REGISTRY = [
    "James Locke"
   ],
   "confidence": "mapped",
-  "subVertical": "Goods & Services"
+  "subVertical": "Goods & Services",
+  "status": "prospect"
  },
  {
   "key": "teekay fso finance",
@@ -15824,7 +16298,8 @@ export const ACCOUNT_REGISTRY = [
    "Jared Dries"
   ],
   "confidence": "mapped",
-  "subVertical": "Goods & Services"
+  "subVertical": "Goods & Services",
+  "status": "prospect"
  },
  {
   "key": "tenby grange",
@@ -15834,7 +16309,8 @@ export const ACCOUNT_REGISTRY = [
    "Jared Dries"
   ],
   "confidence": "mapped",
-  "subVertical": "TMT"
+  "subVertical": "TMT",
+  "status": "prospect"
  },
  {
   "key": "teradata",
@@ -15888,7 +16364,8 @@ export const ACCOUNT_REGISTRY = [
    "James Locke"
   ],
   "confidence": "mapped",
-  "subVertical": "Goods & Services"
+  "subVertical": "Goods & Services",
+  "status": "prospect"
  },
  {
   "key": "thomco no 2053",
@@ -15942,7 +16419,8 @@ export const ACCOUNT_REGISTRY = [
    "Jared Dries"
   ],
   "confidence": "mapped",
-  "subVertical": "Goods & Services"
+  "subVertical": "Goods & Services",
+  "status": "prospect"
  },
  {
   "key": "tianqi lithium kwinana",
@@ -15952,7 +16430,8 @@ export const ACCOUNT_REGISTRY = [
    "James Locke"
   ],
   "confidence": "mapped",
-  "subVertical": "Goods & Services"
+  "subVertical": "Goods & Services",
+  "status": "prospect"
  },
  {
   "key": "tibco bpm",
@@ -15995,7 +16474,8 @@ export const ACCOUNT_REGISTRY = [
    "Jared Dries"
   ],
   "confidence": "mapped",
-  "subVertical": "Goods & Services"
+  "subVertical": "Goods & Services",
+  "status": "prospect"
  },
  {
   "key": "toi foundation",
@@ -16027,7 +16507,8 @@ export const ACCOUNT_REGISTRY = [
    "Jared Dries"
   ],
   "confidence": "mapped",
-  "subVertical": "Goods & Services"
+  "subVertical": "Goods & Services",
+  "status": "prospect"
  },
  {
   "key": "tomy",
@@ -16037,7 +16518,8 @@ export const ACCOUNT_REGISTRY = [
    "Jared Dries"
   ],
   "confidence": "mapped",
-  "subVertical": "Goods & Services"
+  "subVertical": "Goods & Services",
+  "status": "prospect"
  },
  {
   "key": "tonic media network",
@@ -16080,7 +16562,8 @@ export const ACCOUNT_REGISTRY = [
    "Jared Dries"
   ],
   "confidence": "mapped",
-  "subVertical": "Goods & Services"
+  "subVertical": "Goods & Services",
+  "status": "prospect"
  },
  {
   "key": "tortuga ventures",
@@ -16090,7 +16573,8 @@ export const ACCOUNT_REGISTRY = [
    "Jared Dries"
   ],
   "confidence": "mapped",
-  "subVertical": "Goods & Services"
+  "subVertical": "Goods & Services",
+  "status": "prospect"
  },
  {
   "key": "toshiba international",
@@ -16188,7 +16672,8 @@ export const ACCOUNT_REGISTRY = [
    "Jared Dries"
   ],
   "confidence": "mapped",
-  "subVertical": "Goods & Services"
+  "subVertical": "Goods & Services",
+  "status": "prospect"
  },
  {
   "key": "toyoda gosei",
@@ -16198,7 +16683,8 @@ export const ACCOUNT_REGISTRY = [
    "Jared Dries"
   ],
   "confidence": "mapped",
-  "subVertical": "Goods & Services"
+  "subVertical": "Goods & Services",
+  "status": "prospect"
  },
  {
   "key": "tp icap management services",
@@ -16230,7 +16716,8 @@ export const ACCOUNT_REGISTRY = [
    "James Locke"
   ],
   "confidence": "mapped",
-  "subVertical": "Goods & Services"
+  "subVertical": "Goods & Services",
+  "status": "prospect"
  },
  {
   "key": "traffic logistics",
@@ -16240,7 +16727,8 @@ export const ACCOUNT_REGISTRY = [
    "Jared Dries"
   ],
   "confidence": "mapped",
-  "subVertical": "Goods & Services"
+  "subVertical": "Goods & Services",
+  "status": "prospect"
  },
  {
   "key": "traffic technologies",
@@ -16283,7 +16771,8 @@ export const ACCOUNT_REGISTRY = [
    "James Locke"
   ],
   "confidence": "mapped",
-  "subVertical": "Goods & Services"
+  "subVertical": "Goods & Services",
+  "status": "prospect"
  },
  {
   "key": "transamerica direct marketing asia pacific",
@@ -16304,7 +16793,8 @@ export const ACCOUNT_REGISTRY = [
    "James Locke"
   ],
   "confidence": "mapped",
-  "subVertical": "Goods & Services"
+  "subVertical": "Goods & Services",
+  "status": "prospect"
  },
  {
   "key": "transport general",
@@ -16347,7 +16837,8 @@ export const ACCOUNT_REGISTRY = [
    "Jared Dries"
   ],
   "confidence": "mapped",
-  "subVertical": "Goods & Services"
+  "subVertical": "Goods & Services",
+  "status": "prospect"
  },
  {
   "key": "tresmine",
@@ -16379,7 +16870,8 @@ export const ACCOUNT_REGISTRY = [
    "Jared Dries"
   ],
   "confidence": "mapped",
-  "subVertical": "Goods & Services"
+  "subVertical": "Goods & Services",
+  "status": "prospect"
  },
  {
   "key": "tripadvisor",
@@ -16432,7 +16924,8 @@ export const ACCOUNT_REGISTRY = [
    "Jared Dries"
   ],
   "confidence": "mapped",
-  "subVertical": "Goods & Services"
+  "subVertical": "Goods & Services",
+  "status": "prospect"
  },
  {
   "key": "true alliance",
@@ -16442,7 +16935,8 @@ export const ACCOUNT_REGISTRY = [
    "Jared Dries"
   ],
   "confidence": "mapped",
-  "subVertical": "Goods & Services"
+  "subVertical": "Goods & Services",
+  "status": "prospect"
  },
  {
   "key": "trustee for bdo wa directors employees trust",
@@ -16485,7 +16979,8 @@ export const ACCOUNT_REGISTRY = [
    "James Locke"
   ],
   "confidence": "mapped",
-  "subVertical": "Goods & Services"
+  "subVertical": "Goods & Services",
+  "status": "prospect"
  },
  {
   "key": "tuatahi first fibre",
@@ -16506,7 +17001,8 @@ export const ACCOUNT_REGISTRY = [
    "James Locke"
   ],
   "confidence": "mapped",
-  "subVertical": "Goods & Services"
+  "subVertical": "Goods & Services",
+  "status": "prospect"
  },
  {
   "key": "tullett prebon",
@@ -16538,7 +17034,8 @@ export const ACCOUNT_REGISTRY = [
    "Jared Dries"
   ],
   "confidence": "mapped",
-  "subVertical": "Goods & Services"
+  "subVertical": "Goods & Services",
+  "status": "prospect"
  },
  {
   "key": "two degrees",
@@ -16581,7 +17078,8 @@ export const ACCOUNT_REGISTRY = [
    "James Locke"
   ],
   "confidence": "mapped",
-  "subVertical": "Goods & Services"
+  "subVertical": "Goods & Services",
+  "status": "customer"
  },
  {
   "key": "uca wayside chapel",
@@ -16591,7 +17089,8 @@ export const ACCOUNT_REGISTRY = [
    "James Locke"
   ],
   "confidence": "mapped",
-  "subVertical": "Goods & Services"
+  "subVertical": "Goods & Services",
+  "status": "prospect"
  },
  {
   "key": "uci",
@@ -16601,7 +17100,8 @@ export const ACCOUNT_REGISTRY = [
    "James Locke"
   ],
   "confidence": "mapped",
-  "subVertical": "Goods & Services"
+  "subVertical": "Goods & Services",
+  "status": "prospect"
  },
  {
   "key": "ugam solutions",
@@ -16611,7 +17111,8 @@ export const ACCOUNT_REGISTRY = [
    "James Locke"
   ],
   "confidence": "mapped",
-  "subVertical": "Goods & Services"
+  "subVertical": "Goods & Services",
+  "status": "prospect"
  },
  {
   "key": "uhg trading",
@@ -16621,7 +17122,8 @@ export const ACCOUNT_REGISTRY = [
    "James Locke"
   ],
   "confidence": "mapped",
-  "subVertical": "Goods & Services"
+  "subVertical": "Goods & Services",
+  "status": "prospect"
  },
  {
   "key": "underwriting agencies of",
@@ -16696,7 +17198,8 @@ export const ACCOUNT_REGISTRY = [
    "James Locke"
   ],
   "confidence": "mapped",
-  "subVertical": "Goods & Services"
+  "subVertical": "Goods & Services",
+  "status": "prospect"
  },
  {
   "key": "united equipment",
@@ -16728,7 +17231,8 @@ export const ACCOUNT_REGISTRY = [
    "James Locke"
   ],
   "confidence": "mapped",
-  "subVertical": "Goods & Services"
+  "subVertical": "Goods & Services",
+  "status": "prospect"
  },
  {
   "key": "unity bank",
@@ -16760,7 +17264,8 @@ export const ACCOUNT_REGISTRY = [
    "Jared Dries"
   ],
   "confidence": "mapped",
-  "subVertical": "Goods & Services"
+  "subVertical": "Goods & Services",
+  "status": "prospect"
  },
  {
   "key": "universal pictures",
@@ -16803,7 +17308,8 @@ export const ACCOUNT_REGISTRY = [
    "Jared Dries"
   ],
   "confidence": "mapped",
-  "subVertical": "Goods & Services"
+  "subVertical": "Goods & Services",
+  "status": "prospect"
  },
  {
   "key": "v2 food",
@@ -16813,7 +17319,8 @@ export const ACCOUNT_REGISTRY = [
    "James Locke"
   ],
   "confidence": "mapped",
-  "subVertical": "Goods & Services"
+  "subVertical": "Goods & Services",
+  "status": "customer"
  },
  {
   "key": "vadacom",
@@ -16878,7 +17385,8 @@ export const ACCOUNT_REGISTRY = [
    "James Locke"
   ],
   "confidence": "mapped",
-  "subVertical": "Goods & Services"
+  "subVertical": "Goods & Services",
+  "status": "prospect"
  },
  {
   "key": "venezuela solidarity network",
@@ -16931,7 +17439,8 @@ export const ACCOUNT_REGISTRY = [
    "James Locke"
   ],
   "confidence": "mapped",
-  "subVertical": "Goods & Services"
+  "subVertical": "Goods & Services",
+  "status": "prospect"
  },
  {
   "key": "verrency",
@@ -16996,7 +17505,8 @@ export const ACCOUNT_REGISTRY = [
    "Jared Dries"
   ],
   "confidence": "mapped",
-  "subVertical": "Goods & Services"
+  "subVertical": "Goods & Services",
+  "status": "prospect"
  },
  {
   "key": "viburnum funds",
@@ -17039,7 +17549,8 @@ export const ACCOUNT_REGISTRY = [
    "James Locke"
   ],
   "confidence": "mapped",
-  "subVertical": "Goods & Services"
+  "subVertical": "Goods & Services",
+  "status": "customer"
  },
  {
   "key": "viking global",
@@ -17071,7 +17582,8 @@ export const ACCOUNT_REGISTRY = [
    "Jared Dries"
   ],
   "confidence": "mapped",
-  "subVertical": "Goods & Services"
+  "subVertical": "Goods & Services",
+  "status": "prospect"
  },
  {
   "key": "vitaco health",
@@ -17092,7 +17604,8 @@ export const ACCOUNT_REGISTRY = [
    "Jared Dries"
   ],
   "confidence": "mapped",
-  "subVertical": "Goods & Services"
+  "subVertical": "Goods & Services",
+  "status": "prospect"
  },
  {
   "key": "vix mobility",
@@ -17113,7 +17626,8 @@ export const ACCOUNT_REGISTRY = [
    "Jared Dries"
   ],
   "confidence": "mapped",
-  "subVertical": "Goods & Services"
+  "subVertical": "Goods & Services",
+  "status": "prospect"
  },
  {
   "key": "voestalpine vae railway systems",
@@ -17123,7 +17637,8 @@ export const ACCOUNT_REGISTRY = [
    "Jared Dries"
   ],
   "confidence": "mapped",
-  "subVertical": "Goods & Services"
+  "subVertical": "Goods & Services",
+  "status": "prospect"
  },
  {
   "key": "voice project",
@@ -17133,7 +17648,8 @@ export const ACCOUNT_REGISTRY = [
    "James Locke"
   ],
   "confidence": "mapped",
-  "subVertical": "Goods & Services"
+  "subVertical": "Goods & Services",
+  "status": "prospect"
  },
  {
   "key": "volunteering queensland",
@@ -17143,7 +17659,8 @@ export const ACCOUNT_REGISTRY = [
    "James Locke"
   ],
   "confidence": "mapped",
-  "subVertical": "Goods & Services"
+  "subVertical": "Goods & Services",
+  "status": "prospect"
  },
  {
   "key": "vonex wholesale",
@@ -17197,7 +17714,8 @@ export const ACCOUNT_REGISTRY = [
    "James Locke"
   ],
   "confidence": "mapped",
-  "subVertical": "Goods & Services"
+  "subVertical": "Goods & Services",
+  "status": "prospect"
  },
  {
   "key": "w s plastics",
@@ -17207,7 +17725,8 @@ export const ACCOUNT_REGISTRY = [
    "James Locke"
   ],
   "confidence": "mapped",
-  "subVertical": "Goods & Services"
+  "subVertical": "Goods & Services",
+  "status": "prospect"
  },
  {
   "key": "wa to nin",
@@ -17249,7 +17768,8 @@ export const ACCOUNT_REGISTRY = [
    "Jared Dries"
   ],
   "confidence": "mapped",
-  "subVertical": "Goods & Services"
+  "subVertical": "Goods & Services",
+  "status": "prospect"
  },
  {
   "key": "warburn estate",
@@ -17259,7 +17779,8 @@ export const ACCOUNT_REGISTRY = [
    "Jared Dries"
   ],
   "confidence": "mapped",
-  "subVertical": "Goods & Services"
+  "subVertical": "Goods & Services",
+  "status": "prospect"
  },
  {
   "key": "wartsila",
@@ -17269,7 +17790,8 @@ export const ACCOUNT_REGISTRY = [
    "James Locke"
   ],
   "confidence": "mapped",
-  "subVertical": "Goods & Services"
+  "subVertical": "Goods & Services",
+  "status": "prospect"
  },
  {
   "key": "warwick credit union",
@@ -17290,7 +17812,8 @@ export const ACCOUNT_REGISTRY = [
    "Jared Dries"
   ],
   "confidence": "mapped",
-  "subVertical": "Goods & Services"
+  "subVertical": "Goods & Services",
+  "status": "prospect"
  },
  {
   "key": "waterlogic",
@@ -17300,7 +17823,8 @@ export const ACCOUNT_REGISTRY = [
    "James Locke"
   ],
   "confidence": "mapped",
-  "subVertical": "Goods & Services"
+  "subVertical": "Goods & Services",
+  "status": "prospect"
  },
  {
   "key": "wbp",
@@ -17387,7 +17911,8 @@ export const ACCOUNT_REGISTRY = [
    "Jared Dries"
   ],
   "confidence": "mapped",
-  "subVertical": "Goods & Services"
+  "subVertical": "Goods & Services",
+  "status": "prospect"
  },
  {
   "key": "werkin",
@@ -17408,7 +17933,8 @@ export const ACCOUNT_REGISTRY = [
    "Jared Dries"
   ],
   "confidence": "mapped",
-  "subVertical": "Goods & Services"
+  "subVertical": "Goods & Services",
+  "status": "prospect"
  },
  {
   "key": "white lite",
@@ -17484,7 +18010,8 @@ export const ACCOUNT_REGISTRY = [
    "Jared Dries"
   ],
   "confidence": "mapped",
-  "subVertical": "Goods & Services"
+  "subVertical": "Goods & Services",
+  "status": "prospect"
  },
  {
   "key": "william adams",
@@ -17549,7 +18076,8 @@ export const ACCOUNT_REGISTRY = [
    "Jared Dries"
   ],
   "confidence": "mapped",
-  "subVertical": "Goods & Services"
+  "subVertical": "Goods & Services",
+  "status": "prospect"
  },
  {
   "key": "wilsons corporate finance",
@@ -17602,7 +18130,8 @@ export const ACCOUNT_REGISTRY = [
    "Jared Dries"
   ],
   "confidence": "mapped",
-  "subVertical": "Locations"
+  "subVertical": "Locations",
+  "status": "prospect"
  },
  {
   "key": "winson",
@@ -17612,7 +18141,8 @@ export const ACCOUNT_REGISTRY = [
    "Jared Dries"
   ],
   "confidence": "mapped",
-  "subVertical": "FSI"
+  "subVertical": "FSI",
+  "status": "prospect"
  },
  {
   "key": "with collective",
@@ -17655,7 +18185,8 @@ export const ACCOUNT_REGISTRY = [
    "James Locke"
   ],
   "confidence": "mapped",
-  "subVertical": "Goods & Services"
+  "subVertical": "Goods & Services",
+  "status": "customer"
  },
  {
   "key": "worksense workwear safety",
@@ -17676,7 +18207,8 @@ export const ACCOUNT_REGISTRY = [
    "Jared Dries"
   ],
   "confidence": "mapped",
-  "subVertical": "Goods & Services"
+  "subVertical": "Goods & Services",
+  "status": "prospect"
  },
  {
   "key": "wormald",
@@ -17686,7 +18218,8 @@ export const ACCOUNT_REGISTRY = [
    "Jared Dries"
   ],
   "confidence": "mapped",
-  "subVertical": "Goods & Services"
+  "subVertical": "Goods & Services",
+  "status": "prospect"
  },
  {
   "key": "wr carpenter agriculture",
@@ -17696,7 +18229,8 @@ export const ACCOUNT_REGISTRY = [
    "Jared Dries"
   ],
   "confidence": "mapped",
-  "subVertical": "Goods & Services"
+  "subVertical": "Goods & Services",
+  "status": "prospect"
  },
  {
   "key": "writesource medical",
@@ -17706,7 +18240,8 @@ export const ACCOUNT_REGISTRY = [
    "Jared Dries"
   ],
   "confidence": "mapped",
-  "subVertical": "HCLS"
+  "subVertical": "HCLS",
+  "status": "prospect"
  },
  {
   "key": "ws services",
@@ -17727,7 +18262,8 @@ export const ACCOUNT_REGISTRY = [
    "James Locke"
   ],
   "confidence": "mapped",
-  "subVertical": "Goods & Services"
+  "subVertical": "Goods & Services",
+  "status": "customer"
  },
  {
   "key": "wt emea acquisition",
@@ -17770,7 +18306,8 @@ export const ACCOUNT_REGISTRY = [
    "James Locke"
   ],
   "confidence": "mapped",
-  "subVertical": "Goods & Services"
+  "subVertical": "Goods & Services",
+  "status": "prospect"
  },
  {
   "key": "xyst",
@@ -17780,7 +18317,8 @@ export const ACCOUNT_REGISTRY = [
    "Jared Dries"
   ],
   "confidence": "mapped",
-  "subVertical": "Goods & Services"
+  "subVertical": "Goods & Services",
+  "status": "prospect"
  },
  {
   "key": "yahoo",
@@ -17877,7 +18415,8 @@ export const ACCOUNT_REGISTRY = [
    "James Locke"
   ],
   "confidence": "mapped",
-  "subVertical": "Goods & Services"
+  "subVertical": "Goods & Services",
+  "status": "prospect"
  },
  {
   "key": "young mens christian association of hobart",
@@ -17898,7 +18437,8 @@ export const ACCOUNT_REGISTRY = [
    "Jared Dries"
   ],
   "confidence": "mapped",
-  "subVertical": "Goods & Services"
+  "subVertical": "Goods & Services",
+  "status": "prospect"
  },
  {
   "key": "yulan international",
@@ -17919,7 +18459,8 @@ export const ACCOUNT_REGISTRY = [
    "Jared Dries"
   ],
   "confidence": "mapped",
-  "subVertical": "Goods & Services"
+  "subVertical": "Goods & Services",
+  "status": "prospect"
  },
  {
   "key": "zap",
@@ -17939,7 +18480,8 @@ export const ACCOUNT_REGISTRY = [
   "aes": [
    "James Locke"
   ],
-  "confidence": "inferred"
+  "confidence": "inferred",
+  "status": "prospect"
  },
  {
   "key": "zhiran",
@@ -17949,7 +18491,8 @@ export const ACCOUNT_REGISTRY = [
    "Jared Dries"
   ],
   "confidence": "mapped",
-  "subVertical": "Goods & Services"
+  "subVertical": "Goods & Services",
+  "status": "prospect"
  },
  {
   "key": "zib",

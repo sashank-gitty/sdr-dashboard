@@ -58,18 +58,38 @@ export const VENDOR_WATCHLIST = [
 //   - Customers (~105) are queried by name on rotation. They're the
 //     highest-value watch (renewal risk, expansion, churn) and small
 //     enough to cycle through in a few days.
-//   - Prospects rotate too, but a ~1,600-deep list cycles slowly, so
-//     name-matching is opportunistic for them. Their real coverage
-//     comes from the thematic patch tagging the normalizer applies to
+//   - Prospects rotate per AE on a weekly budget (see below), so every
+//     territory advances at the same rate. Their coverage is still
+//     topped up by the thematic patch tagging the normalizer applies to
 //     sector and regulatory news, which lands in a patch view without
 //     needing the account named at all.
 //
-// Tune the two per-run constants below against the `queried` figure in
+// Tune the per-run constants below against the `queried` figure in
 // the /api/ingest response summary if the function starts running long.
 import { ACCOUNT_REGISTRY } from "./accountRegistry.js"
 
 const CUSTOMER_QUERIES_PER_RUN = 25
-const PROSPECT_QUERIES_PER_RUN = 10
+
+// Prospect coverage is budgeted PER AE PER WEEK rather than as one
+// per-run slice off a single ~1,600-deep alphabetical list.
+//
+// The old shape took 10 prospects a day off that one list. Because the
+// list is sorted by name and territories are not evenly spread through
+// the alphabet, any given week's slice could sit almost entirely inside
+// one or two AEs' patches — so a rep could go weeks with no named-account
+// queries running for their territory at all, and the imbalance was
+// invisible from the ingest summary.
+//
+// Budgeting per AE makes the guarantee explicit and even: every AE gets
+// ACCOUNTS_PER_AE_PER_WEEK of their own prospects queried by name each
+// week, no matter how large or small their book is. The week's block is
+// then dealt across the seven days so a single run still only carries a
+// few extra queries — with four AEs at 20/week that is ~11 a day, which
+// is close to the 10/day the flat rotation was already doing. Run cost
+// is therefore roughly unchanged; what changes is who the queries are
+// spent on.
+const ACCOUNTS_PER_AE_PER_WEEK = 20
+const DAYS_PER_WEEK = 7
 
 // Registry names are legal entity names, frequently in caps
 // ("BRIDGESTONE MINING SOLUTIONS AUSTRALIA PTY LTD"). Google News does
@@ -110,6 +130,33 @@ function queriesFor(status) {
 export const CUSTOMER_ACCOUNT_QUERIES = queriesFor("customer")
 export const PROSPECT_ACCOUNT_QUERIES = queriesFor("prospect")
 
+// The same prospect queries, bucketed by the AE whose patch they sit in,
+// so each territory can be rotated through independently.
+//
+// An account owned by two AEs is filed under the first — it produces the
+// same query string either way, and the dedupe in accountQueriesForRun
+// keeps it from being fetched twice in a run where both AEs surface it.
+function prospectQueriesByAe() {
+  const byAe = new Map()
+  for (const account of ACCOUNT_REGISTRY) {
+    if ((account.status ?? null) !== "prospect") continue
+    const query = toSearchQuery(account.name)
+    if (query.length < 8) continue
+    const ae = account.aes?.[0] ?? "unassigned"
+    if (!byAe.has(ae)) byAe.set(ae, new Set())
+    byAe.get(ae).add(query)
+  }
+  // Sorted on both axes so a given (week, day) always produces the same
+  // queries — the rotation has to be reproducible to be auditable.
+  return new Map(
+    [...byAe.entries()]
+      .sort(([a], [b]) => a.localeCompare(b))
+      .map(([ae, queries]) => [ae, [...queries].sort()]),
+  )
+}
+
+export const PROSPECT_QUERIES_BY_AE = prospectQueriesByAe()
+
 // Deterministic day-indexed window so consecutive daily runs advance
 // through the list instead of re-querying the same slice. Wraps around.
 function rotatingSlice(list, size, dayIndex) {
@@ -122,11 +169,56 @@ function rotatingSlice(list, size, dayIndex) {
     : [...list.slice(start), ...list.slice(0, end - list.length)]
 }
 
+// This week's block of accounts for one AE. Wraps like rotatingSlice, so
+// the rotation runs indefinitely and every account in a book comes up
+// before any of them comes up a second time.
+function weekBlock(list, perWeek, weekIndex) {
+  if (list.length === 0 || perWeek <= 0) return []
+  if (list.length <= perWeek) return list
+  const start = (weekIndex * perWeek) % list.length
+  const end = start + perWeek
+  return end <= list.length
+    ? list.slice(start, end)
+    : [...list.slice(start), ...list.slice(0, end - list.length)]
+}
+
+// Deal one AE's weekly block across the seven days, so a run carries a
+// few accounts per AE rather than the whole week's worth on Monday.
+// Dealt round-robin rather than in contiguous chunks so that a short
+// block (an AE with fewer than seven prospects left in the cycle) still
+// spreads across the week instead of landing entirely on day 0.
+function dayShare(block, dayOfWeek) {
+  return block.filter((_, i) => i % DAYS_PER_WEEK === dayOfWeek)
+}
+
+/**
+ * Today's named-prospect queries: each AE's slice of their own weekly
+ * budget. Deterministic for a given date.
+ */
+export function prospectQueriesForRun(date = new Date()) {
+  const dayIndex = Math.floor(date.getTime() / 86_400_000)
+  const weekIndex = Math.floor(dayIndex / DAYS_PER_WEEK)
+  const dayOfWeek = ((dayIndex % DAYS_PER_WEEK) + DAYS_PER_WEEK) % DAYS_PER_WEEK
+
+  const queries = []
+  for (const list of PROSPECT_QUERIES_BY_AE.values()) {
+    queries.push(
+      ...dayShare(weekBlock(list, ACCOUNTS_PER_AE_PER_WEEK, weekIndex), dayOfWeek),
+    )
+  }
+  return queries
+}
+
 export function accountQueriesForRun(date = new Date()) {
   const dayIndex = Math.floor(date.getTime() / 86_400_000)
+  // Deduped across the two sources: an account can legitimately appear in
+  // both the customer rotation and an AE's prospect block if the book
+  // lists it twice under different statuses.
   return [
-    ...rotatingSlice(CUSTOMER_ACCOUNT_QUERIES, CUSTOMER_QUERIES_PER_RUN, dayIndex),
-    ...rotatingSlice(PROSPECT_ACCOUNT_QUERIES, PROSPECT_QUERIES_PER_RUN, dayIndex),
+    ...new Set([
+      ...rotatingSlice(CUSTOMER_ACCOUNT_QUERIES, CUSTOMER_QUERIES_PER_RUN, dayIndex),
+      ...prospectQueriesForRun(date),
+    ]),
   ]
 }
 
